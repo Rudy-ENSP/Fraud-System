@@ -5,7 +5,7 @@ import image from '../images/friends.png';
 import Box from '@material-ui/core/Box';
 import axios from 'axios';
 import {Redirect} from "react-router-dom";
-        
+import { isAcceuil,isEntité,isPlaintes } from './Navbar/Navbar';    
 
 
 export class Accueil extends Component {
@@ -20,13 +20,14 @@ export class Accueil extends Component {
             username:'',
             password:'',
             
+            
         }
     }
 
     
 
     render(){
-        
+       
         return(
 
           <div style={{backgroundColor:'white'}}>

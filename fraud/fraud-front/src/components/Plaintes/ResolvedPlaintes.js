@@ -1,39 +1,44 @@
-import React, { Component, useState } from 'react';
-import '../../styles.css'
+import React, { Component } from 'react';
 import Modal from 'react-modal'
 import Box from '@material-ui/core/Box';
+import '../../styles.css'
 import axios from 'axios';
+import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
 
+class ResolvedPlaintes extends Component {
 
-
-class NoResolvedTickets extends Component {
     constructor(props){
         super(props)
         this.state={
             modalVisible:false,
-            tickets:[],
+            plaintes:[],
             id:'',
             title:'',
-            service:'',
+            entité:'',
             auteur:'',
             date:'',
             etat:'',
             contenu:'',
+            response:'',
+           
         }
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/ticket?etat=cree')
+		let data={
+              'user':username,
+              'password':password
+          };
+        axios.post('http://localhost:8000/plainte/solved/',data)
           .then(res => {
-            const tickets = res.data;
-            this.setState({tickets: tickets  });
-            console.log('tickets', tickets)
+            const plaintes = res.data;
+            this.setState({plaintes: plaintes  });
+            console.log(plaintes)
           })
           .catch(function (error) {
             console.log(error);
           });
       }
-
     ShowModal(){
     
         return(
@@ -70,6 +75,7 @@ class NoResolvedTickets extends Component {
         )
     }
 
+
     contentModal=()=>{
         return(
             <div>
@@ -83,8 +89,8 @@ class NoResolvedTickets extends Component {
                 <Box display="flex" flexDirection="row" p={1} m={1}
                  bgcolor="background.paper" justifyContent='space-between'>
                     <Box p={1} bgcolor="grey.300">
-                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>service </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.service}</Box>
+                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>entité </Box>
+                        <Box style={{textAlign:"center"}}>{this.state.entité}</Box>
                     </Box>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>auteur </Box>
@@ -99,101 +105,90 @@ class NoResolvedTickets extends Component {
                 </div>
                 <div>
                     <Box display="flex" flexDirection='column'  bgcolor="background.paper" p={1} m={1}>
-                        <Box bgcolor="grey.300" style={{fontSize:18,fontWeight:"bold",textAlign:"center"}}>Message</Box>
+                        <Box bgcolor="grey.300" style={{fontSize:18,fontWeight:"bold",textAlign:"center"}}>Details</Box>
                         <Box style={{marginTop:10}} >{this.state.contenu}</Box>
                     </Box>
                 </div>
                 <div>
-                    <form style={{margin:20}}>
-                        <div className='form-group col-md-13 mb-3'>
-                            <label for='content'>Ajouter un commentaire/une réponse</label>
-                            <textarea value={this.state.value} className ="form-control" style={{height:100}} required/>
-                        </div>
-                        <div style={{marginLeft:'30%'}}>
-                            <input type="submit" className="btn btn-primary" value="Envoyer" />
+                    <Box display="flex" flexDirection='column'  bgcolor="background.paper" p={1} m={1}>
+                        <Box bgcolor="grey.300" style={{fontSize:18,fontWeight:"bold",textAlign:"center"}}>Response</Box>
+                        <Box style={{marginTop:10}} >{this.state.response}</Box>
+                    </Box>
+                </div>
+                <div style={{marginLeft:'30%'}}>
                             <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                         </div>
-                    </form>
-                </div>
+               
             </div>
         )
     }
-
+    
     render(){
 
-        const MyTickets = this.state.tickets/* [
-            {id: 1, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 2, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 3, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 4, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 5, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 6, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 7, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 8, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 9, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 10, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 11, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 12, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 13, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 14, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
+        const MyPlaintes = this.state.plaintes /*[
+            {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resoluee',Content:'Nothing'},
+            {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 3, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
+            {id: 4, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 5, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
+            {id: 6, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 7, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 8, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 9, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
+            {id: 10, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 11, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 12, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
+            {id: 13, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
+            {id: 14, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
           ];*/
 
-
-        function TicketsNonResolus(){
-
-            const ticketsNonResolus=[]
-
-            MyTickets.map((ticket)=>
-               
-                    ticketsNonResolus.push(ticket)
-            )
-            return ticketsNonResolus
+        function PlainteResolue(){
+            const plainteResolue=[]
+            MyPlaintes.map((plainte)=>plainteResolue.push(plainte))
+			console.log(MyPlaintes)
+            return plainteResolue
         }
           
-
-          const content = TicketsNonResolus().map((ticket) =>
+         const content = PlainteResolue().map((plainte) =>
           <tr onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                id:ticket.id,
-                title:ticket.title,
-                service:ticket.Service,
-                auteur:ticket.Auteur,
-                date:ticket.Date,
-                etat:ticket.Etat,
-                contenu:ticket.Content
-                })}>
-              <th scope="row">{ticket.id}</th>
-              <td>{ticket.title}</td>
-              <td>{ticket.Service}</td>
-              <td>{ticket.Auteur}</td>
-              <td>{ticket.Date}</td>
-              <td>{ticket.Etat}</td>
+              ()=>this.setState({
+                  modalVisible:true,
+                  id:plainte.id,
+                  title:plainte.title,
+                  entité:plainte.entité,
+                  auteur:plainte.auteur,
+                  date:plainte.date_création,
+                  etat:plainte.state,
+                  contenu:plainte.details,
+                  response:plainte.response,
+                  })}>
+              <th scope="row">{plainte.id}</th>
+              <td>{plainte.title}</td>
+              <td>{plainte.entité}</td>
+              <td>{plainte.date_création}</td>
+              <td>{plainte.state}</td>
           </tr>
           );
 
-
           function showTable(){
              
-              if(TicketsNonResolus().length ===0){
+              if(PlainteResolue().length ===0){
                   return(
-                      <h5 style={{textAlign:'center',marginTop:100}}>
-                          Aucun ticket dans cette rebrique</h5>
+                      <h5 style={{textAlign:'center',marginTop:100}}>Aucun plainte dans cette rubrique</h5>
                   )
               }
-              if(TicketsNonResolus().length <=8 && TicketsNonResolus().length>=1){
+              if(PlainteResolue().length <=8 && PlainteResolue().length>=1){
                 return (
                     <div className="container-fluid">
               
                         <div className="table-wrapper-scroll-y my-custom-scrollbar">
-                            <table className="table table-bordered table-hover mb-0">
+                            <table className="table table-bordered table-hover mb-0 table">
                                 <thead style={{backgroundColor:'orange'}}>
                                     <tr >
                                     <th scope="col">#</th>
                                     <th scope="col">Titre</th>
-                                    <th scope="col">Service</th>
-                                    <th scope="col">Auteur</th>
+                                    <th scope="col">Entité</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Etat</th>
                                     </tr>
@@ -206,7 +201,7 @@ class NoResolvedTickets extends Component {
                     </div>
                 )
                 }
-              if(TicketsNonResolus().length>8){
+              if(PlainteResolue().length>8){
                 return (
                     <div className="container-fluid">
               
@@ -216,8 +211,8 @@ class NoResolvedTickets extends Component {
                                     <tr >
                                     <th scope="col">#</th>
                                     <th scope="col">Titre</th>
-                                    <th scope="col">Service</th>
-                                    <th scope="col">Auteur</th>
+                                    <th scope="col">Entité</th>
+                                   
                                     <th scope="col">Date</th>
                                     <th scope="col">Etat</th>
                                     </tr>
@@ -229,8 +224,8 @@ class NoResolvedTickets extends Component {
                                     <tr >
                                         <th scope="col">#</th>
                                         <th scope="col">Titre</th>
-                                        <th scope="col">Service</th>
-                                        <th scope="col">Auteur</th>
+                                        <th scope="col">Entité</th>
+                                       
                                         <th scope="col">Date</th>
                                         <th scope="col">Etat</th>
                                     </tr>
@@ -242,13 +237,11 @@ class NoResolvedTickets extends Component {
               }
             }
           
-
-
         return (
             <div className="main">
                 <div style={{textAlign:'center',marginBottom:20}}>
-                    <h3>Mes tickets non resolus</h3>
-                    <p>Ici vous pouvez voir tout vos tickets non resolu</p>
+                    <h3>Les plaintes resoluees</h3>
+                    <p>Ici vous pouvez voir toutes les réponses et les plaintes Résolues</p>
                 </div>
                 {showTable()}
                 {this.ShowModal()}
@@ -257,4 +250,4 @@ class NoResolvedTickets extends Component {
     }
 }
 
-export default NoResolvedTickets
+export default ResolvedPlaintes

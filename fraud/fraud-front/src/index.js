@@ -3,18 +3,20 @@ import { render } from 'react-dom';
 import './index.css';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
-import Tickets from './components/Tickets/Tickets';
+import Plaintes from './components/Plaintes/Plaintes';
 import {Accueil} from './components/Accueil';
+import {Body} from './components/Body';
 import {Entree} from './components/Entree';
 import Notifications from './components/Notifications/Notifications'
 import Login from './components/Login/login'
 import Staff from './components/Staff/Staff'
-import Services from './components/Services/Services'
+import Entité from './components/Entités/Entités'
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/footer'
 import ProtectedRoute from'./components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import ClientRoute from './components/ClientRoute';
+import Entités from './components/Entités/Entités';
 
 
 
@@ -26,10 +28,10 @@ render(
   <div>
     
     <Router>
-        <Login/>
+        <Entree/>
         <ProtectedRoute path="/entree" component={Entree}/>
-        <ProtectedRoute path="/tickets" component={Tickets}/>
-        <ProtectedRoute path="/services" component={Services}/>
+        <ProtectedRoute path="/Plaintes" component={Plaintes}/>
+        <ProtectedRoute path="/Entités" component={Entités}/>
         <ProtectedRoute path="/notifications" component={Notifications}/>
         <ProtectedRoute path="/staff" component={Staff}/>
     </Router>

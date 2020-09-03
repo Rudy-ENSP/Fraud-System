@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import '../../styles.css';
 import axios from 'axios';
 
-class NewServices extends Component {
+class NewEntités extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -23,18 +23,18 @@ class NewServices extends Component {
         })
       }
 
-      onSendService=(event)=>{
+      onSendEntité=(event)=>{
         event.preventDefault()
-          let newServices={
+          let newEntités={
               Nom : this.state.Nom,
               Adresse: this.state.Adresse,
           }
          
-          axios.post('http://localhost:8000/ticket/createService/', newServices)
+          axios.post('http://localhost:8000/plaintes/createEntité/', newEntités)
             .then(res => {
              
               console.log(res.data);
-              alert('service crée avec succès')
+              alert('Entité crée avec succès')
             })
             
       }
@@ -43,15 +43,15 @@ class NewServices extends Component {
         <div className='main'>
 
           <div style={{textAlign:'center', marginRight:50,marginBottom:20}}>
-            <h3 >Création d'un nouveau Service</h3>
-            <p>Les Services sont utilisés pour classer les Services.</p>
+            <h3 >Création d'un nouveau Entité</h3>
+            <p>Les Entités sont utilisés pour classer les Entités.</p>
           </div>
 
 
-          <form onSubmit={this.onSendService} className="needs-validation" novalidate>
+          <form onSubmit={this.onSendEntité} className="needs-validation" novalidate>
             <div className="form-row">
               <div className='col-md-12'>
-                <label for='Nom'>Entrer le nom du Service</label>
+                <label for='Nom'>Entrer le nom du Entité</label>
                 <input type='text' className ="form-control" name='Nom'
                   onChange={this.onChangeNom} required />
               </div>
@@ -72,4 +72,4 @@ class NewServices extends Component {
       }
 }
 
-export default NewServices
+export default NewEntités

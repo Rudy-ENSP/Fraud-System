@@ -3,12 +3,12 @@ import Modal from 'react-modal'
 import '../../styles.css';
 import axios from 'axios';
 
-class AllServices extends Component {
+class AllEntités extends Component {
     constructor(props){
         super(props)
         this.state={
             modalVisible:false,
-            services:[],
+            entités:[],
             id:'',
             Nom:'',
             Adresse:'',
@@ -16,11 +16,11 @@ class AllServices extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/ticket/listeService/')
+        axios.get('http://localhost:8000/plaintes/listeEntité/')
           .then(res => {
-            const services = res.data;
-            this.setState({services: services  });
-            console.log('tickets', services)
+            const entités = res.data;
+            this.setState({entités: entités  });
+            console.log('plaintes', entités)
           })
           .catch(function (error) {
             console.log(error);
@@ -29,37 +29,37 @@ class AllServices extends Component {
     
     render(){
 
-      const Services = this.state.services
-        /*const Services = [
-            {id: 1, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 2, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 3, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 4, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 5, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 6, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 7, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 8, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 9, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 10, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 11, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 12, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 13, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
-            {id: 14, Nom: 'Aide support',Date:'12/05/2020',Description:'Nothing'},
+      const Entités = this.state.entités
+        /*const Entités = [
+            {id: 1, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 2, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 3, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 4, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 5, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 6, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 7, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 8, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 9, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 10, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 11, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 12, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 13, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
+            {id: 14, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
           ];*/
 
-          const content = Services.map((service) =>
+          const content = Entités.map((entité) =>
             
                 <tr onClick={
                     ()=>this.setState({
                         modalVisible:true,
-                        id:service.id,
-                        Nom:service.name,                      
-                        Adresse:service.addresse
+                        id:entité.id,
+                        Nom:entité.name,                      
+                        Adresse:entité.addresse
                         })}>
-                    <th scope="row">{service.id}</th>
-                    <td>{service.name}</td>
+                    <th scope="row">{entité.id}</th>
+                    <td>{entité.name}</td>
                    
-                    <td>{service.addresse}</td>
+                    <td>{entité.addresse}</td>
                 </tr>
            
           );
@@ -68,7 +68,7 @@ class AllServices extends Component {
         function showTable(){
 
             
-              if(Services.length <=8 && Services.length>=1){
+              if(Entités.length <=8 && Entités.length>=1){
                 return (
                     <div className="container-fluid">
               
@@ -89,7 +89,7 @@ class AllServices extends Component {
                     </div>
                 )
                 }
-              if(Services.length>8){
+              if(Entités.length>8){
                 return (
                     <div className="container-fluid">
               
@@ -124,8 +124,8 @@ class AllServices extends Component {
         return (
             <div className="main">
                 <div style={{textAlign:'center',marginBottom:20}}>
-                    <h3>Mes services</h3>
-                    <p>Ici vous pouvez voir tous les services que vous avez créé</p>
+                    <h3>Mes entités</h3>
+                    <p>Ici vous pouvez voir toutes les entités que vous avez créé</p>
                 </div>
                 {showTable()}
                
@@ -134,4 +134,4 @@ class AllServices extends Component {
     }
 }
 
-export default AllServices
+export default AllEntités

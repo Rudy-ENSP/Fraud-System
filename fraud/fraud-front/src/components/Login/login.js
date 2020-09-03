@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Box from '@material-ui/core/Box';
 import axios from 'axios';
-import Tickets from '../Tickets/Tickets';
+import Tickets from '../Plaintes/Plaintes';
 import {Entree} from '../Entree';
 import {Redirect} from "react-router-dom";
 import {useHistory} from "react-router-dom";

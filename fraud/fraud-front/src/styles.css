@@ -3,7 +3,7 @@
     font-weight:bold;
 }
 a.active {
-    color:orange !important;
+    color:#007bff !important;
 }
 body {
     font-family: "Lato", sans-serif;
@@ -12,12 +12,14 @@ body {
   .sidenav {
     height: 100%;
     width: 150px;
-    position: fixed;
+    position:absolute;
     z-index: 1;
     left:1;
-    background-color: #111;
+    background-color: #343a40!important;
     overflow-x: hidden;
     padding-top: 50px;
+    bottom:65px;
+    top: 65px;
   }
   
   .sidenav a {

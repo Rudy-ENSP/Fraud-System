@@ -7,6 +7,12 @@ import './Navbarcss/navbar.css'
 import axios from 'axios';
 import { isLoginAdmin,isLogin,isLoginClient } from '../Login/login';
 
+
+export var isPlaintes=false;
+export var isEntité=false;
+export var isAcceuil=true;
+
+
 class Navbar extends Component {
 
 
@@ -16,6 +22,9 @@ class Navbar extends Component {
             isLogin:false,
             isLoginAdmin:false,
             isLoginClient:false,
+            isEntité:false,
+            isPlaintes:false,
+            isAcceuil:true
         }
     }
     componentDidMount(){
@@ -35,7 +44,7 @@ class Navbar extends Component {
             isLoginAdmin:false,
             isLoginClient:false,
         })
-
+    
 
         axios.get('http://localhost:8000/plaintes/logout/')
         .then(res => {
@@ -48,7 +57,18 @@ class Navbar extends Component {
         window.location.reload(false);
     }
        
-    
+    onclickPlaintes=()=>{
+      isPlaintes=true
+  }
+
+    onclickAcceuil=()=>{
+      isAcceuil=true
+
+    }
+    onclickEntité=()=>{
+      isEntité=true
+      
+    }
 
      refreshNavBar=()=> {
          this.setState({
@@ -108,23 +128,27 @@ class Navbar extends Component {
             <header>
               
               <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-                <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/#"><span id="fraud">Fraud Stats</span></a>
+                <a class="nav-link" href=""><span id="fraud">Fraud Stats</span></a>
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                      <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/#">Acceuil </a>
+                    <NavLink exact to="/"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
+                      
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/#">Plaintes</a>
+                    <NavLink to="/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
+                      
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link disabled" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/#">Assignation</a>
+                    <NavLink to="/Assignation"><a class="nav-link" href="">Assignation</a></NavLink>
+                      
                     </li>
                     <li class="nav-item">
-                      <a class="nav-link disabled" href="https://getbootstrap.com/docs/4.0/examples/sticky-footer-navbar/#">Entités</a>
+                    <NavLink to="/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
+                      
                     </li>
                   </ul>
                   <form class="form-inline mt-2 mt-md-0">

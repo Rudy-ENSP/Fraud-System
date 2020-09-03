@@ -1,44 +1,39 @@
-import React, { Component } from 'react';
+import React, { Component, useState } from 'react';
+import '../../styles.css'
 import Modal from 'react-modal'
 import Box from '@material-ui/core/Box';
-import '../../styles.css'
 import axios from 'axios';
-import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
 
-class ResolvedTickets extends Component {
 
+
+class NoResolvedPlaintes extends Component {
     constructor(props){
         super(props)
         this.state={
             modalVisible:false,
-            tickets:[],
+            plaintes:[],
             id:'',
             title:'',
-            service:'',
+            entité:'',
             auteur:'',
             date:'',
             etat:'',
             contenu:'',
-            response:'',
-           
         }
     }
 
     componentDidMount() {
-		let data={
-              'user':username,
-              'password':password
-          };
-        axios.post('http://localhost:8000/ticket/solved/',data)
+        axios.get('http://localhost:8000/plainte?etat=cree')
           .then(res => {
-            const tickets = res.data;
-            this.setState({tickets: tickets  });
-            console.log(tickets)
+            const plaintes = res.data;
+            this.setState({plaintes: plaintes  });
+            console.log('plaintes', plaintes)
           })
           .catch(function (error) {
             console.log(error);
           });
       }
+
     ShowModal(){
     
         return(
@@ -75,7 +70,6 @@ class ResolvedTickets extends Component {
         )
     }
 
-
     contentModal=()=>{
         return(
             <div>
@@ -89,8 +83,8 @@ class ResolvedTickets extends Component {
                 <Box display="flex" flexDirection="row" p={1} m={1}
                  bgcolor="background.paper" justifyContent='space-between'>
                     <Box p={1} bgcolor="grey.300">
-                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>service </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.service}</Box>
+                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>entité </Box>
+                        <Box style={{textAlign:"center"}}>{this.state.entité}</Box>
                     </Box>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>auteur </Box>
@@ -105,90 +99,101 @@ class ResolvedTickets extends Component {
                 </div>
                 <div>
                     <Box display="flex" flexDirection='column'  bgcolor="background.paper" p={1} m={1}>
-                        <Box bgcolor="grey.300" style={{fontSize:18,fontWeight:"bold",textAlign:"center"}}>Details</Box>
+                        <Box bgcolor="grey.300" style={{fontSize:18,fontWeight:"bold",textAlign:"center"}}>Message</Box>
                         <Box style={{marginTop:10}} >{this.state.contenu}</Box>
                     </Box>
                 </div>
                 <div>
-                    <Box display="flex" flexDirection='column'  bgcolor="background.paper" p={1} m={1}>
-                        <Box bgcolor="grey.300" style={{fontSize:18,fontWeight:"bold",textAlign:"center"}}>Response</Box>
-                        <Box style={{marginTop:10}} >{this.state.response}</Box>
-                    </Box>
-                </div>
-                <div style={{marginLeft:'30%'}}>
+                    <form style={{margin:20}}>
+                        <div className='form-group col-md-13 mb-3'>
+                            <label for='content'>Ajouter un commentaire/une réponse</label>
+                            <textarea value={this.state.value} className ="form-control" style={{height:100}} required/>
+                        </div>
+                        <div style={{marginLeft:'30%'}}>
+                            <input type="submit" className="btn btn-primary" value="Envoyer" />
                             <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                         </div>
-               
+                    </form>
+                </div>
             </div>
         )
     }
-    
+
     render(){
 
-        const MyTickets = this.state.tickets /*[
-            {id: 1, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 2, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 3, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 4, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 5, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 6, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 7, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 8, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 9, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 10, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 11, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 12, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
-            {id: 13, title: 'Bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
-            {id: 14, title: 'bonjour, monde', Service: 'aide et support',Auteur:'cardoun07',Date:'12/05/2020',Etat:'resolu',Content:'Nothing'},
+        const MyPlaintes = this.state.plaintes/* [
+            {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
+            {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 3, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
+            {id: 4, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 5, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
+            {id: 6, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 7, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 8, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 9, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
+            {id: 10, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 11, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 12, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
+            {id: 13, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
+            {id: 14, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
           ];*/
 
-        function TicketResolu(){
-            const ticketResolu=[]
-            MyTickets.map((ticket)=>ticketResolu.push(ticket))
-			console.log(MyTickets)
-            return ticketResolu
+
+        function PlaintesNonResolus(){
+
+            const plaintesNonResolus=[]
+
+            MyPlaintes.map((plainte)=>
+               
+                    plaintesNonResolus.push(plainte)
+            )
+            return plaintesNonResolus
         }
           
-         const content = TicketResolu().map((ticket) =>
+
+          const content = PlaintesNonResolus().map((plainte) =>
           <tr onClick={
-              ()=>this.setState({
-                  modalVisible:true,
-                  id:ticket.id,
-                  title:ticket.title,
-                  service:ticket.service,
-                  auteur:ticket.auteur,
-                  date:ticket.date_création,
-                  etat:ticket.state,
-                  contenu:ticket.details,
-                  response:ticket.response,
-                  })}>
-              <th scope="row">{ticket.id}</th>
-              <td>{ticket.title}</td>
-              <td>{ticket.service}</td>
-              <td>{ticket.date_création}</td>
-              <td>{ticket.state}</td>
+            ()=>this.setState({
+                modalVisible:true,
+                id:plainte.id,
+                title:plainte.title,
+                entité:plainte.Entité,
+                auteur:plainte.Auteur,
+                date:plainte.Date,
+                etat:plainte.Etat,
+                contenu:plainte.Content
+                })}>
+              <th scope="row">{plainte.id}</th>
+              <td>{plainte.title}</td>
+              <td>{plainte.Entité}</td>
+              <td>{plainte.Auteur}</td>
+              <td>{plainte.Date}</td>
+              <td>{plainte.Etat}</td>
           </tr>
           );
 
+
           function showTable(){
              
-              if(TicketResolu().length ===0){
+              if(PlaintesNonResolus().length ===0){
                   return(
-                      <h5 style={{textAlign:'center',marginTop:100}}>Aucun ticket dans cette rubrique</h5>
+                      <h5 style={{textAlign:'center',marginTop:100}}>
+                          Aucun plainte dans cette rebrique</h5>
                   )
               }
-              if(TicketResolu().length <=8 && TicketResolu().length>=1){
+              if(PlaintesNonResolus().length <=8 && PlaintesNonResolus().length>=1){
                 return (
                     <div className="container-fluid">
               
                         <div className="table-wrapper-scroll-y my-custom-scrollbar">
-                            <table className="table table-bordered table-hover mb-0 table">
+                            <table className="table table-bordered table-hover mb-0">
                                 <thead style={{backgroundColor:'orange'}}>
                                     <tr >
                                     <th scope="col">#</th>
                                     <th scope="col">Titre</th>
-                                    <th scope="col">Service</th>
+                                    <th scope="col">Entité</th>
+                                    <th scope="col">Auteur</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Etat</th>
                                     </tr>
@@ -201,7 +206,7 @@ class ResolvedTickets extends Component {
                     </div>
                 )
                 }
-              if(TicketResolu().length>8){
+              if(PlaintesNonResolus().length>8){
                 return (
                     <div className="container-fluid">
               
@@ -211,8 +216,8 @@ class ResolvedTickets extends Component {
                                     <tr >
                                     <th scope="col">#</th>
                                     <th scope="col">Titre</th>
-                                    <th scope="col">Service</th>
-                                   
+                                    <th scope="col">Entité</th>
+                                    <th scope="col">Auteur</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Etat</th>
                                     </tr>
@@ -224,8 +229,8 @@ class ResolvedTickets extends Component {
                                     <tr >
                                         <th scope="col">#</th>
                                         <th scope="col">Titre</th>
-                                        <th scope="col">Service</th>
-                                       
+                                        <th scope="col">Entité</th>
+                                        <th scope="col">Auteur</th>
                                         <th scope="col">Date</th>
                                         <th scope="col">Etat</th>
                                     </tr>
@@ -237,11 +242,13 @@ class ResolvedTickets extends Component {
               }
             }
           
+
+
         return (
             <div className="main">
                 <div style={{textAlign:'center',marginBottom:20}}>
-                    <h3>Mes tickets resolus</h3>
-                    <p>Ici vous pouvez voir toutes les réponses apportées à vos tickets</p>
+                    <h3>Mes plaintes non resolues</h3>
+                    <p>Ici vous pouvez voir toutes vos plaintes non resolues</p>
                 </div>
                 {showTable()}
                 {this.ShowModal()}
@@ -250,4 +257,4 @@ class ResolvedTickets extends Component {
     }
 }
 
-export default ResolvedTickets
+export default NoResolvedPlaintes

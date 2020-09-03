@@ -3,22 +3,22 @@ import '../../styles.css'
 import axios from 'axios';
 import { username ,password} from '../Login/login';
 
-class NewTickets extends Component {
+class NewPlaintes extends Component {
 
 
     constructor(props) {
         super(props);
         this.state = {
           Titre: '',
-          Service: "Aide et support",
+          Entité: "Aide et support",
           Content:'',
         };
       }
       onChangeTitre = (event) => {
         this.setState({Titre: event.target.value});
       }
-      onChangeService = (event) => {
-        this.setState({Service: event.target.value});
+      onChangeEntité = (event) => {
+        this.setState({Entité: event.target.value});
       }
       onChangeContent = (event) => {
         this.setState({Content: event.target.value});
@@ -26,35 +26,35 @@ class NewTickets extends Component {
       onCancel=()=>{
         this.setState({
           Titre:'',
-          service:'',
+          entité:'',
           Content:'',
         })
       }
 
-      onSendTicket=(event)=>{
+      onSendPlainte=(event)=>{
         event.preventDefault();
-          let newTickets={
+          let newPlaintes={
               'cas' : this.state.Titre,
               'content': this.state.Content,
               'state': 'Cree',
-              'service':this.state.Service,
+              'entité':this.state.Entité,
               'user':username,
               'password':password
           };
-          axios.post('http://localhost:8000/ticket/create/', newTickets)
+          axios.post('http://localhost:8000/plaintes/create/', newPlaintes)
           .then(res => {
             console.log(res);
             console.log(res.data);
             if(res.data['state']==='success'){
-              alert( "TICKET " +newTickets.cas +" crée avec succèss" );
+              alert( "PLAINTE " +newPlaintes.cas +" crée avec succèss" );
               this.setState ({
                 Titre: '',
-                Service: "Aide et support",
+                Entité: "Aide et support",
                 Content:'',
               });
             }
             else{
-                alert('echec de lors de la création du ticket')
+                alert('echec de lors de la création de la  plaintes')
             }
           })
           .catch(err => console.log(err));
@@ -72,13 +72,13 @@ class NewTickets extends Component {
         <div className='main'>
 
           <div style={{textAlign:'center', marginRight:50,marginBottom:20}}>
-            <h3 >Création d'un nouveau ticket</h3>
-            <p>Il s'agit d'un formulaire de création de tickets. Remplissez le et envoyez-nous vos problèmes / doutes / suggestions.
-              Notre système d'assistance vous répondra dans les plus brefs délais.</p>
+            <h3 >Création d'un nouveau plaintes</h3>
+            <p>Il s'agit d'un formulaire de création de plaintes. Remplissez le et envoyez-nous vos problèmes .
+              Notre système d'assistance s'occupera du reste</p>
           </div>
 
 
-          <form onSubmit={this.onSendTicket} className="needs-validation">
+          <form onSubmit={this.onSendPlainte} className="needs-validation">
             <div className="form-row">
               <div className='col-md-6'>
                 <label for='titre'></label>
@@ -87,13 +87,13 @@ class NewTickets extends Component {
               </div>
 
               <div className='col-md-6'>
-                <label for='services'> Choisir un service </label>
+                <label for='entités'> Choisir une entité </label>
                 <select value={this.state.value} className ="form-control" 
-                        onChange={this.onChangeService} required>
+                        onChange={this.onChangeEntité} required>
                   <option value="Aide et support">Aide et support</option>
-                  <option value="Service 2">Service 2</option>
-                  <option value="Service 3">Service 3</option>
-                  <option value="Service 4">Service 4</option>
+                  <option value="Entité 2">Direction du CIRT</option>
+                  <option value="Entité 3">Entité 3</option>
+                  <option value="Entité 4">Entité 4</option>
                 </select>
               </div>
             </div>
@@ -112,4 +112,4 @@ class NewTickets extends Component {
         );
       }
   }
-  export default NewTickets
+  export default NewPlaintes
