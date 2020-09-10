@@ -3,7 +3,7 @@ import '../../styles.css'
 import Modal from 'react-modal'
 import Box from '@material-ui/core/Box';
 import axios from 'axios';
-
+import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
 
 
 class NoResolvedPlaintes extends Component {
@@ -19,20 +19,57 @@ class NoResolvedPlaintes extends Component {
             date:'',
             etat:'',
             contenu:'',
+            Reponse:''
         }
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/plainte?etat=cree')
-          .then(res => {
-            const plaintes = res.data;
-            this.setState({plaintes: plaintes  });
-            console.log('plaintes', plaintes)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        let data={
+            'user':username,
+            'password':password
+        };
+      axios.post('http://localhost:8000/plaintes/nonresolues/',data)
+        .then(res => {
+          const plaintes = res.data;
+          this.setState({plaintes: plaintes  });
+          console.log(plaintes)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
       }
+
+      onChangeReponse = (event) => {
+        this.setState({Reponse: event.target.value});
+      }
+      envoyer=(event)=>{
+        event.preventDefault();
+          let newPlainte={
+              'id':this.state.id,
+              'title':this.state.title,
+              'user':username,
+              'password':password,
+              'Reponse':this.state.Reponse
+          };
+          axios.post('http://localhost:8000/plaintes/resoudre/', newPlainte)
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+            if(res.data['state']==='success'){
+              alert( "LA PLAINTE " +newPlainte.title.toLocaleUpperCase() +" mise a jour avec succes" );
+             
+            }
+            else{
+                alert('echec de lors de la création de la  plaintes')
+            }
+          })
+          .catch(err => console.log(err));
+
+          //
+         
+      }
+
+      
 
     ShowModal(){
     
@@ -42,7 +79,7 @@ class NoResolvedPlaintes extends Component {
                     style={{
                         overlay: {
                         position: 'fixed',
-                        top: 0,
+                        top: 15,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -50,7 +87,7 @@ class NoResolvedPlaintes extends Component {
                         },
                         content: {
                         position: 'absolute',
-                        top: '40px',
+                        top: '60px',
                         left: '30%',
                         right: '30%',
                         bottom: '40px',
@@ -73,7 +110,7 @@ class NoResolvedPlaintes extends Component {
     contentModal=()=>{
         return(
             <div>
-                <div style={{backgroundColor:"black",height:30 ,margin:20}}>
+                <div style={{backgroundColor:"#007bff",height:30 ,margin:20}}>
                     
                     <h5 style={{textAlign:"center",paddingTop:8 ,color:'white'}}>
                      {this.state.title}</h5>
@@ -104,10 +141,12 @@ class NoResolvedPlaintes extends Component {
                     </Box>
                 </div>
                 <div>
-                    <form style={{margin:20}}>
+                    <form style={{margin:20}} onSubmit={this.envoyer}>
                         <div className='form-group col-md-13 mb-3'>
                             <label for='content'>Ajouter un commentaire/une réponse</label>
-                            <textarea value={this.state.value} className ="form-control" style={{height:100}} required/>
+                            <textarea value={this.state.value} className ="form-control" style={{height:100}} 
+                            onChange={this.onChangeReponse}
+                            required/>
                         </div>
                         <div style={{marginLeft:'30%'}}>
                             <input type="submit" className="btn btn-primary" value="Envoyer" />
@@ -158,18 +197,18 @@ class NoResolvedPlaintes extends Component {
                 modalVisible:true,
                 id:plainte.id,
                 title:plainte.title,
-                entité:plainte.Entité,
-                auteur:plainte.Auteur,
-                date:plainte.Date,
-                etat:plainte.Etat,
-                contenu:plainte.Content
+                entité:plainte.entité,
+                auteur:plainte.auteur,
+                date:plainte.date_création,
+                etat:plainte.state,
+                contenu:plainte.details
                 })}>
               <th scope="row">{plainte.id}</th>
               <td>{plainte.title}</td>
-              <td>{plainte.Entité}</td>
-              <td>{plainte.Auteur}</td>
-              <td>{plainte.Date}</td>
-              <td>{plainte.Etat}</td>
+              <td>{plainte.entité}</td>
+              <td>{plainte.auteur}</td>
+              <td>{plainte.date_création}</td>
+              <td>{plainte.state}</td>
           </tr>
           );
 
@@ -186,11 +225,11 @@ class NoResolvedPlaintes extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Titre</th>
                                     <th scope="col">Entité</th>
                                     <th scope="col">Auteur</th>
@@ -210,11 +249,11 @@ class NoResolvedPlaintes extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Titre</th>
                                     <th scope="col">Entité</th>
                                     <th scope="col">Auteur</th>
@@ -225,9 +264,9 @@ class NoResolvedPlaintes extends Component {
                                 <tbody>
                                     {content}
                                 </tbody>
-                                <tfoot style={{backgroundColor:'orange'}}>
+                                <tfoot style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                        <th scope="col">#</th>
+                                        <th scope="col">Indice</th>
                                         <th scope="col">Titre</th>
                                         <th scope="col">Entité</th>
                                         <th scope="col">Auteur</th>
@@ -246,9 +285,9 @@ class NoResolvedPlaintes extends Component {
 
         return (
             <div className="main">
-                <div style={{textAlign:'center',marginBottom:20}}>
-                    <h3>Mes plaintes non resolues</h3>
-                    <p>Ici vous pouvez voir toutes vos plaintes non resolues</p>
+                <div style={{marginLeft:'60px',marginTop:'80px' ,fontWeight:'bold',fontSize:'1.1em'}}>
+                    <h3>Les Plaintes non resolues</h3>
+                    <p>Ici vous pouvez voir toutes les plaintes non resolues</p>
                 </div>
                 {showTable()}
                 {this.ShowModal()}

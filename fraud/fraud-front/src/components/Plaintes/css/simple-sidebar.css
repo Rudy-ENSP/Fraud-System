@@ -9,22 +9,19 @@
  }
 
 #sidebar-wrapper {
-  min-height: 78vh;
+  min-height: 100vh;
   margin-left: -15rem;
   -webkit-transition: margin .25s ease-out;
   -moz-transition: margin .25s ease-out;
   -o-transition: margin .25s ease-out;
   transition: margin .25s ease-out;
-  margin-top:42px;
-  margin-bottom: 10px;
-  border-radius:10px;
 }
 
 #sidebar-wrapper .sidebar-heading {
   padding: 0.875rem 1.25rem;
   font-size: 1.2rem;
   font-weight: bold;
- 
+  margin-top:65px;
 }
 
 #sidebar-wrapper .list-group {

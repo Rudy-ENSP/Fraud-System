@@ -29,7 +29,7 @@ class ResolvedPlaintes extends Component {
               'user':username,
               'password':password
           };
-        axios.post('http://localhost:8000/plainte/solved/',data)
+        axios.post('http://localhost:8000/plaintes/resolues/',data)
           .then(res => {
             const plaintes = res.data;
             this.setState({plaintes: plaintes  });
@@ -47,7 +47,7 @@ class ResolvedPlaintes extends Component {
                     style={{
                         overlay: {
                         position: 'fixed',
-                        top: 0,
+                        top: 15,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -55,7 +55,7 @@ class ResolvedPlaintes extends Component {
                         },
                         content: {
                         position: 'absolute',
-                        top: '40px',
+                        top: '60px',
                         left: '30%',
                         right: '30%',
                         bottom: '40px',
@@ -79,7 +79,7 @@ class ResolvedPlaintes extends Component {
     contentModal=()=>{
         return(
             <div>
-                <div style={{backgroundColor:"black",height:30 ,margin:20}}>
+                <div style={{backgroundColor:"#007bff",height:30 ,margin:20}}>
                     
                     <h5 style={{textAlign:"center",paddingTop:8 ,color:'white'}}>
                      {this.state.title}</h5>
@@ -116,7 +116,7 @@ class ResolvedPlaintes extends Component {
                     </Box>
                 </div>
                 <div style={{marginLeft:'30%'}}>
-                            <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
+                            <button  style={{marginLeft:10,marginTop:2}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                         </div>
                
@@ -182,11 +182,11 @@ class ResolvedPlaintes extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
                             <table className="table table-bordered table-hover mb-0 table">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Titre</th>
                                     <th scope="col">Entité</th>
                                     <th scope="col">Date</th>
@@ -205,11 +205,11 @@ class ResolvedPlaintes extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Titre</th>
                                     <th scope="col">Entité</th>
                                    
@@ -220,9 +220,9 @@ class ResolvedPlaintes extends Component {
                                 <tbody>
                                     {content}
                                 </tbody>
-                                <tfoot style={{backgroundColor:'orange'}}>
+                                <tfoot style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                        <th scope="col">#</th>
+                                        <th scope="col">Indice</th>
                                         <th scope="col">Titre</th>
                                         <th scope="col">Entité</th>
                                        
@@ -239,8 +239,8 @@ class ResolvedPlaintes extends Component {
           
         return (
             <div className="main">
-                <div style={{textAlign:'center',marginBottom:20}}>
-                    <h3>Les plaintes resoluees</h3>
+                <div style={{marginLeft:'60px',marginTop:'80px' ,fontWeight:'bold',fontSize:'1.1em'}}>
+                    <h3>Les Plaintes Resolues</h3>
                     <p>Ici vous pouvez voir toutes les réponses et les plaintes Résolues</p>
                 </div>
                 {showTable()}

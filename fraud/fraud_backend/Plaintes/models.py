@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 class Entité(models.Model):
     id = models.AutoField(primary_key=True)
     name=models.CharField(max_length=50)
-    droits=models.CharField(max_length=5)
-    #droit correspond a un nombre de 5 chiffre dont chacun defini le droit sur une entité ...à voir
     hierarchie=models.IntegerField()
      #hierarchie correspond au niveau du service  par ordre croissant des collaborateurs aux directions
     def __str__(self):

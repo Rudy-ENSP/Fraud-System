@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import Modal from 'react-modal'
 import '../../styles.css';
 import axios from 'axios';
-
+var listeEntités
 class AllEntités extends Component {
     constructor(props){
         super(props)
@@ -11,12 +11,12 @@ class AllEntités extends Component {
             entités:[],
             id:'',
             Nom:'',
-            Adresse:'',
+            Hierachie:'',
         }
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/plaintes/listeEntité/')
+        axios.get('http://localhost:8000/plaintes/listeEntite/')
           .then(res => {
             const entités = res.data;
             this.setState({entités: entités  });
@@ -54,12 +54,12 @@ class AllEntités extends Component {
                         modalVisible:true,
                         id:entité.id,
                         Nom:entité.name,                      
-                        Adresse:entité.addresse
+                        Hiérarchie:entité.hierarchie
                         })}>
                     <th scope="row">{entité.id}</th>
                     <td>{entité.name}</td>
                    
-                    <td>{entité.addresse}</td>
+                    <td>{entité.hierarchie}</td>
                 </tr>
            
           );
@@ -72,13 +72,13 @@ class AllEntités extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'150px'}} >
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Nom</th>
-                                    <th scope="col">Adresse</th>
+                                    <th scope="col">Hierarchie</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -93,24 +93,24 @@ class AllEntités extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'150px'}}>
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Nom</th>
                                     
-                                    <th scope="col">Adresse</th>
+                                    <th scope="col">Hierarchie</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {content}
                                 </tbody>
-                                <tfoot style={{backgroundColor:'orange'}}>
+                                <tfoot style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                        <th scope="col">#</th>
+                                        <th scope="col">Indice</th>
                                         <th scope="col">Nom</th>
-                                        <th scope="col">Adresse</th>
+                                        <th scope="col">Hierarchie</th>
                                         
                                     </tr>
                                 </tfoot>
@@ -123,7 +123,7 @@ class AllEntités extends Component {
           
         return (
             <div className="main">
-                <div style={{textAlign:'center',marginBottom:20}}>
+                <div style={{marginLeft:'70px',marginTop:'90px' ,fontWeight:'bold',fontSize:'1.1em'}}>
                     <h3>Mes entités</h3>
                     <p>Ici vous pouvez voir toutes les entités que vous avez créé</p>
                 </div>

@@ -28,12 +28,12 @@ render(
   <div>
     
     <Router>
-        <Entree/>
-        <ProtectedRoute path="/entree" component={Entree}/>
+        <Login/>
+        <PublicRoute exact path="/" component={Login}/>
+        <ProtectedRoute path="/Acceuil" component={Entree}/>
         <ProtectedRoute path="/Plaintes" component={Plaintes}/>
         <ProtectedRoute path="/Entités" component={Entités}/>
-        <ProtectedRoute path="/notifications" component={Notifications}/>
-        <ProtectedRoute path="/staff" component={Staff}/>
+        
     </Router>
     
   </div>,

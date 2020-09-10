@@ -23,7 +23,7 @@ class EntitéSideBar extends Component {
                </div>
                 <Route>
                     <Route exact path="/All Entités" component={AllEntités}/>
-                    <Route path="/Nouvelles plaintes" component={NewEntités}/>
+                    <Route path="/Nouvelle Entité" component={NewEntités}/>
                 </Route>
                 </Router>
             </div>

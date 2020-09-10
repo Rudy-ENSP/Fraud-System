@@ -93,7 +93,7 @@ class Login extends Component {
     render(){
 
 		if(this.state.redirect==true){
-            return <Entree/>
+             return <Redirect to="/Acceuil"/>
         }
         return (
 <div class="main">

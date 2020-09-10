@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import Navbar from './Navbar/Navbar'
 import Footer from './Footer/footer'
-import { HashRouter as Router, Route, /*Switch,*/NavLink} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch,NavLink} from 'react-router-dom';
 import Accueil from './Accueil';
 import AllPlaintes from './Plaintes/AllPlaintes'
 import Entités from './Entités/Entités'
+import CategoriePlainte from './CategoriePlainte/CategoriePlainte'
 import NoResolvedPlaintes from './Plaintes/NoResolvedPlaintes'
 import ResolvedPlaintes from './Plaintes/ResolvedPlaintes'
 
@@ -23,8 +24,8 @@ export class Entree extends Component {
                     <div class="space">
 
                     </div>
-                    <Route >
-                                <Route  exact path="/">
+                    <Switch>
+                                <Route  exact path="/Acceuil">
                                 <Accueil/>
                                 </Route>
                               
@@ -36,7 +37,12 @@ export class Entree extends Component {
                                 <Entités/>
                                 
                                 </Route>
-                    </Route>
+                                
+                                <Route  path="/CategoriePlainte">
+                                <CategoriePlainte/>
+                                
+                                </Route>
+                    </Switch>
                     <div class="space">
                     
                     </div>

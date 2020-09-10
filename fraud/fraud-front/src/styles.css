@@ -88,3 +88,26 @@ body {
   .ecart{
     width: 30px;
   }
+  #formulairenewplainte{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 60px;
+  }
+  #titre{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  #choix1{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 12px;
+  }
+  #choix2{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-top: 12px;
+  }

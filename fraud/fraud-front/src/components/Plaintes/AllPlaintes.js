@@ -32,7 +32,7 @@ class AllPlaintes extends Component {
               'user':username,
               'password':password
           };
-        axios.post('http://localhost:8000/plaintes/liste/',data)
+          axios.post('http://localhost:8000/plaintes/listePlainte/',data)
           .then(res => {
             const plainte = res.data;
             this.setState({plainte: plainte  });
@@ -84,7 +84,7 @@ class AllPlaintes extends Component {
                     style={{
                         overlay: {
                         position: 'fixed',
-                        top: 0,
+                        top: 15,
                         left: 0,
                         right: 0,
                         bottom: 0,
@@ -92,7 +92,7 @@ class AllPlaintes extends Component {
                         },
                         content: {
                         position: 'absolute',
-                        top: '40px',
+                        top: '60px',
                         left: '30%',
                         right: '30%',
                         bottom: '40px',
@@ -138,10 +138,10 @@ class AllPlaintes extends Component {
                         <Box bgcolor="grey.300" style={{fontSize:16,fontWeight:"bold",textAlign:"center"}}>Reponse</Box>
                         <Box style={{marginTop:8}} >{this.state.reponse}</Box>
                     </Box>
-                    <button  style={{marginLeft:10}} onClick={()=>                          
+                    <button  style={{marginLeft:'25%'}} onClick={()=>                          
                             this.isResolu(this.state.id)      
                     }
-                                className="btn btn-warning">plainte resolu</button>
+                                className="btn btn-primary">plainte resolu</button>
                     <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                 </div>
@@ -152,7 +152,7 @@ class AllPlaintes extends Component {
     contentModal=()=>{
         return(
             <div>
-                <div style={{backgroundColor:"blue",height:30 ,margin:20}}>
+                <div style={{backgroundColor:"#007bff",height:30 ,margin:20}}>
                     
                     <h5 style={{textAlign:"center",paddingTop:5 ,color:'white'}}>
                      {this.state.title}</h5>
@@ -162,15 +162,15 @@ class AllPlaintes extends Component {
                 <Box display="flex" flexDirection="row" p={1} m={1}
                     bgcolor="background.paper" justifyContent='space-between'>
                     <Box p={1} bgcolor="grey.300">
-                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>entité </Box>
+                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>Entité </Box>
                         <Box style={{textAlign:"center"}}>{this.state.entité}</Box>
                     </Box>
                     <Box p={1} bgcolor="grey.300">
-                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>auteur </Box>
+                        <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>Auteur </Box>
                         <Box style={{textAlign:"center"}}>{this.state.auteur}</Box>
                     </Box>
                     <Box  p={1} bgcolor="grey.300">
-                        <Box style={{textAlign:'center',color:'black' ,fontWeight:'bold',fontSize:16}}>date de création</Box>
+                        <Box style={{textAlign:'center',color:'black' ,fontWeight:'bold',fontSize:16}}>Date de Création</Box>
                         <Box style={{textAlign:"center"}}> {this.state.date}</Box>
                     </Box>
                     
@@ -178,7 +178,7 @@ class AllPlaintes extends Component {
                 </div>
                 <div>
                     <Box display="flex" flexDirection='column'  bgcolor="background.paper" p={1} m={1}>
-                        <Box bgcolor="grey.300" style={{fontSize:16,fontWeight:"bold",textAlign:"center"}}>details</Box>
+                        <Box bgcolor="grey.300" style={{fontSize:16,fontWeight:"bold",textAlign:"center"}}>Details</Box>
                         <Box style={{marginTop:8}} >{this.state.contenu}</Box>
                     </Box>
                 </div>
@@ -194,7 +194,7 @@ class AllPlaintes extends Component {
     
     render(){
 
-        const MyPlaintes = this.state.Plaintes
+        const MyPlaintes = this.state.plainte
        
 
           const content = MyPlaintes.map((plainte) =>
@@ -228,19 +228,19 @@ class AllPlaintes extends Component {
              
               if(MyPlaintes.length ===0){
                   return(
-                    <h5 style={{textAlign:'center',marginTop:100}}>
-                        Aucun plainte dans cette rubrique</h5>
+                    <h5 style={{textAlign:'center',marginTop:70}}>
+                        Aucune Plainte Enregistrée</h5>
                   )
               }
               if(MyPlaintes.length <=8 && MyPlaintes.length>=1){
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Titre</th>
                                     <th scope="col">Entité</th>
                                     
@@ -260,11 +260,11 @@ class AllPlaintes extends Component {
                 return (
                     <div className="container-fluid">
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar">
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
                             <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'orange'}}>
+                                <thead style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                    <th scope="col">#</th>
+                                    <th scope="col">Indice</th>
                                     <th scope="col">Titre</th>
                                     <th scope="col">Entité</th>
                                     
@@ -275,9 +275,9 @@ class AllPlaintes extends Component {
                                 <tbody>
                                     {content}
                                 </tbody>
-                                <tfoot style={{backgroundColor:'orange'}}>
+                                <tfoot style={{backgroundColor:'#007bff'}}>
                                     <tr >
-                                        <th scope="col">#</th>
+                                        <th scope="col">Indice</th>
                                         <th scope="col">Titre</th>
                                         <th scope="col">Entité</th>
                                        
@@ -294,9 +294,9 @@ class AllPlaintes extends Component {
           
         return (
             <div className="main">
-                <div style={{textAlign:'center',marginBottom:20}}>
-                    <h3>Mes Plaintes</h3>
-                    <p>Ici vous pouvez voir toutes les Plaintes que vous avez créé</p>
+                <div style={{marginLeft:'60px',marginTop:'80px' ,fontWeight:'bold',fontSize:'1.1em'}}>
+                    <h3>Toutes Les Plaintes</h3>
+                    <p>Ici vous pouvez voir toutes les Plaintes ayant été Enregistrées</p>
                 </div>
 
 

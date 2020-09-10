@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from Plaintes.models import Entité, Users, CatPlainte, Plainte
+from .models import Entité, Users, CatPlainte, Plainte
 
 
 class EntitéSerializer(ModelSerializer):

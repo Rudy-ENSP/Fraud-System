@@ -7,7 +7,7 @@ const ProtectedRoute = ({component: Component, ...rest}) => {
         <Route {...rest} render={props => (
             isLoginAdmin || isLoginClient?
                 <Component {...props} />
-            : <Redirect to="/" />
+            : <Redirect to="/Acceuil" />
         )} />
     );
 };

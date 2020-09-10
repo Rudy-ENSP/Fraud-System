@@ -135,7 +135,7 @@ class Navbar extends Component {
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                    <NavLink exact to="/"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
+                    <NavLink exact to="/Acceuil"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
                       
                     </li>
                     <li class="nav-item">
@@ -150,10 +150,14 @@ class Navbar extends Component {
                     <NavLink to="/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
                       
                     </li>
+                    <li class="nav-item">
+                    <NavLink to="/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
+                      
+                    </li>
                   </ul>
                   <form class="form-inline mt-2 mt-md-0">
                     
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={this.deconnexion}>Deconnection</button>
+                    <button style={{fontWeight:"bold"}} class="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={this.deconnexion}>Deconnection</button>
                   </form>
                 </div>
               </nav>

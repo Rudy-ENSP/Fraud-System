@@ -7,19 +7,21 @@ class NewEntités extends Component {
         super(props);
         this.state = {
           Nom: '',
-          Adresse:'',
+          Hierarchie:'',
         };
       }
       onChangeNom = (event) => {
         this.setState({Nom: event.target.value});
+        console.log('Nom ',event.target.value)
       }
-      onChangeAdresse = (event) => {
-        this.setState({Adresse: event.target.value});
+      onChangeHierarchie = (event) => {
+        this.setState({Hierarchie: event.target.value});
+        console.log('Hierarchie ',event.target.value)
       }
       onCancel=()=>{
         this.setState({
           Nom:'',
-          Adresse:'',
+          Hierarchie:'',
         })
       }
 
@@ -27,14 +29,22 @@ class NewEntités extends Component {
         event.preventDefault()
           let newEntités={
               Nom : this.state.Nom,
-              Adresse: this.state.Adresse,
+              Hierarchie: this.state.Hierarchie,
           }
          
-          axios.post('http://localhost:8000/plaintes/createEntité/', newEntités)
-            .then(res => {
-             
+          axios.post('http://localhost:8000/plaintes/createEntite/', newEntités)
+            .then(res => {console.log(res);
               console.log(res.data);
-              alert('Entité crée avec succès')
+              if(res.data['state']==='success'){
+                alert( "Entité :" +newEntités.Nom +" crée avec succèss" );
+                this.setState ({
+                  Nom:'',
+                  Hierarchie:'',
+                });
+              }
+              else{
+                  alert('echec de lors de la création de notre entité')
+              }
             })
             
       }
@@ -43,25 +53,36 @@ class NewEntités extends Component {
         <div className='main'>
 
           <div style={{textAlign:'center', marginRight:50,marginBottom:20}}>
-            <h3 >Création d'un nouveau Entité</h3>
-            <p>Les Entités sont utilisés pour classer les Entités.</p>
+            
+            <p style={{marginLeft:'50px',marginTop:'90px' ,fontWeight:'bold',fontSize:'1.1em'}}>Création Des Entités de Notre Entreprise</p>
           </div>
 
 
           <form onSubmit={this.onSendEntité} className="needs-validation" novalidate>
             <div className="form-row">
-              <div className='col-md-12'>
-                <label for='Nom'>Entrer le nom du Entité</label>
+              <div className='col-md-12' style={{marginTop:'12px',marginLeft:'50px'}}>
+                <label for='Nom' style={{fontWeight:'bold'}}>Entrer le nom de L'Entité</label>
                 <input type='text' className ="form-control" name='Nom'
                   onChange={this.onChangeNom} required />
               </div>
             </div>
-            <div className='form-group col-md-12 mb-3' style={{marginTop:20}}>
-              <label for='Adresse'>Adresse</label>
-              <textarea value={this.state.value} className ="form-control" style={{height:150}}
-                        onChange={this.onChangeAdresse} required/>
+            <div className='form-group col-md-12 mb-3' style={{marginTop:'12px',marginLeft:'38px'}}>
+            <label for='Hiérarchie' style={{fontWeight:'bold'}}>Hierarchie</label>
+                  <select value={this.state.Hierarchie} className ="form-control" 
+                          onChange={this.onChangeHierarchie} required>
+                    <option value="1">Direction</option>
+                    <option value="2">Sous-Direction</option>
+                    <option value="3">Cellule</option>
+                    <option value="4">Service</option>
+                    <option value="5">Equipe</option>
+                    <option value="6">Collaborateurs</option>
+                    <option value="7">Stagiaires</option>
+                  </select>
             </div>
-            <div style={{marginLeft:'40%'}}>
+            <div >
+            
+                </div>
+            <div style={{marginLeft:'50%'}}>
             <input type="submit" className="btn btn-primary" value="Créer" />
             <button style={{marginLeft:10}} onClick={this.onCancel} className="btn btn-danger">Annuler</button>
             </div>

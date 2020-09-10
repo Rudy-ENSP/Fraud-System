@@ -1,12 +1,13 @@
 import React, {Component} from 'react';
 import { BrowserRouter as Router, Route, /*Switch,*/Link} from 'react-router-dom';
-import '../../styles.css';
+
 import './css/simple-sidebar.css'
 import './vendor/bootstrap/css/bootstrap.min.css'
 import AllPlaintes from './AllPlaintes'
 import NewPlaintes from './NewPlaintes'
 import NoResolvedPlaintes from './NoResolvedPlaintes'
 import ResolvedPlaintes from './ResolvedPlaintes'
+import WaitingPlaintes from './WaitingPlaintes'
 
 class PlainteSideBar extends Component {
     render(){
@@ -35,6 +36,7 @@ class PlainteSideBar extends Component {
                     <Route path="/Nouvelles plaintes" component={NewPlaintes}/>
                     <Route path="/plaintes résolues" component={ResolvedPlaintes}/>
                     <Route path="/plaintes non résolues" component={NoResolvedPlaintes}/>
+                    <Route path="/Plaintes en attente" component={WaitingPlaintes}/>
                 </Route>
                 </Router>
             </div>
