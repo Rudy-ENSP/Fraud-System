@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal'
 import Box from '@material-ui/core/Box';
+import Select from 'react-select';
 import {Modal as BModal,Button} from 'react-bootstrap'
 import '../../styles.css'
 import axios from 'axios';
@@ -69,6 +70,15 @@ class ResolvedPlaintes extends Component {
             const categoriePlainte = res.data;
             this.setState({categoriePlainte: categoriePlainte  });
             console.log('Categorieplaintes', categoriePlainte)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+          axios.get('http://localhost:8000/plaintes/listeUsers/')
+          .then(res => {
+            const Users = res.data;
+            this.setState({Users: Users  });
+            console.log('Users', Users)
           })
           .catch(function (error) {
             console.log(error);
@@ -248,7 +258,24 @@ class ResolvedPlaintes extends Component {
     }
     
     render(){
-
+        const assignation = this.state.Users
+        const entité = this.state.entités
+        const categorie = this.state.categoriePlainte
+          const entité_select=[]
+          const temp1 = entité.map((option) =>
+          entité_select.push({ value: option.id, label: option.name })
+           
+          );
+          const categorie_select=[]
+          const temp2 = categorie.map((option) =>
+          categorie_select.push({ value: option.id, label: option.name })
+           
+          );
+          const assignation_select=[]
+          const temp3 = assignation.map((option) =>
+          assignation_select.push({ value: option.id, label: option.name })
+           
+          );
         const MyPlaintes = this.state.plaintes /*[
             {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resoluee',Content:'Nothing'},
             {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
@@ -418,6 +445,7 @@ class ResolvedPlaintes extends Component {
 
             
            
+
         <BModal
           id="editmodal"
           size="sm"
@@ -426,48 +454,74 @@ class ResolvedPlaintes extends Component {
           aria-labelledby="contained-modal-title-vcenter"
          
         >           <form onSubmit={this.onEditPlainte} >
-                            <BModal.Header closeButton>
+                               <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-sm">
-                                <h4 class="modal-title">Editer Plainte</h4>
+                                <h4 class="modal-title">Ajouter Plainte</h4>
                                 </BModal.Title>
                             </BModal.Header>
                             <BModal.Body>
-                           
-                                    <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-                                        <input type='text' className ="form-control" name='Titre'
-                                onChange={this.onChangeTitre} required />
-                                   
-                                        <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-                                        <select value={this.state.value} className ="form-control" 
-                                                onChange={this.onChangeCategorie} required>
-                                            <option value="Web-Defacement">Web-Defacement</option>
-                                            <option value="Spam">Spam</option>
-                                            <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                                            <option value="FleeceWare">FleeceWare</option>
-                                        </select>
-                                  
-                                        <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-                                        <select value={this.state.value} className ="form-control" 
-                                        onChange={this.onChangeEntité} required>
-                                            <option value="CIRT">Equipe Aide</option>
-                                            <option value="Entité 2">Direction du CIRT</option>
-                                            <option value="Entité 3">Reseau et Systeme</option>
-                                            <option value="Entité 4">Entité 4</option>
-                                        </select>
+                                <div style={{display:'flex',flexDirection:"column",justifyContent:'space-between'}}>
+                                    <div class="form-group">
+                                        <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
+                                                    <input type='text' className ="form-control" name='Titre'
+                                            onChange={this.onChangeTitre} required />
+                                                
+                                    </div>
+                                    <div class="form-group">
+                                        <label for='Categorie' style={{fontWeight:'bold'}}>Categorie</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={categorie_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Categorie"
+                                            options={categorie_select}
+                                            onChange={this.onChangeCategorie}
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={assignation_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Assignation"
+                                            options={assignation_select}
+                                            onChange={this.onChangeAssignation}
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for='Entité' style={{fontWeight:'bold'}}>Entité</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={entité_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Entité"
+                                            options={entité_select}
+                                            onChange={this.onChangeEntité}
+                                        />
+                                    </div>
                                     
-                                        <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
-                                        <select value={this.state.value} className ="form-control" 
-                                        onChange={this.onChangeAssignation} >
-                                            <option value="2">Rudy</option>
-                                            <option value="3">Arold</option>
-                                            <option value="4">Nick</option>
-                                            <option value="1">Cardoun</option>
-                                        </select>
-                                    
+                                    <div class="form-group">
                                     <label for='description' style={{fontWeight:"bold"}}>Description</label>
                                     <textarea value={this.state.value} className ="form-control" style={{height:90}}
                                             onChange={this.onChangeDescription} required/>
-                                    
+                                    </div>
+                                </div>      
                             </BModal.Body>
                             <BModal.Footer>
                             
@@ -501,7 +555,6 @@ class ResolvedPlaintes extends Component {
                             </BModal.Footer>
                     </form>    
         </BModal>
-
 <div id="editEmployeeModal" class="modal fade">
 <div class="modal-dialog">
     <div class="modal-content">
