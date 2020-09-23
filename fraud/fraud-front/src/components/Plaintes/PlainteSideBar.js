@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { BrowserRouter as Router, Route, /*Switch,*/Link} from 'react-router-dom';
 
 import './css/simple-sidebar.css'
-import './vendor/bootstrap/css/bootstrap.min.css'
+import 'bootstrap/dist/css/bootstrap.css';
 import AllPlaintes from './AllPlaintes'
 import NewPlaintes from './NewPlaintes'
 import NoResolvedPlaintes from './NoResolvedPlaintes'
@@ -19,8 +19,6 @@ class PlainteSideBar extends Component {
                     <div class="sidebar-heading">Gestion des Plaintes </div>
                     <div class="list-group list-group-flush">
                         <Link class="list-group-item list-group-item-action bg-light" to="/All Plaintes">Toutes Les Plaintes</Link>
-                        
-                        <Link class="list-group-item list-group-item-action bg-light" to="/Nouvelles plaintes">Nouvelles Plaintes </Link>
                         
                         <Link class="list-group-item list-group-item-action bg-light"to="/plaintes résolues">Plaintes Resolues</Link>
                         

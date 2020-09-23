@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import './index.css';
+import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
 import Plaintes from './components/Plaintes/Plaintes';
@@ -9,6 +10,7 @@ import {Body} from './components/Body';
 import {Entree} from './components/Entree';
 import Notifications from './components/Notifications/Notifications'
 import Login from './components/Login/login'
+import Auth from './components/Auth'
 import Staff from './components/Staff/Staff'
 import Entité from './components/Entités/Entités'
 import Navbar from './components/Navbar/Navbar'

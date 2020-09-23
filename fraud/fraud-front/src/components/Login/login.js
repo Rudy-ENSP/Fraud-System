@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Box from '@material-ui/core/Box';
 import axios from 'axios';
-import Tickets from '../Plaintes/Plaintes';
+import {  Link  } from 'react-router-dom';
 import {Entree} from '../Entree';
 import {Redirect} from "react-router-dom";
 import {useHistory} from "react-router-dom";
@@ -25,7 +25,7 @@ export var password;
 
 
 
-class Login extends Component {
+export  class Login extends Component {
 	 
 	constructor(){
         super()
@@ -42,6 +42,15 @@ class Login extends Component {
         }
 	}
 	
+    componentDidMount() {
+		const script=document.createElement("script");
+		script.src="./Login_v2/js/main.js";
+		script.async=true;
+		document.body.appendChild(script);
+		
+      }
+
+
 	isLoginTest=()=>{
         console.log('isLoginAdmin ',isLoginAdmin , ' isLogin ', isLogin)
         isLogin=true
@@ -135,9 +144,9 @@ class Login extends Component {
 							Don’t have an account?
 						</span>
 
-						<a class="txt2" href="#">
-							Sign Up
-						</a>
+						<li className="nav-item">
+                        <Link className="nav-link" to="/sign-up">Sign up</Link>
+                      </li>
 					</div>
 				</form>
 			</div>

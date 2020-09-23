@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal'
+import {Modal as BModal,Button} from 'react-bootstrap'
 import Box from '@material-ui/core/Box';
+import Select from 'react-select';
+import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
 import '../../styles.css';
+import './css/style.css';
+import '../Login/Login_v2/fonts/font-awesome-4.7.0/css/font-awesome.css';
 import { username ,password, isLoginAdmin} from '../Login/login';
+
 
 class AllPlaintes extends Component {
 
@@ -11,7 +17,9 @@ class AllPlaintes extends Component {
         super(props)
         this.state={
             modalVisible:false,
-            plainte:[],
+            addmodalVisible:false,
+            deletemodalVisible:false,
+            editmodalVisible:false,
             id:'',
             title:'',
             entité:'',
@@ -19,8 +27,18 @@ class AllPlaintes extends Component {
             date:'',
             etat:'',
             contenu:'',
-            reponse:'Aucune reponse pour le moment',
+            Reponse:'Aucune reponse pour le moment',
             addresponse:'',
+            Titre: '',
+            Entité: "Collaborateur",
+            Description:'',
+            Assignation:'',
+            Categorie:'',
+            entités:[],
+            categoriePlainte:[],
+            Users:[],
+            plainte:[]
+            
         }
     }
 
@@ -41,12 +59,164 @@ class AllPlaintes extends Component {
           .catch(function (error) {
             console.log(error);
           });
+
+          axios.get('http://localhost:8000/plaintes/listeEntite/')
+          .then(res => {
+            const entités = res.data;
+            this.setState({entités: entités  });
+            console.log('entités', entités)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+          axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
+          .then(res => {
+            const categoriePlainte = res.data;
+            this.setState({categoriePlainte: categoriePlainte  });
+            console.log('Categorieplaintes', categoriePlainte)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+
+          axios.get('http://localhost:8000/plaintes/listeUsers/')
+          .then(res => {
+            const Users = res.data;
+            this.setState({Users: Users  });
+            console.log('Users', Users)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        
       }
+      onChangeTitre = (event) => {
+        this.setState({Titre: event.target.value});
+        console.log('Titre ',event.target.value)
+      }
+      onChangeEntité = (event) => {
+        this.setState({Entité: event.value});
+        console.log('Entité',event.value)
+      }
+      onChangeDescription = (event) => {
+        this.setState({Description: event.target.value});
+        console.log('Description',event.target.value)
+      }
+      onChangeAssignation = (event) => {
+        this.setState({Assignation: event.value});
+        console.log('Assignation',event.value)
+      }
+      onChangeCategorie= (event) => {
+        this.setState({Categorie: event.value});
+        console.log('Categorie',event.value)
+      }
+      onCancel=()=>{
+        this.setState({
+          Titre:'',
+          entité:'',
+          Description:'',
+        })
+      }
+      onSendPlainte=(event)=>{
+        event.preventDefault();
+          let newPlainte={
+              'cas' : this.state.Titre,
+              'description': this.state.Description,
+              'state': 'ajoutée',
+              'entité':this.state.Entité,
+              'user':username,
+              'password':password,
+              'Assignation':this.state.Assignation
+          };
+          axios.post('http://localhost:8000/plaintes/enregistrer/', newPlainte)
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+            if(res.data['state']==='success'){
+              alert( "PLAINTE " +newPlainte.cas.toLocaleUpperCase() +" crée avec succèss" );
+              this.setState ({
+                Titre: '',
+                Entité: "Collaborateur",
+                Description:'',
+                Assignation:''
+              });
+            }
+            else{
+                alert('echec de lors de la création de la  plaintes')
+            }
+          })
+          .catch(err => console.log(err));
 
+          //
+         
+      }
+      
+      onDeletePlainte=(event)=>{
+        event.preventDefault();
+          let plainte={
+              'id':this.state.id,
+              
+          };
+          axios.post('http://localhost:8000/plaintes/delete/', plainte)
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+            if(res.data['status']=='success'){
+              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" supprimé avec succèss" );
+              
+            }
+            else{
+                alert('echec de lors de la suppression de la  plaintes')
+            }
+          })
+          .catch(err => console.log(err));
 
-      isResolu(id_plainte){
-       let data={'id':id_plainte}
-        axios.post('http://localhost:8000/plaintes/validate/',data)
+          //
+         
+      }
+      onEditPlainte=(event)=>{
+        event.preventDefault();
+          let plainte={
+              'id':this.state.id,
+              'cas' : this.state.Titre,
+              'description': this.state.Description,
+              'entité':this.state.Entité,
+              'user':username,
+              'password':password,
+              'Assignation':this.state.Assignation
+          };
+          axios.post('http://localhost:8000/plaintes/editer/', plainte)
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+            if(res.data['state']==='success'){
+              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
+              this.setState ({
+                Titre: '',
+                Entité: "Collaborateur",
+                Description:'',
+                Assignation:''
+              });
+            }
+            else{
+                alert('echec de lors de la création de la  plaintes')
+            }
+          })
+          .catch(err => console.log(err));
+
+          //
+         
+      }
+      solve(id_plainte){
+        let data={
+            'id':this.state.id,
+            'title':this.state.title,
+            'user':username,
+            'password':password,
+            'Reponse':this.state.Reponse
+        };
+        axios.post('http://localhost:8000/plaintes/valider/',data)
         .then(res => {
           console.log(res.data)
         })
@@ -54,7 +224,7 @@ class AllPlaintes extends Component {
           console.log(error);
         });
         this.setState({modalVisible:false})
-        console.log('id de la plainte ',id_plainte)
+        console.log('Plainte Resolue :',id_plainte)
       }
 
 
@@ -63,16 +233,31 @@ class AllPlaintes extends Component {
       }
 
 
-      sendResponse(response,id_plainte){
-       let data = {'id':id_plainte,'response':response}
-        axios.post('http://localhost:8000/plaintes/edit/',data)
-        .then(res => {
-          console.log(res.data)
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-        console.log('reponse ',response)
+      envoyer=(event)=>{
+        event.preventDefault();
+          let newPlainte={
+              'id':this.state.id,
+              'title':this.state.title,
+              'user':username,
+              'password':password,
+              'Reponse':this.state.Reponse
+          };
+          axios.post('http://localhost:8000/plaintes/resoudre/', newPlainte)
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+            if(res.data['state']==='success'){
+              alert( "LA PLAINTE " +newPlainte.title.toLocaleUpperCase() +" mise a jour avec succes" );
+             
+            }
+            else{
+                alert('echec de lors de la mise à jour  de la  plainte')
+            }
+          })
+          .catch(err => console.log(err));
+
+          //
+         
       }
 
 
@@ -113,17 +298,18 @@ class AllPlaintes extends Component {
     }
 
     IsAdmin=()=>{
-        if(isLoginAdmin){
+        if(this.state.etat=="ajoutée" || this.state.etat=="waiting"){
             return(
                 <div>
-                    <form onSubmit={(event)=>{event.preventDefault(); this.sendResponse(this.state.addresponse,this.state.id)}} style={{margin:20}}>
+                    <form style={{margin:20}} onSubmit={this.envoyer}>
                         <div className='form-group col-md-13 mb-3'>
                             <label for='content'>Ajouter un commentaire/une réponse</label>
-                            <textarea value={this.state.value} placeholder={this.state.reponse} className ="form-control" 
-                             onChange={this.onChangeContent} style={{height:100}} required/>
+                            <textarea value={this.state.value} className ="form-control" style={{height:100}} 
+                            onChange={this.onChangeContent}
+                            required/>
                         </div>
                         <div style={{marginLeft:'30%'}}>
-                            <input type="submit" onClick={()=>this.setState({modalVisible:false})} className="btn btn-primary" value="Envoyer" />
+                            <input type="submit" className="btn btn-primary" value="Envoyer" />
                             <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                         </div>
@@ -139,7 +325,7 @@ class AllPlaintes extends Component {
                         <Box style={{marginTop:8}} >{this.state.reponse}</Box>
                     </Box>
                     <button  style={{marginLeft:'25%'}} onClick={()=>                          
-                            this.isResolu(this.state.id)      
+                            this.solve(this.state.id)      
                     }
                                 className="btn btn-primary">plainte resolu</button>
                     <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
@@ -191,17 +377,87 @@ class AllPlaintes extends Component {
             </div>
         )
     }
+    addModal=()=>{
+        return(
+            <div id="addEmployeeModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <form onSubmit={this.onSendPlainte} >
+                        <div class="modal-header">						
+                            <h4 class="modal-title">Ajouter Plainte</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">					
+                            <div class="form-group">
+                            <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
+                                <input type='text' className ="form-control" name='Titre'
+                        onChange={this.onChangeTitre} required />
+                            </div>
+                            <div class="form-group">
+                                <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
+                                <select value={this.state.value} className ="form-control" 
+                                        onChange={this.onChangeCategorie} required>
+                                    <option value="Web-Defacement">Web-Defacement</option>
+                                    <option value="Spam">Spam</option>
+                                    <option value="Ingenierie Sociale">Ingenierie Sociale</option>
+                                    <option value="FleeceWare">FleeceWare</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
+                                <select value={this.state.value} className ="form-control" 
+                                onChange={this.onChangeEntité} required>
+                                    <option value="CIRT">Equipe Aide</option>
+                                    <option value="Entité 2">Direction du CIRT</option>
+                                    <option value="Entité 3">Reseau et Systeme</option>
+                                    <option value="Entité 4">Entité 4</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                            <label for='description' style={{fontWeight:"bold"}}>Description</label>
+                            <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                                    onChange={this.onChangeDescription} required/>
+                            </div>					
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
+                            <input type="submit" class="btn btn-success" value="Add"  />
+                        </div>
+                    </form>
+                </div>
+            </div>
+            </div>
+        )
+    }
     
     render(){
+        
+        const assignation = this.state.Users
+        const entité = this.state.entités
+        const categorie = this.state.categoriePlainte
+          const entité_select=[]
+          const temp1 = entité.map((option) =>
+          entité_select.push({ value: option.id, label: option.name })
+           
+          );
+          const categorie_select=[]
+          const temp2 = categorie.map((option) =>
+          categorie_select.push({ value: option.id, label: option.name })
+           
+          );
+          const assignation_select=[]
+          const temp3 = assignation.map((option) =>
+          assignation_select.push({ value: option.id, label: option.name })
+           
+          );
+
+
 
         const MyPlaintes = this.state.plainte
-       
-
           const content = MyPlaintes.map((plainte) =>
             
                 <tr onClick={
                     ()=>this.setState({
-                        modalVisible:true,
                         id:plainte.id,
                         title:plainte.title,
                         entité:plainte.entité,
@@ -211,12 +467,39 @@ class AllPlaintes extends Component {
                         contenu:plainte.details,
                         reponse:plainte.response,
                         })}>
-                    <th scope="row">{plainte.id}</th>
-                    <td>{plainte.title}</td>
-                    <td>{plainte.entité}</td>
+                    <td>
+							<span class="custom-checkbox">
+								<input type="checkbox" id="checkbox1" name="options[]" value="1"/>
+								<label for="checkbox1"></label>
+							</span>
+					</td>
                     
-                    <td>{plainte.date_création}</td>
-                    <td>{plainte.state}</td>
+                    <th scope="row" onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                        })} >{plainte.id}</th>
+                    <td onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.title}</td>
+                    <td onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.entité}</td>
+                        
+                    <td onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.date_création}</td>
+                    <td onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                       })}>{plainte.state}</td>
+                        
+                    <td style={{display:"flex",justifyContent:"space-between"}}>
+							<a  class="edit" data-toggle="modal" onClick={()=>this.setState({editmodalVisible:true})}><span class="glyphicon glyphicon-pencil"></span></a>
+							<a  class="delete" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><span class="glyphicon glyphicon-trash"></span></a>
+					</td>
                 </tr>
            
           );
@@ -234,79 +517,401 @@ class AllPlaintes extends Component {
               }
               if(MyPlaintes.length <=8 && MyPlaintes.length>=1){
                 return (
-                    <div className="container-fluid">
-              
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
-                            <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'#007bff'}}>
-                                    <tr >
-                                    <th scope="col">Indice</th>
-                                    <th scope="col">Titre</th>
-                                    <th scope="col">Entité</th>
-                                    
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Etat</th>
-                                    </tr>
+                    
+                        
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                            <table className="table table-bordered table-striped table-hover mb-0 ">
+                                <thead >
+                                    <th>
+                                        <span class="custom-checkbox">
+                                            <input type="checkbox" id="selectAll"/>
+                                            <label for="selectAll"></label>
+                                        </span>
+                                    </th>
+                                    <th>Indice</th>
+                                    <th>Titre</th>
+                                    <th>Entité</th>
+                                    <th>Date</th> 
+                                    <th>Etat</th>
+                                    <th>Actions</th>
                                 </thead>
+                                
                                 <tbody>
                                     {content}
                                 </tbody>
                             </table>
+                            
                         </div>
-                    </div>
+                    
                 )
                 }
               if(MyPlaintes.length>8){
                 return (
-                    <div className="container-fluid">
+                   
               
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar" style={{marginLeft:'100px'}}>
-                            <table className="table table-bordered table-hover mb-0">
-                                <thead style={{backgroundColor:'#007bff'}}>
-                                    <tr >
-                                    <th scope="col">Indice</th>
-                                    <th scope="col">Titre</th>
-                                    <th scope="col">Entité</th>
-                                    
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Etat</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {content}
-                                </tbody>
-                                <tfoot style={{backgroundColor:'#007bff'}}>
-                                    <tr >
-                                        <th scope="col">Indice</th>
-                                        <th scope="col">Titre</th>
-                                        <th scope="col">Entité</th>
-                                       
-                                        <th scope="col">Date</th>
-                                        <th scope="col">Etat</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
+              
+                    <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                    <table className="table table-bordered table-striped table-hover mb-0">
+                        <thead >
+                            <th>
+                                <span class="custom-checkbox">
+                                    <input type="checkbox" id="selectAll"/>
+                                    <label for="selectAll"></label>
+                                </span>
+                            </th>
+                            <th>Indice</th>
+                            <th>Titre</th>
+                            <th>Entité</th>
+                            <th>Date</th> 
+                            <th>Etat</th>
+                            <th>Actions</th>
+                        </thead>
+                        <tbody>
+                            {content}
+                        </tbody>
+                    </table>
+                    
+                </div>
+            
                 )
               }
             }
           
         return (
-            <div className="main">
-                <div style={{marginLeft:'60px',marginTop:'80px' ,fontWeight:'bold',fontSize:'1.1em'}}>
-                    <h3>Toutes Les Plaintes</h3>
-                    <p>Ici vous pouvez voir toutes les Plaintes ayant été Enregistrées</p>
+            <body>
+                <div class="container-xl" style={{marginTop:'50px'}}>
+                    <div class="table-responsive">
+                            <div class="table-wrapper">
+                                    <div class="table-title">
+                                            <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <h2>Gestion de <b>Plaintes</b></h2>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><span class="glyphicon glyphicon-plus"></span> <span>Add Plainte</span></button>
+                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><span class="glyphicon glyphicon-minus"></span> <span>Delete</span></button>						
+                                                        </div>
+                                                    </div>
+                                    </div>
+                                    {showTable()}
+                                    {this.ShowModal()}
+
+                                    </div>
+                    </div>    
                 </div>
-
-
                 
+               
+            
+        <BModal
+          id="addmodal"
+          size="sm"
+          show={this.state.addmodalVisible}
+          onHide={() => this.setState({addmodalVisible:false})}
+          aria-labelledby="contained-modal-title-vcenter"
+         
+        >           <form onSubmit={this.onSendPlainte} >
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-sm">
+                                <h4 class="modal-title">Ajouter Plainte</h4>
+                                </BModal.Title>
+                            </BModal.Header>
+                            <BModal.Body>
+                                <div style={{display:'flex',flexDirection:"column",justifyContent:'space-between'}}>
+                                    <div class="form-group">
+                                        <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
+                                                    <input type='text' className ="form-control" name='Titre'
+                                            onChange={this.onChangeTitre} required />
+                                                
+                                    </div>
+                                    <div class="form-group">
+                                        <label for='Categorie' style={{fontWeight:'bold'}}>Categorie</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={categorie_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Categorie"
+                                            options={categorie_select}
+                                            onChange={this.onChangeCategorie}
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                    <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={assignation_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Assignation"
+                                            options={assignation_select}
+                                            onChange={this.onChangeAssignation}
+                                        />
+                                    </div>
+                                    <div class="form-group">
+                                        <label for='Entité' style={{fontWeight:'bold'}}>Entité</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={entité_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Entité"
+                                            options={entité_select}
+                                            onChange={this.onChangeEntité}
+                                        />
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                    <label for='description' style={{fontWeight:"bold"}}>Description</label>
+                                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                                            onChange={this.onChangeDescription} required/>
+                                    </div>
+                                </div>      
+                            </BModal.Body>
+                            <BModal.Footer>
+                            
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({addmodalVisible:false})}/>
+                                <input type="submit" class="btn btn-success" value="Add"  />
+                                
+                            </BModal.Footer>
+                    </form>    
+        </BModal>
+        <BModal
+          id="editmodal"
+          size="sm"
+          show={this.state.editmodalVisible}
+          onHide={() => this.setState({editmodalVisible:false})}
+          aria-labelledby="contained-modal-title-vcenter"
+         
+        >           <form onSubmit={this.onEditPlainte} >
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-sm">
+                                <h4 class="modal-title">Editer Plainte</h4>
+                                </BModal.Title>
+                            </BModal.Header>
+                            <BModal.Body>
+                           
+                                    <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
+                                        <input type='text' className ="form-control" name='Titre'
+                                onChange={this.onChangeTitre} required />
+                                   
+                                        <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
+                                        <select value={this.state.value} className ="form-control" 
+                                                onChange={this.onChangeCategorie} required>
+                                            <option value="Web-Defacement">Web-Defacement</option>
+                                            <option value="Spam">Spam</option>
+                                            <option value="Ingenierie Sociale">Ingenierie Sociale</option>
+                                            <option value="FleeceWare">FleeceWare</option>
+                                        </select>
+                                  
+                                        <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
+                                        <select value={this.state.value} className ="form-control" 
+                                        onChange={this.onChangeEntité} required>
+                                            <option value="CIRT">Equipe Aide</option>
+                                            <option value="Entité 2">Direction du CIRT</option>
+                                            <option value="Entité 3">Reseau et Systeme</option>
+                                            <option value="Entité 4">Entité 4</option>
+                                        </select>
+                                    
+                                        <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
+                                        <select value={this.state.value} className ="form-control" 
+                                        onChange={this.onChangeAssignation} >
+                                            <option value="2">Rudy</option>
+                                            <option value="3">Arold</option>
+                                            <option value="4">Nick</option>
+                                            <option value="1">Cardoun</option>
+                                        </select>
+                                    
+                                    <label for='description' style={{fontWeight:"bold"}}>Description</label>
+                                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                                            onChange={this.onChangeDescription} required/>
+                                    
+                            </BModal.Body>
+                            <BModal.Footer>
+                            
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({editmodalVisible:false})}/>
+                                <input type="submit" class="btn btn-success" value="Save"  />
+                                
+                            </BModal.Footer>
+                    </form>    
+        </BModal>
 
+        <BModal
+          id="deletemodal"
+          size="sm"
+          show={this.state.deletemodalVisible}
+          onHide={() => this.setState({deletemodalVisible:false})}
+          aria-labelledby="contained-modal-title-vcenter"
+         
+        >          <form onSubmit={this.onDeletePlainte}>
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-sm">
+                                <h4 class="modal-title">Delete Plainte</h4>
+                                </BModal.Title>
+                            </BModal.Header>
+                            <BModal.Body>
+                                <p>Are you sure you want to delete this Records?</p>
+                                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                            </BModal.Body>
+                            <BModal.Footer>
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({deletemodalVisible:false})}/>
+                                <input type="submit" class="btn btn-danger" value="Delete"/> 
+                            </BModal.Footer>
+                    </form>    
+        </BModal>
+           
+    
 
-                
-                {showTable()}
-                {this.ShowModal()}
+        <div id="addEmployeeModal" class="modal fade">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                <form onSubmit={this.onSendPlainte} >
+                        <div class="modal-header">						
+                            <h4 class="modal-title">Ajouter Plainte</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        </div>
+                        <div class="modal-body">					
+                            <div class="form-group">
+                            <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
+                                <input type='text' className ="form-control" name='Titre'
+                        onChange={this.onChangeTitre} required />
+                            </div>
+                            <div class="form-group">
+                                <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
+                                <select value={this.state.value} className ="form-control" 
+                                        onChange={this.onChangeCategorie} required>
+                                    <option value="Web-Defacement">Web-Defacement</option>
+                                    <option value="Spam">Spam</option>
+                                    <option value="Ingenierie Sociale">Ingenierie Sociale</option>
+                                    <option value="FleeceWare">FleeceWare</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
+                                <select value={this.state.value} className ="form-control" 
+                                onChange={this.onChangeEntité} required>
+                                    <option value="CIRT">Equipe Aide</option>
+                                    <option value="Entité 2">Direction du CIRT</option>
+                                    <option value="Entité 3">Reseau et Systeme</option>
+                                    <option value="Entité 4">Entité 4</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
+                                <select value={this.state.value} className ="form-control" 
+                                onChange={this.onChangeAssignation} >
+                                    <option value="2">Rudy</option>
+                                    <option value="3">Arold</option>
+                                    <option value="4">Nick</option>
+                                    <option value="1">Cardoun</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                            <label for='description' style={{fontWeight:"bold"}}>Description</label>
+                            <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                                    onChange={this.onChangeDescription} required/>
+                            </div>					
+                        </div>
+                        <div class="modal-footer">
+                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
+                            <input type="submit" class="btn btn-success" value="Add"  />
+                        </div>
+                    </form>
+                </div>
             </div>
+            </div>
+<div id="editEmployeeModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+        <form onSubmit={this.onEditPlainte} >
+				<div class="modal-header">						
+					<h4 class="modal-title">Editer Plainte</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">					
+					<div class="form-group">
+                    <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
+						<input type='text' className ="form-control" name='Titre'
+                   onChange={this.onChangeTitre} required />
+					</div>
+					<div class="form-group">
+						<label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
+						<select value={this.state.value} className ="form-control" 
+                                  onChange={this.onChangeCategorie} required>
+                            <option value="Web-Defacement">Web-Defacement</option>
+                            <option value="Spam">Spam</option>
+                            <option value="Ingenierie Sociale">Ingenierie Sociale</option>
+                            <option value="FleeceWare">FleeceWare</option>
+                        </select>
+					</div>
+                    <div class="form-group">
+						<label for='entités' style={{fontWeight:"bold"}}>Entité</label>
+						<select value={this.state.value} className ="form-control" 
+                          onChange={this.onChangeEntité} required>
+                            <option value="CIRT">Equipe Aide</option>
+                            <option value="Entité 2">Direction du CIRT</option>
+                            <option value="Entité 3">Reseau et Systeme</option>
+                            <option value="Entité 4">Entité 4</option>
+                        </select>
+					</div>
+                    <div class="form-group">
+                                <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
+                                <select value={this.state.value} className ="form-control" 
+                                onChange={this.onChangeAssignation} >
+                                    <option value="2">Rudy</option>
+                                    <option value="3">Arold</option>
+                                    <option value="4">Nick</option>
+                                    <option value="1">Cardoun</option>
+                                </select>
+                            </div>
+					<div class="form-group">
+                    <label for='description' style={{fontWeight:"bold"}}>Description</label>
+                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                              onChange={this.onChangeDescription} required/>
+					</div>					
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
+					<input type="submit" class="btn btn-success" value="Save" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+<div id="deleteEmployeeModal" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<form onSubmit={this.onDeletePlainte}>
+				<div class="modal-header">						
+					<h4 class="modal-title">Delete Plainte</h4>
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				</div>
+				<div class="modal-body">					
+					<p>Are you sure you want to delete this Records?</p>
+					<p class="text-warning"><small>This action cannot be undone.</small></p>
+				</div>
+				<div class="modal-footer">
+					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
+					<input type="submit" class="btn btn-danger" value="Delete"/>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+            </body>
         );
     }
 }

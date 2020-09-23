@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import '../../styles.css'
-import './Footercss/bootstrap.min.css';
-
+import 'bootstrap/dist/css/bootstrap.css';
 import './Footercss/footer.css';
 
 class Footer extends Component {

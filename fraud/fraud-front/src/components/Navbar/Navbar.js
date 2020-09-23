@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink ,Link,useHistory } from 'react-router-dom';
 
-import './Navbarcss/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.css';
 
 import './Navbarcss/navbar.css'
 import axios from 'axios';
@@ -44,7 +44,7 @@ class Navbar extends Component {
             isLoginAdmin:false,
             isLoginClient:false,
         })
-    
+       
 
         axios.get('http://localhost:8000/plaintes/logout/')
         .then(res => {
@@ -92,7 +92,7 @@ class Navbar extends Component {
                         <li className="li_nav" activeClassName="main-nav">
                             <NavLink to="/Services">Services</NavLink>
                         </li>
-                        <button onClick={this.deconnexion} style={{border:'none'}} >
+                        <button onClick={(this.deconnexion)} style={{border:'none'}} >
                              <a className="navbar-brand" style={{fontSize:12,
                                 color:'black',fontWeight:'bold',marginLeft:10}}>Deconnexion</a>
                         </button>
@@ -122,6 +122,7 @@ class Navbar extends Component {
         }
     }
     render(){
+      
         return (
             <body>
 
@@ -142,10 +143,7 @@ class Navbar extends Component {
                     <NavLink to="/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
                       
                     </li>
-                    <li class="nav-item">
-                    <NavLink to="/Assignation"><a class="nav-link" href="">Assignation</a></NavLink>
-                      
-                    </li>
+                  
                     <li class="nav-item">
                     <NavLink to="/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
                       
@@ -156,8 +154,8 @@ class Navbar extends Component {
                     </li>
                   </ul>
                   <form class="form-inline mt-2 mt-md-0">
+                  <Link exact to="/"><button style={{fontWeight:"bold"}} class="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={this.deconnexion}>Deconnection</button></Link>
                     
-                    <button style={{fontWeight:"bold"}} class="btn btn-outline-success my-2 my-sm-0" type="submit" onClick={this.deconnexion}>Deconnection</button>
                   </form>
                 </div>
               </nav>

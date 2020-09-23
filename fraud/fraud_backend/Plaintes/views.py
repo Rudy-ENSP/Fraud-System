@@ -11,6 +11,17 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 
 
+#Methodes pour les Users
+
+@api_view(['POST'])
+def listeUsers(request):
+    entité = get_list_or_404(User)
+    serializer = User.objects.all()
+   
+    return JsonResponse(serializer.data, safe=False)
+    
+
+
 #Methodes pour les Entités
 
 
@@ -23,6 +34,21 @@ def createEntité(request):
     data={'state':"success"}
     #echec={'state':"echec"}
     entité.save()
+    return JsonResponse(data)
+
+@api_view(['POST'])
+def deleteEntité(request):
+    entité=get_object_or_404(Entité, id = request.data['id'])
+    entité.delete()
+    data={'status':'success'}
+    return JsonResponse(data)
+@api_view(['POST'])
+def editEntité(request):
+    entité = get_object_or_404(Entité, id = request.data['id'])
+    entité.hierarchie = request.data['Hierarchie']
+    entité.name = request.data['Nom']
+    entité.save()
+    data = {'status':'success'}
     return JsonResponse(data)
 
 @api_view(['GET'])
@@ -44,7 +70,19 @@ def createCategoriePlainte(request):
     #echec={'state':"echec"}
     categoriePlainte.save()
     return JsonResponse(data)
-
+def deleteCategoriePlainte(request):
+    Categorie=get_object_or_404(CatPlainte, id = request.data['id'])
+    Categorie.delete()
+    data={'status':'success'}
+    return JsonResponse(data)
+@api_view(['POST'])
+def editCategoriePlainte(request):
+    Categorie = get_object_or_404(CatPlainte, id = request.data['id'])
+    Categorie.entité = get_object_or_404(Entité, hierarchie=request.data['Entité'])
+    Categorie.name = request.data['Nom']
+    Categorie.save()
+    data = {'status':'success'}
+    return JsonResponse(data)
 @api_view(['GET'])
 def listeCategoriePlainte(request):
     catPlainte = get_list_or_404(CatPlainte)
@@ -53,7 +91,25 @@ def listeCategoriePlainte(request):
 
 
 #Methodes pour les Plaintes
-
+@api_view(['POST'])
+def delete(request):
+    plainte=get_object_or_404(Plainte, id = request.data['id'])
+    plainte.delete()
+    data={'status':'success'}
+    return JsonResponse(data)
+@api_view(['POST'])
+def editer(request):
+    user = authenticate(request, username = request.data['user'], password = request.data['password'])
+    
+    plainte = get_object_or_404(Plainte, id = request.data['id'])
+    plainte.details = request.data['description']
+    plainte.title=request.data['cas']
+    plainte.entité = get_object_or_404(Entité, name=request.data['entité'])
+    plainte.auteur = user
+    plainte.assignation=get_object_or_404(Users, id=request.data['Assignation'])
+    plainte.save()
+    data = {'status':'success'}
+    return JsonResponse(data)
 
 @api_view(['POST'])
 def enregistrer(request):
@@ -64,7 +120,8 @@ def enregistrer(request):
         details=request.data['description'],
         entité =entité,
         auteur=user,
-        state = request.data['state']
+        state = request.data['state'],
+        assignation= get_object_or_404(Users, id=request.data['Assignation'])
     )
     data={'state':"success"}
     plainte.save()
@@ -81,12 +138,33 @@ def resoudre(request):
     return JsonResponse(data)
 
 @api_view(['POST'])
+def setState(request):
+    user = authenticate(request, username = request.data['user'], password = request.data['password'])
+    plainte = get_object_or_404(Plainte, id=request.data['id'])
+    plainte.state='resolu'
+    data={'state':"success"}
+    plainte.save()
+    return JsonResponse(data)
+
+@api_view(['POST'])
 def getResolues(request):
     data = {"echec":"echec"}
     user = authenticate(request, username = request.data['user'], password = request.data['password'])
-    plainte = Plainte.objects.filter(state = 'resolu', auteur = user).order_by('date_création').reverse()
-    serializer = PlainteSerializer(plainte,many=True)
-    return JsonResponse(serializer.data, safe=False)
+    if (user.is_staff == False):
+        	plainte = Plainte.objects.filter(state = 'resolu', entité=user.users.entité).order_by('date_création').reverse()
+        	serializer = PlainteSerializer(plainte,many=True)
+        	return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(data)
+
+@api_view(['POST'])
+def getWaiting(request):
+    data = {"echec":"echec"}
+    user = authenticate(request, username = request.data['user'], password = request.data['password'])
+    if (user.is_staff == False):
+        	plainte = Plainte.objects.filter(state = 'waiting', entité=user.users.entité).order_by('date_création').reverse()
+        	serializer = PlainteSerializer(plainte,many=True)
+        	return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(data)
 
 @api_view(['POST'])
 def getNonResolues(request):
@@ -102,9 +180,11 @@ def getNonResolues(request):
 def listePlainte(request):
     data = {"echec":"echec"}
     user = authenticate(username = request.data['user'], password = request.data['password'])
-    plainte = Plainte.objects.filter(auteur = user).order_by('date_création').reverse()
-    serializer = PlainteSerializer(plainte,many=True)
-    return JsonResponse(serializer.data, safe=False)  
+    if (user.is_staff == False):
+        	plainte = Plainte.objects.filter(auteur=user,entité=user.users.entité).order_by('date_création').reverse()
+        	serializer = PlainteSerializer(plainte,many=True)
+        	return JsonResponse(serializer.data, safe=False)
+    return JsonResponse(data)
 
 @api_view(['POST'])
 def getSolved(request):
