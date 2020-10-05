@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.core import serializers
 from django.http import JsonResponse
 from rest_framework.decorators import api_view, action,permission_classes
 from rest_framework.response import Response
@@ -9,16 +10,33 @@ from django.contrib.auth import authenticate, get_user_model, logout, login
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
-
+import json
 
 #Methodes pour les Users
 
-@api_view(['POST'])
+@api_view(['GET'])
 def listeUsers(request):
-    entité = get_list_or_404(User)
-    serializer = User.objects.all()
-   
-    return JsonResponse(serializer.data, safe=False)
+    set=Users.objects.all()
+    users=[]
+    for utilisateur in set:
+        users1=get_object_or_404(User,id=(utilisateur.user).id)
+        name=users1.first_name +" "+users1.last_name
+        users.append({'id':utilisateur.id,'entité':(utilisateur.entité).id,'user':name,'username':users1.username})
+    print(users)
+
+    return JsonResponse(users, safe=False)
+       
+@api_view(['POST'])
+def UserProfile(request):
+    user = authenticate(request, username = request.data['user'], password = request.data['password'])
+    set = User.objects.filter(username = request.data['user'])
+    users=[]
+    for utilisateur in set:
+        users.append({'nom':utilisateur.first_name,'prenom':utilisateur.last_name,'email':utilisateur.email})
+    print(users)
+
+    return JsonResponse(users, safe=False)
+            
     
 
 
@@ -199,14 +217,29 @@ def getSolved(request):
 
 
 @api_view(['POST'])
-def createUser(request):
-    username = request.get('username')
-    mail = request.get('mail')
-    password = request.get('password')
-    user = User.objects.create_user(username, mail, password)
-    user.last_name = 'CIRT'
-    user.save()
-
+def CreateUser(request):
+    username = request.data['Username']
+    mail = request.data['Email']
+    password = request.data['Password']
+    first_name = request.data['Nom']
+    sur_name = request.data['Prenom']
+    
+    fails = {"state":"User exist"}
+    user1=get_object_or_404(User, username=username)
+    if User.objects.get(username=username)is not None :
+            data = fails
+    else:
+        user = User.objects.create_user(username, mail, password)
+        user.last_name = sur_name
+        user.first_name=first_name
+        user.save()
+        utilisateur = Users(
+            entité=get_object_or_404(Entité, id=request.data['Entité']),
+            user=user,
+       )
+        utilisateur.save()
+        data = {"state":"success"} 
+    return JsonResponse(data)
 
 
 @api_view(['POST'])

@@ -1,0 +1,7 @@
+import Footer from './Footer/footer'
+import AllPlaintes from './Plaintes/AllPlaintes'
+import Entités from './Entités/Entités'
+import CategoriePlainte from './CategoriePlainte/CategoriePlainte'
+import NoResolvedPlaintes from './Plaintes/NoResolvedPlaintes'
+import ResolvedPlaintes from './Plaintes/ResolvedPlaintes'
+import Plaintes from './Plaintes/Plaintes';

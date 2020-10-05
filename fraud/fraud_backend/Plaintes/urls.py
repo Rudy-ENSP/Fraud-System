@@ -30,8 +30,9 @@ urlpatterns = [
     path('createCategoriePlainte/', views.createCategoriePlainte, name="createCategoriePlainte"),
     path('editCategoriePlainte/', views.editCategoriePlainte, name="editCategoriePlainte"),
     path('deleteCategoriePlainte/', views.deleteCategoriePlainte, name="deleteCategoriePlainte"),
-
+    path('UserProfile/', views.UserProfile, name="UserProfile"),
     path('listeUsers/', views.listeUsers, name="listeUsers"),
+    path('CreateUser/', views.CreateUser, name="CreateUser"),
 
 ]
 

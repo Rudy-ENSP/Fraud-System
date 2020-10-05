@@ -9,7 +9,7 @@ import CategoriePlainte from './CategoriePlainte/CategoriePlainte'
 import NoResolvedPlaintes from './Plaintes/NoResolvedPlaintes'
 import ResolvedPlaintes from './Plaintes/ResolvedPlaintes'
 
-import {Body} from './Body';
+
 import '../styles.css';
 import { isLoginAdmin,isLogin,isLoginClient } from './Login/login';
 import Plaintes from './Plaintes/Plaintes';

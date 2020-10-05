@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Modal from 'react-modal'
 import {Modal as BModal,Button} from 'react-bootstrap'
+import Spinner from 'react-bootstrap/Spinner'
 import Box from '@material-ui/core/Box';
 import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.css';
@@ -377,58 +378,7 @@ class AllPlaintes extends Component {
             </div>
         )
     }
-    addModal=()=>{
-        return(
-            <div id="addEmployeeModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <form onSubmit={this.onSendPlainte} >
-                        <div class="modal-header">						
-                            <h4 class="modal-title">Ajouter Plainte</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">					
-                            <div class="form-group">
-                            <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-                                <input type='text' className ="form-control" name='Titre'
-                        onChange={this.onChangeTitre} required />
-                            </div>
-                            <div class="form-group">
-                                <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-                                <select value={this.state.value} className ="form-control" 
-                                        onChange={this.onChangeCategorie} required>
-                                    <option value="Web-Defacement">Web-Defacement</option>
-                                    <option value="Spam">Spam</option>
-                                    <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                                    <option value="FleeceWare">FleeceWare</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeEntité} required>
-                                    <option value="CIRT">Equipe Aide</option>
-                                    <option value="Entité 2">Direction du CIRT</option>
-                                    <option value="Entité 3">Reseau et Systeme</option>
-                                    <option value="Entité 4">Entité 4</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                            <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                            <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                                    onChange={this.onChangeDescription} required/>
-                            </div>					
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-                            <input type="submit" class="btn btn-success" value="Add"  />
-                        </div>
-                    </form>
-                </div>
-            </div>
-            </div>
-        )
-    }
+    
     
     render(){
         
@@ -447,7 +397,7 @@ class AllPlaintes extends Component {
           );
           const assignation_select=[]
           const temp3 = assignation.map((option) =>
-          assignation_select.push({ value: option.id, label: option.name })
+          assignation_select.push({ value: option.id, label: option.user.Username })
            
           );
 
@@ -511,8 +461,10 @@ class AllPlaintes extends Component {
              
               if(MyPlaintes.length ===0){
                   return(
-                    <h5 style={{textAlign:'center',marginTop:70}}>
-                        Aucune Plainte Enregistrée</h5>
+                    <h1 style={{textAlign:'center',marginTop:70}}>
+                        <Spinner animation="border" role="status">
+  <span className="sr-only">Loading...</span>
+</Spinner></h1>
                   )
               }
               if(MyPlaintes.length <=8 && MyPlaintes.length>=1){

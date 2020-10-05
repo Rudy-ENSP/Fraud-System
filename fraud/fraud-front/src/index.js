@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import './index.css';
+
 import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
@@ -32,7 +33,7 @@ render(
     <Router>
         <Login/>
         <PublicRoute exact path="/" component={Login}/>
-        <ProtectedRoute path="/Acceuil" component={Entree}/>
+        <ProtectedRoute  path="/Acceuil" component={Entree}/>
         <ProtectedRoute path="/Plaintes" component={Plaintes}/>
         <ProtectedRoute path="/Entités" component={Entités}/>
         
