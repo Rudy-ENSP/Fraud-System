@@ -60,6 +60,17 @@ def deleteEntité(request):
     entité.delete()
     data={'status':'success'}
     return JsonResponse(data)
+
+@api_view(['POST'])
+def deletemultiEntite(request):
+    list=request.data['delete_list']
+    for i in list:
+       entité=get_object_or_404(Entité, id = i)
+       entité.delete()
+    
+    data={'status':'success'}
+    return JsonResponse(data)
+
 @api_view(['POST'])
 def editEntité(request):
     entité = get_object_or_404(Entité, id = request.data['id'])
@@ -88,11 +99,24 @@ def createCategoriePlainte(request):
     #echec={'state':"echec"}
     categoriePlainte.save()
     return JsonResponse(data)
+
+@api_view(['POST'])
 def deleteCategoriePlainte(request):
     Categorie=get_object_or_404(CatPlainte, id = request.data['id'])
     Categorie.delete()
     data={'status':'success'}
     return JsonResponse(data)
+
+@api_view(['POST'])
+def deletemultiCategoriePlainte(request):
+    list=request.data['delete_list']
+    for i in list:
+      Categorie=get_object_or_404(CatPlainte, id = i)
+      Categorie.delete()
+
+    data={'status':'success'}
+    return JsonResponse(data)
+
 @api_view(['POST'])
 def editCategoriePlainte(request):
     Categorie = get_object_or_404(CatPlainte, id = request.data['id'])
@@ -115,6 +139,17 @@ def delete(request):
     plainte.delete()
     data={'status':'success'}
     return JsonResponse(data)
+
+@api_view(['POST'])
+def deletemulti(request):
+    list=request.data['delete_list']
+    for i in list:
+      plainte=get_object_or_404(Plainte, id = i)
+      plainte.delete()
+
+    data={'status':'success'}
+    return JsonResponse(data)
+
 @api_view(['POST'])
 def editer(request):
     user = authenticate(request, username = request.data['user'], password = request.data['password'])

@@ -10,8 +10,10 @@ import {MdEdit } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.css';
 import  Loader from '../loader'
 import Select from 'react-select';
+import $ from 'jquery'
 import {Modal as BModal,Button} from 'react-bootstrap'
 var listeCategoriePlainte
+var liste_id_element_check=[] 
 class AllCategoriePlainte extends Component {
     constructor(props){
         super(props)
@@ -19,6 +21,7 @@ class AllCategoriePlainte extends Component {
           modalVisible:false,
           addmodalVisible:false,
           deletemodalVisible:false,
+          deletemultimodalVisible:false,
           editmodalVisible:false,
             categoriePlainte:[],
             id:'',
@@ -112,6 +115,26 @@ class AllCategoriePlainte extends Component {
             })
             
       }
+      onDeleteMultiCategoriePlainte=(event)=>{
+        event.preventDefault()
+          let delete_list={delete_list:liste_id_element_check}
+         
+          axios.post('http://localhost:8000/plaintes/deletemultiCategoriePlainte/', delete_list)
+            .then(res => {console.log(res);
+              console.log(res.data);
+              if(res.data['status']==='success'){
+                alert( "Categories  supprimées avec succèss" );
+                this.setState ({
+                  Nom:'',
+                  Entité:'',
+                });
+              }
+              else{
+                  alert('echec de lors de la suppression de notre categorie')
+              }
+            })
+            
+      }
       onDeleteCategoriePlainte=(event)=>{
         event.preventDefault()
           let newCategoriePlainte={
@@ -173,7 +196,28 @@ class AllCategoriePlainte extends Component {
                          })}>
                     <td>
 							<span class="custom-checkbox">
-								<input type="checkbox" id="checkbox1" name="options[]" value="1"/>
+              <input type="checkbox" id={categoriePlainte.id} name="options[]" value="1" onClick={()=>{
+                                    var id=categoriePlainte.id
+                                    var checkbox = document.getElementById(id);
+                                    console.log(checkbox.checked)  
+                                                        
+                                                            if(checkbox.checked){
+                                                                var flag=(liste_id_element_check).includes(categoriePlainte.id)
+                                                                if(!flag){ liste_id_element_check.push(categoriePlainte.id)}
+                                                               
+                                                                
+                                                                console.log(liste_id_element_check)
+                                                            } else{
+                                                               var index=liste_id_element_check.indexOf(categoriePlainte.id)
+                                                               if(index>=0){ (liste_id_element_check).splice(index,1)}
+                                                               
+                                                                    
+                                                                console.log(liste_id_element_check)                        
+                                                              
+                                                            } 
+                                                       
+            
+                                                        }}/>
 								<label for="checkbox1"></label>
 							</span>
 					</td>
@@ -213,7 +257,36 @@ class AllCategoriePlainte extends Component {
                         <thead >
                             <th>
                                 <span class="custom-checkbox">
-                                    <input type="checkbox" id="selectAll"/>
+                                <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
+                                                       var selectAll= document.getElementById("selectAll")
+                                                        
+                                                            if(selectAll.checked){
+                                                                liste_id_element_check=[]
+                                                                checkbox.each(function(){
+                                                                    this.checked = true;
+                                                                    var id = parseInt(this.getAttribute('id')) ;
+                                                                    
+                                                                    liste_id_element_check.push(id)  
+                                                                                          
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } else{
+                                                                checkbox.each(function(){
+                                                                    this.checked = false; 
+                                                                    var id = this.getAttribute('id') ;
+                                                                    liste_id_element_check=[] 
+                                                                                         
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } 
+                                                        
+                                                        checkbox.click(function(){
+                                                            if(!this.checked){
+                                                                $("#selectAll").prop("checked", false);
+                                                            }
+                                                            
+                                                        });
+                                                        }}/>
                                     <label for="selectAll"></label>
                                 </span>
                             </th>
@@ -239,7 +312,36 @@ class AllCategoriePlainte extends Component {
                         <thead >
                             <th>
                                 <span class="custom-checkbox">
-                                    <input type="checkbox" id="selectAll"/>
+                                <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
+                                                       var selectAll= document.getElementById("selectAll")
+                                                        
+                                                            if(selectAll.checked){
+                                                                liste_id_element_check=[]
+                                                                checkbox.each(function(){
+                                                                    this.checked = true;
+                                                                    var id = parseInt(this.getAttribute('id')) ;
+                                                                    
+                                                                    liste_id_element_check.push(id)  
+                                                                                          
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } else{
+                                                                checkbox.each(function(){
+                                                                    this.checked = false; 
+                                                                    var id = this.getAttribute('id') ;
+                                                                    liste_id_element_check=[] 
+                                                                                         
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } 
+                                                        
+                                                        checkbox.click(function(){
+                                                            if(!this.checked){
+                                                                $("#selectAll").prop("checked", false);
+                                                            }
+                                                            
+                                                        });
+                                                        }}/>
                                     <label for="selectAll"></label>
                                 </span>
                             </th>
@@ -272,7 +374,7 @@ class AllCategoriePlainte extends Component {
                                                 </div>
                                                 <div class="col-sm-6">
                                                 <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><i ><FaPlusCircle /></i> <span>Add Categorie</span></button>
-                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><i><FaMinusCircle /></i> <span>Delete</span></button>
+                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({ deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Delete</span></button>
                                                     </div>
                                                 </div>
                                 </div>
@@ -403,6 +505,30 @@ class AllCategoriePlainte extends Component {
                             </BModal.Body>
                             <BModal.Footer>
                                 <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({deletemodalVisible:false})}/>
+                                <input type="submit" class="btn btn-danger" value="Delete"/> 
+                            </BModal.Footer>
+                    </form>    
+        </BModal>
+
+        <BModal
+          id="deletemultimodal"
+          size="sm"
+          show={this.state.deletemultimodalVisible}
+          onHide={() => this.setState({deletemultimodalVisible:false})}
+          aria-labelledby="contained-modal-title-vcenter"
+         
+        >          <form onSubmit={this.onDeleteMultiCategoriePlainte}>
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-sm">
+                                <h4 class="modal-title">Delete Categorie</h4>
+                                </BModal.Title>
+                            </BModal.Header>
+                            <BModal.Body>
+                                <p>Are you sure you want to delete all the selected values?</p>
+                                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                            </BModal.Body>
+                            <BModal.Footer>
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({deletemultimodalVisible:false})}/>
                                 <input type="submit" class="btn btn-danger" value="Delete"/> 
                             </BModal.Footer>
                     </form>    
