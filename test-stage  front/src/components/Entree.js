@@ -21,20 +21,20 @@ export class Entree extends Component {
 
                     </div>
                     <Switch>
-                    <Route  exact path="/Acceuil">
+                                <Route  exact path="/fraud/home">
                                 <Accueil/>
                                 </Route>
                               
-                                <Route  path="/Plaintes">
+                                <Route  path="/fraud/Plaintes">
                                 
                                 <Plaintes/>
                                 </Route>
-                                <Route  path="/Entités">
+                                <Route  path="/fraud/Entités">
                                 <Entités/>
                                 
                                 </Route>
                                 
-                                <Route  path="/CategoriePlainte">
+                                <Route  path="/fraud/CategoriePlainte">
                                 <CategoriePlainte/>
                                 
                                 </Route>

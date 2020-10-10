@@ -30,11 +30,8 @@ render(
     
     <Router>
         <Login/>
-        <PublicRoute exact path="/" component={Login}/>
-        <ProtectedRoute path="/" component={Entree}/>
-        <ProtectedRoute path="/Plaintes" component={Plaintes}/>
-        <ProtectedRoute path="/Entités" component={Entités}/>
-        <ProtectedRoute path="/CategoriePlainte" component={CategoriePlainte}/>
+        <ProtectedRoute path="/fraud" component={Entree}/>
+        
     </Router>
     
   </div>,

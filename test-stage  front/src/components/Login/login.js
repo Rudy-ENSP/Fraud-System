@@ -404,7 +404,7 @@ export  class Login extends Component {
       }
     
 	  LoginUser=(event)=>{
-        
+       
         event.preventDefault();
         let AuthInfos={
             'username' : this.state.username,
@@ -432,7 +432,8 @@ export  class Login extends Component {
 					if(this.state.username!='admin'){
 						isLoginClient=true
 					}
-				this.setState({redirect:true})
+                this.setState({redirect:true})
+                //this.history.push("/Entree")
 					
 				}
 				else{
@@ -447,7 +448,7 @@ export  class Login extends Component {
 
     render(){
         const users = this.state.Users
-       
+       // const history=useHistory();
           const temp4 = users.map((option) =>
           username_list.push( option.username )
          
@@ -462,7 +463,7 @@ export  class Login extends Component {
            
           );
 		if(this.state.redirect==true){
-             return <Redirect to="/Acceuil"/>
+             return <Redirect to="/fraud/home"/>
         }
         return (
 <div class="main">

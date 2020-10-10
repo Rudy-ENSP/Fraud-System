@@ -12,8 +12,10 @@ import {Modal as BModal,Button} from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import  Loader from '../loader'
 import $ from 'jquery'
+import {Organigramme} from './Entités'
 var listeEntités
 var liste_id_element_check=[] 
+var list_id=[]
 class AllEntités extends Component {
     constructor(props){
         super(props)
@@ -31,15 +33,9 @@ class AllEntités extends Component {
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/plaintes/listeEntite/')
-          .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
-            console.log('entités', entités)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+
+        
+        
       }
       onChangeNom = (event) => {
         this.setState({Nom: event.target.value});
@@ -65,12 +61,44 @@ class AllEntités extends Component {
           axios.post('http://localhost:8000/plaintes/createEntite/', newEntités)
             .then(res => {console.log(res);
               console.log(res.data);
-              if(res.data['status']==='success'){
+              if(res.data['state']==='success'){
                 alert( "Entité : " +newEntités.Nom +" crée avec succèss" );
                 this.setState ({
                   Nom:'',
                   Hierarchie:'',
                 });
+               /*
+
+                var tableRef = document.getElementById('myTable').getElementsByTagName('tbody')[0];
+
+                // Insert a row in the table at row index 0
+                var newRow   = tableRef.insertRow(tableRef.rows.length);
+              
+                // Insert a cell in the row at index 0
+                var newCell  = newRow.insertCell(0);
+              
+                // Append a text node to the cell
+                var newText  = document.createTextNode($('#2').html())
+                newCell.appendChild(newText);*/
+                var max=0
+                var i=0
+             while(i<list_id.length){
+               if(list_id[i]>max){max=list_id[i]}
+               i++
+             }
+             max++
+
+               
+                var id='#'+list_id[0]
+                var td1='<td> <span class="custom-checkbox">'+$(id).html()+'	<label for="checkbox1"></label> </span> </td>'
+                var td4='<td id="name3">'+newEntités.Nom+'</td>'
+                var td2='<th id="'+max+'">'+max+'</th>'
+                var td3='<td id="hierarchie3">'+newEntités.Hierarchie+'</td>'
+               
+                var td5='<td style="display: flex; justify-content: space-between;"><a class="edit" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path></svg></a><a class="delete" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg></a></td>'
+                var row='<tr>'+td1+td2+td4+td3+td5+'</tr>'
+                $('#myTable > tbody:last-child').append(row);
+                
               }
               else{
                   alert('echec de lors de la création de notre entité')
@@ -95,12 +123,19 @@ class AllEntités extends Component {
                   Nom:'',
                   Hierarchie:'',
                 });
+                const id='#name'+this.state.id
+                
+                $(id).html(newEntités.Nom);
+                const id1='#hierarchie'+this.state.id
+                
+                $(id1).html(newEntités.Hierarchie);
               }
               else{
                   alert('echec de lors de la création de notre entité')
               }
             })
-            
+            this.props.callbackParent(true) 
+            this.forceUpdate()
       }
       onDeleteMultiEntité=(event)=>{
         event.preventDefault()
@@ -111,7 +146,12 @@ class AllEntités extends Component {
               console.log(res.data);
               if(res.data['status']==='success'){
                 alert( "les Entités selectioneés ont été supprimées avec succèss" );
-               
+                  var i=0
+                  while(i<(liste_id_element_check).length){
+                  console.log('#tablerow'+(liste_id_element_check)[i]);
+                  $('#tablerow'+(liste_id_element_check)[i]).remove();
+                  i++
+                  }
                   liste_id_element_check=[]
                
               }
@@ -138,6 +178,8 @@ class AllEntités extends Component {
                   Nom:'',
                   Hierarchie:'',
                 });
+                const id='#tablerow'+this.state.id
+                $(id).remove();
               }
               else{
                   alert('echec de lors de la suppression de votre entité')
@@ -145,9 +187,11 @@ class AllEntités extends Component {
             })
             
       } 
+     
     render(){
 
-      const Entités = this.state.entités
+      //const Entités = this.state.entités
+      const Entités = this.props.entités
         /*const Entités = [
             {id: 1, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
             {id: 2, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
@@ -164,19 +208,16 @@ class AllEntités extends Component {
             {id: 13, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
             {id: 14, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
           ];*/
-          const Organigramme = [
-            { value: '1', label: 'Direction' },
-            { value: '2', label: 'Sous-Direction' },
-            { value: '3', label: 'Cellule' },
-            { value: '4', label: 'Service' },
-            { value: '5', label: 'Equipe' },
-            { value: '6', label: 'Collaborateurs' },
-            { value: '7', label: 'Stagiaires' },
-          ]
-         
+          
+          const test=Entités.map((entité) =>
+             list_id.push(entité.id))
+             var i=0
+             
+
+
           const content = Entités.map((entité) =>
-            
-                <tr onClick={
+                 
+                <tr id={'tablerow'+entité.id} onClick={
                     ()=>this.setState({
                         id:entité.id,
                         Nom:entité.name,                      
@@ -184,6 +225,7 @@ class AllEntités extends Component {
                         })}>
                     <td>
                       <span class="custom-checkbox">
+                     
                       <input type="checkbox" id={entité.id} name="options[]" value="1" onClick={()=>{
                                     var id=entité.id
                                     var checkbox = document.getElementById(id);
@@ -213,12 +255,12 @@ class AllEntités extends Component {
                     ()=>this.setState({
                         modalVisible:true,
                         })}>{entité.id}</th>
-                    <td onClick={
+                    <td id={'name'+entité.id} onClick={
                     ()=>this.setState({
                         modalVisible:true,
                        })}>{entité.name}</td>
                    
-                    <td onClick={
+                    <td id={'hierarchie'+entité.id} onClick={
                     ()=>this.setState({
                         modalVisible:true,
                       })}>{entité.hierarchie}</td>
@@ -241,7 +283,7 @@ class AllEntités extends Component {
               if(Entités.length <=8 && Entités.length>=1){
                 return (
                     <div className="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table className="table table-bordered table-striped table-hover mb-0 ">
+                    <table id="myTable" className="table table-bordered table-striped table-hover mb-0 ">
                         <thead >
                             <th>
                                 <span class="custom-checkbox">
@@ -298,7 +340,7 @@ class AllEntités extends Component {
               if(Entités.length>8){
                 return (
                     <div className="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table className="table table-bordered table-striped table-hover mb-0 ">
+                    <table id="myTable" className="table table-bordered table-striped table-hover mb-0 ">
                         <thead >
                             <th>
                                 <span class="custom-checkbox">

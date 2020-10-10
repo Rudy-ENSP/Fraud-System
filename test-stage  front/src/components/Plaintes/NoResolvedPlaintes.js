@@ -14,8 +14,9 @@ import 'bootstrap/dist/css/bootstrap.css';
 import  Loader from '../loader'
 import $ from 'jquery'
 import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
-var liste_id_element_check=[] 
 
+var liste_id_element_check=[] 
+var list_id=[]
 class NoResolvedPlaintes extends Component {
     constructor(props){
         super(props)
@@ -44,53 +45,17 @@ class NoResolvedPlaintes extends Component {
             categoriePlainte:[],
             plainte:[],
             Users:[],
+            nom_auteur:'',
+            nom_entité:'',
+            nom_Categorie:'',
+            assignation:'',
+            nom_assigne:''
      
         }
     }
 
     componentDidMount() {
-        let data={
-            'user':username,
-            'password':password
-        };
-      axios.post('http://localhost:8000/plaintes/nonresolues/',data)
-        .then(res => {
-          const plaintes = res.data;
-          this.setState({plaintes: plaintes  });
-          console.log(plaintes)
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-
-        axios.get('http://localhost:8000/plaintes/listeEntite/')
-          .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
-            console.log('entités', entités)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-
-          axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
-          .then(res => {
-            const categoriePlainte = res.data;
-            this.setState({categoriePlainte: categoriePlainte  });
-            console.log('Categorieplaintes', categoriePlainte)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-         axios.get('http://localhost:8000/plaintes/listeUsers/')
-          .then(res => {
-            const Users = res.data;
-            this.setState({Users: Users  });
-            console.log('Users', Users)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+       
       }
 
       onChangeReponse = (event) => {
@@ -174,6 +139,29 @@ class NoResolvedPlaintes extends Component {
                 Entité: "Collaborateur",
                 Description:'',
               });
+
+              var max=0
+                var i=0
+             while(i<list_id.length){
+               if(list_id[i]>max){max=list_id[i]}
+               i++
+             }
+             max++
+
+               
+                var id='#'+list_id[0]
+                var td1='<td> <span class="custom-checkbox">'+$(id).html()+'	<label for="checkbox1"></label> </span> </td>'
+                var td3='<td id="name3">'+newPlainte.cas+'</td>'
+                var td2='<th id="'+max+'">'+max+'</th>'
+                var td5='<td id="entité3">'+newPlainte.entité+'</td>'
+                var td4='<td id="cat3">'+newPlainte.Categorie+'</td>'
+                var td7='<td id="date">'+Date.now()+'</td>'
+                var td6='<td id="date">'+newPlainte.Assignation+'</td>'
+                var td8='<td id="date">ajoutée</td>'
+               
+                var td9='<td style="display: flex; justify-content: space-between;"><a class="edit" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path></svg></a><a class="delete" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg></a></td>'
+                var row='<tr>'+td1+td2+td3+td4+td5+td6+td7+td8+td9+'</tr>'
+                $('#myTable > tbody:last-child').append(row);
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -197,7 +185,8 @@ class NoResolvedPlaintes extends Component {
             console.log(res.data);
             if(res.data['status']=='success'){
               alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" supprimé avec succèss" );
-              
+              const id='#tablerow'+this.state.id
+              $(id).remove();
             }
             else{
                 alert('echec de lors de la suppression de la  plaintes')
@@ -220,6 +209,13 @@ class NoResolvedPlaintes extends Component {
             console.log(res.data);
             if(res.data['status']=='success'){
               alert( "Plaintes  supprimées avec succèss" );
+              var i=0
+                  while(i<(liste_id_element_check).length){
+                  console.log('#tablerow'+(liste_id_element_check)[i]);
+                  $('#tablerow'+(liste_id_element_check)[i]).remove();
+                  i++
+                  }
+                  liste_id_element_check=[]
               
             }
             else{
@@ -239,7 +235,9 @@ class NoResolvedPlaintes extends Component {
               'description': this.state.Description,
               'entité':this.state.Entité,
               'user':username,
-              'password':password
+              'password':password,
+              'Assignation':this.state.Assignation,
+              'nom_assigne':this.state.nom_assigne
           };
           axios.post('http://localhost:8000/plaintes/editer/', plainte)
           .then(res => {
@@ -252,6 +250,16 @@ class NoResolvedPlaintes extends Component {
                 Entité: "Collaborateur",
                 Description:'',
               });
+              const id='#title'+this.state.id
+                
+              $(id).html(plainte.Nom);
+              const id1='#nom_entité'+this.state.id
+              
+              $(id1).html(plainte.nom_entité);
+              const id2='#nom_Categorie'+this.state.id
+              $(id2).html(plainte.nom_entité);
+              const id3='#nom_assigne'+this.state.id
+              $(id3).html(plainte.nom_assigne);
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -314,11 +322,11 @@ class NoResolvedPlaintes extends Component {
                  bgcolor="background.paper" justifyContent='space-between'>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>entité </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.entité}</Box>
+                        <Box style={{textAlign:"center"}}>{this.state.nom_entité}</Box>
                     </Box>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>auteur </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.auteur}</Box>
+                        <Box style={{textAlign:"center"}}>{this.state.nom_auteur}</Box>
                     </Box>
                     <Box  p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black' ,fontWeight:'bold',fontSize:16}}>date de création</Box>
@@ -353,9 +361,9 @@ class NoResolvedPlaintes extends Component {
     }
 
     render(){
-        const assignation = this.state.Users
-        const entité = this.state.entités
-        const categorie = this.state.categoriePlainte
+        const assignation = this.props.Users
+        const entité = this.props.entités
+        const categorie = this.props.categoriePlainte
           const entité_select=[]
           const temp1 = entité.map((option) =>
           entité_select.push({ value: option.id, label: option.name })
@@ -371,7 +379,10 @@ class NoResolvedPlaintes extends Component {
           assignation_select.push({ value: option.id, label: option.user })
            
           );
-        const MyPlaintes = this.state.plaintes/* [
+        const MyPlaintes = this.props.plaintes
+        const test=MyPlaintes.map((entité) =>
+        list_id.push(entité.id))
+        /* [
             {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
             {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
             {id: 3, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
@@ -402,7 +413,7 @@ class NoResolvedPlaintes extends Component {
           
 
           const content = PlaintesNonResolus().map((plainte) =>
-          <tr onClick={
+          <tr id={'tablerow'+plainte.id} onClick={
             ()=>this.setState({
                 id:plainte.id,
                 title:plainte.title,
@@ -412,6 +423,12 @@ class NoResolvedPlaintes extends Component {
                 etat:plainte.state,
                 contenu:plainte.details,
                 reponse:plainte.response,
+                categorie:plainte.Categorie,
+                nom_auteur:plainte.nom_auteur,
+                nom_entité:plainte.nom_entité,
+                nom_Categorie:plainte.nom_Categorie,
+                nom_assigne:plainte.nom_assigne,
+                assignation:plainte.assignation
                 })}>
             <td>
                     <span class="custom-checkbox">
@@ -442,17 +459,25 @@ class NoResolvedPlaintes extends Component {
             </td>
             
             <th scope="row" onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                })} >{plainte.id}</th>
-            <td onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                 })}>{plainte.title}</td>
-            <td onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                 })}>{plainte.entité}</td>
+                    ()=>this.setState({
+                        modalVisible:true,
+                        })} >{plainte.id}</th>
+                    <td id={'title'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.title}</td>
+                    <td  id={'nom_Categorie'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_Categorie}</td>
+                    <td id={'nom_entité'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_entité}</td>
+                    <td id={'nom_assigne'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_assigne}</td>
                 
             <td onClick={
             ()=>this.setState({
@@ -525,7 +550,9 @@ class NoResolvedPlaintes extends Component {
                                   </th>
                                   <th>Indice</th>
                                   <th>Titre</th>
+                                  <th>Categorie</th>
                                   <th>Entité</th>
+                                  <th>Assignation</th>
                                   <th>Date</th> 
                                   <th>Etat</th>
                                   <th>Actions</th>
@@ -585,7 +612,9 @@ class NoResolvedPlaintes extends Component {
                           </th>
                           <th>Indice</th>
                           <th>Titre</th>
+                          <th>Categorie</th>
                           <th>Entité</th>
+                          <th>Assignation</th>
                           <th>Date</th> 
                           <th>Etat</th>
                           <th>Actions</th>

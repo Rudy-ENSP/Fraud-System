@@ -177,20 +177,20 @@ class Navbar extends Component {
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                   <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                    <NavLink exact to="/Acceuil"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
+                    <NavLink exact to="/fraud/home"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
                       
                     </li>
                     <li class="nav-item">
-                    <NavLink to="/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
+                    <NavLink to="/fraud/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
                       
                     </li>
                   
                     <li class="nav-item">
-                    <NavLink to="/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
+                    <NavLink to="/fraud/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
                       
                     </li>
                     <li class="nav-item">
-                    <NavLink to="/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
+                    <NavLink to="/fraud/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
                     
                     </li>
                   </ul>

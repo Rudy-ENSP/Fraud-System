@@ -15,6 +15,7 @@ import  Loader from '../loader'
 import $ from 'jquery'
 
 import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
+
 var liste_id_element_check=[] 
 class ResolvedPlaintes extends Component {
 
@@ -46,52 +47,16 @@ class ResolvedPlaintes extends Component {
             categoriePlainte:[],
             plainte:[],
             Users:[],
+            nom_auteur:'',
+            nom_entité:'',
+            nom_Categorie:'',
+            assignation:'',
+            nom_assigne:''
         }
     }
 
     componentDidMount() {
-		let data={
-              'user':username,
-              'password':password
-          };
-        axios.post('http://localhost:8000/plaintes/resolues/',data)
-          .then(res => {
-            const plaintes = res.data;
-            this.setState({plaintes: plaintes  });
-            console.log(plaintes)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-
-          axios.get('http://localhost:8000/plaintes/listeEntite/')
-          .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
-            console.log('entités', entités)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-
-          axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
-          .then(res => {
-            const categoriePlainte = res.data;
-            this.setState({categoriePlainte: categoriePlainte  });
-            console.log('Categorieplaintes', categoriePlainte)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-          axios.get('http://localhost:8000/plaintes/listeUsers/')
-          .then(res => {
-            const Users = res.data;
-            this.setState({Users: Users  });
-            console.log('Users', Users)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+      
       }
       onChangeReponse = (event) => {
         this.setState({Reponse: event.target.value});
@@ -139,7 +104,8 @@ class ResolvedPlaintes extends Component {
             console.log(res.data);
             if(res.data['status']=='success'){
               alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" supprimé avec succèss" );
-              
+              const id='#tablerow'+this.state.id
+              $(id).remove();
             }
             else{
                 alert('echec de lors de la suppression de la  plaintes')
@@ -162,6 +128,13 @@ class ResolvedPlaintes extends Component {
             console.log(res.data);
             if(res.data['status']=='success'){
               alert( "Plaintes  supprimées avec succèss" );
+              var i=0
+                  while(i<(liste_id_element_check).length){
+                  console.log('#tablerow'+(liste_id_element_check)[i]);
+                  $('#tablerow'+(liste_id_element_check)[i]).remove();
+                  i++
+                  }
+                  liste_id_element_check=[]
               
             }
             else{
@@ -181,7 +154,9 @@ class ResolvedPlaintes extends Component {
               'description': this.state.Description,
               'entité':this.state.Entité,
               'user':username,
-              'password':password
+              'password':password,
+              'Assignation':this.state.Assignation,
+              'nom_assigne':this.state.nom_assigne
           };
           axios.post('http://localhost:8000/plaintes/editer/', plainte)
           .then(res => {
@@ -194,6 +169,16 @@ class ResolvedPlaintes extends Component {
                 Entité: "Collaborateur",
                 Description:'',
               });
+              const id='#title'+this.state.id
+                
+                $(id).html(plainte.Nom);
+                const id1='#nom_entité'+this.state.id
+                
+                $(id1).html(plainte.nom_entité);
+                const id2='#nom_Categorie'+this.state.id
+                $(id2).html(plainte.nom_entité);
+                const id3='#nom_assigne'+this.state.id
+                $(id3).html(plainte.nom_assigne);
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -255,11 +240,11 @@ class ResolvedPlaintes extends Component {
                  bgcolor="background.paper" justifyContent='space-between'>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>entité </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.entité}</Box>
+                        <Box style={{textAlign:"center"}}>{this.state.nom_entité}</Box>
                     </Box>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>auteur </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.auteur}</Box>
+                        <Box style={{textAlign:"center"}}>{this.state.nom_auteur}</Box>
                     </Box>
                     <Box  p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black' ,fontWeight:'bold',fontSize:16}}>date de création</Box>
@@ -290,9 +275,9 @@ class ResolvedPlaintes extends Component {
     }
     
     render(){
-        const assignation = this.state.Users
-        const entité = this.state.entités
-        const categorie = this.state.categoriePlainte
+        const assignation = this.props.Users
+        const entité = this.props.entités
+        const categorie = this.props.categoriePlainte
           const entité_select=[]
           const temp1 = entité.map((option) =>
           entité_select.push({ value: option.id, label: option.name })
@@ -308,7 +293,7 @@ class ResolvedPlaintes extends Component {
           assignation_select.push({ value: option.id, label: option.user })
            
           );
-        const MyPlaintes = this.state.plaintes /*[
+        const MyPlaintes = this.props.plaintes /*[
             {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resoluee',Content:'Nothing'},
             {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
             {id: 3, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
@@ -333,7 +318,7 @@ class ResolvedPlaintes extends Component {
         }
           
          const content = PlainteResolue().map((plainte) =>
-         <tr onClick={
+         <tr id={'tablerow'+plainte.id} onClick={
             ()=>this.setState({
                 id:plainte.id,
                 title:plainte.title,
@@ -343,6 +328,13 @@ class ResolvedPlaintes extends Component {
                 etat:plainte.state,
                 contenu:plainte.details,
                 reponse:plainte.response,
+                categorie:plainte.Categorie,
+                nom_auteur:plainte.nom_auteur,
+                nom_entité:plainte.nom_entité,
+                nom_Categorie:plainte.nom_Categorie,
+                nom_assigne:plainte.nom_assigne,
+                assignation:plainte.assignation,
+
                 })}>
             <td>
                     <span class="custom-checkbox">
@@ -373,18 +365,25 @@ class ResolvedPlaintes extends Component {
             </td>
             
             <th scope="row" onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                })} >{plainte.id}</th>
-            <td onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                 })}>{plainte.title}</td>
-            <td onClick={
-            ()=>this.setState({
-                modalVisible:true,
-                 })}>{plainte.entité}</td>
-                
+                    ()=>this.setState({
+                        modalVisible:true,
+                        })} >{plainte.id}</th>
+                    <td id={'title'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.title}</td>
+                    <td  id={'nom_Categorie'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_Categorie}</td>
+                    <td id={'nom_entité'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_entité}</td>
+                    <td id={'nom_assigne'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_assigne}</td>
             <td onClick={
             ()=>this.setState({
                 modalVisible:true,
@@ -452,7 +451,9 @@ class ResolvedPlaintes extends Component {
                                   </th>
                                   <th>Indice</th>
                                   <th>Titre</th>
+                                  <th>Categorie</th>
                                   <th>Entité</th>
+                                  <th>Assignation</th>
                                   <th>Date</th> 
                                   <th>Etat</th>
                                   <th>Actions</th>
@@ -512,7 +513,9 @@ class ResolvedPlaintes extends Component {
                           </th>
                           <th>Indice</th>
                           <th>Titre</th>
+                          <th>Categorie</th>
                           <th>Entité</th>
+                          <th>Assignation</th>
                           <th>Date</th> 
                           <th>Etat</th>
                           <th>Actions</th>

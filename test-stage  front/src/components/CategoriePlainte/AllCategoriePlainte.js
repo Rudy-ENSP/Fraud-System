@@ -12,8 +12,15 @@ import  Loader from '../loader'
 import Select from 'react-select';
 import $ from 'jquery'
 import {Modal as BModal,Button} from 'react-bootstrap'
+var list_id=[]
+
 var listeCategoriePlainte
 var liste_id_element_check=[] 
+var elementdefaut=[]
+var idCatcurrent
+
+
+
 class AllCategoriePlainte extends Component {
     constructor(props){
         super(props)
@@ -23,36 +30,21 @@ class AllCategoriePlainte extends Component {
           deletemodalVisible:false,
           deletemultimodalVisible:false,
           editmodalVisible:false,
-            categoriePlainte:[],
-            id:'',
-            Nom:'',
-            Adresse:'',
-            entités:[],
-            Entité:'',
-            selectOptions : [],
+          categoriePlainte:[],
+          id:'',
+          Nom:'',
+          Adresse:'',
+          entités:[],
+          Entité:'',
+          selectOptions : [],
+          reload:false,
+          nom_entité:''
         }
     }
 
     componentDidMount() {
-        axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
-          .then(res => {
-            const categoriePlainte = res.data;
-            this.setState({categoriePlainte: categoriePlainte  });
-            console.log('Categorieplaintes', categoriePlainte)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-          axios.get('http://localhost:8000/plaintes/listeEntite/')
-          .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
-            console.log('entités', entités)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-      }
+     
+    }
       onChangeNom = (event) => {
         this.setState({Nom: event.target.value});
         console.log('Nom ',event.target.value)
@@ -78,18 +70,41 @@ class AllCategoriePlainte extends Component {
           axios.post('http://localhost:8000/plaintes/createCategoriePlainte/', newCategoriePlainte)
             .then(res => {console.log(res);
               console.log(res.data);
-              if(res.data['status']==='success'){
+              if(res.data['state']==='success'){
                 alert( "Categorie :" +newCategoriePlainte.Nom +" crée avec succèss" );
                 this.setState ({
                   Nom:'',
                   Entité:'',
                 });
+
+                var max=0
+                var i=0
+             while(i<list_id.length){
+               if(list_id[i]>max){max=list_id[i]}
+               i++
+             }
+             max++
+
+               
+                var id='#'+list_id[0]
+                var td1='<td> <span class="custom-checkbox">'+$(id).html()+'	<label for="checkbox1"></label> </span> </td>'
+                var td4='<td id="name3">'+newCategoriePlainte.Nom+'</td>'
+                var td2='<th id="'+max+'">'+max+'</th>'
+                var td3='<td id="entité3">'+newCategoriePlainte.Entité+'</td>'
+               
+                var td5='<td style="display: flex; justify-content: space-between;"><a class="edit" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path></svg></a><a class="delete" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg></a></td>'
+                var row='<tr>'+td1+td2+td4+td3+td5+'</tr>'
+                $('#myTable > tbody:last-child').append(row);
+
+               
+                
               }
               else{
                   alert('echec de lors de la création de notre entité')
               }
             })
-            
+         
+
       }
       onEditCategoriePlainte=(event)=>{
         event.preventDefault()
@@ -97,6 +112,7 @@ class AllCategoriePlainte extends Component {
             id :this.state.id,  
             Nom : this.state.Nom,
             Entité: this.state.Entité,
+            nom_entité:this.state.nom_entité
           }
          
           axios.post('http://localhost:8000/plaintes/editCategoriePlainte/', newCategoriePlainte)
@@ -108,12 +124,20 @@ class AllCategoriePlainte extends Component {
                   Nom:'',
                   Entité:'',
                 });
+                const id='#name'+this.state.id
+                
+                $(id).html(newCategoriePlainte.Nom);
+                const id1='#entité'+this.state.id
+                
+                $(id1).html(newCategoriePlainte.nom_entité);
+
               }
               else{
                   alert('echec de lors de la mise a jour  de la categorie')
               }
+              
             })
-            
+         this.forceUpdate(()=>{this.setState({reload:true})})    
       }
       onDeleteMultiCategoriePlainte=(event)=>{
         event.preventDefault()
@@ -128,6 +152,13 @@ class AllCategoriePlainte extends Component {
                   Nom:'',
                   Entité:'',
                 });
+                var i=0
+                while(i<(liste_id_element_check).length){
+                  console.log('#tablerow'+(liste_id_element_check)[i]);
+                  $('#tablerow'+(liste_id_element_check)[i]).remove();
+                  i++
+                }
+                liste_id_element_check=[]
               }
               else{
                   alert('echec de lors de la suppression de notre categorie')
@@ -152,16 +183,25 @@ class AllCategoriePlainte extends Component {
                   Nom:'',
                   Entité:'',
                 });
+                const id='#tablerow'+this.state.id
+                $(id).remove();
               }
               else{
                   alert('echec de lors de la suppression de notre categorie')
               }
             })
             
+         
       }
     render(){
 
-      const CategoriePlainte = this.state.categoriePlainte
+      const CategoriePlainte = this.props.categoriePlainte
+      const entité =this.props.entités
+
+      const test=CategoriePlainte.map((entité) =>
+             list_id.push(entité.id))
+             
+             
         /*const CategoriePlainte = [
             {id: 1, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
             {id: 2, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
@@ -178,22 +218,29 @@ class AllCategoriePlainte extends Component {
             {id: 13, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
             {id: 14, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
           ];*/
-          const entité = this.state.entités
+         
           const data=[]
-          const temp = entité.map((option) =>
-          data.push({ value: option.id, label: option.name })
+          
+          const temp = entité.map((option) => { 
+            data.push({ value: option.id, label: option.name })
+        }
+         
            
           );
           
           const content = CategoriePlainte.map((categoriePlainte) =>
             
-                <tr onClick={
-                    ()=>this.setState({
+                <tr id={'tablerow'+categoriePlainte.id} onClick={
+                    ()=>
+                    
+                    this.setState({
                         modalVisible:true,
                         id:categoriePlainte.id,
                         Nom:categoriePlainte.name,                      
-                        Entité:categoriePlainte.entité
+                        Entité:categoriePlainte.entité,
+                        nom_entité:categoriePlainte.nom_entité
                          })}>
+                         
                     <td>
 							<span class="custom-checkbox">
               <input type="checkbox" id={categoriePlainte.id} name="options[]" value="1" onClick={()=>{
@@ -221,19 +268,19 @@ class AllCategoriePlainte extends Component {
 								<label for="checkbox1"></label>
 							</span>
 					</td>
-                    <th scope="row" onClick={
+                    <th id={'indice'+categoriePlainte.id} scope="row" onClick={
                     ()=>this.setState({
                         modalVisible:true,
                       })}>{categoriePlainte.id}</th>
-                    <td onClick={
+                    <td id={'name'+categoriePlainte.id} onClick={
                     ()=>this.setState({
                         modalVisible:true,
                        })}>{categoriePlainte.name}</td>
                    
-                    <td onClick={
+                    <td id={'entité'+categoriePlainte.id} onClick={
                     ()=>this.setState({
                         modalVisible:true,
-                       })}>{categoriePlainte.entité}</td>
+                       })}>{categoriePlainte.nom_entité}</td>
                      <td style={{display:"flex",justifyContent:"space-between"}}>
                      <a  class="edit" data-toggle="modal" onClick={()=>this.setState({editmodalVisible:true})}><FaEdit /></a>
 							<a  class="delete" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><FaTrash/></a>
@@ -253,7 +300,7 @@ class AllCategoriePlainte extends Component {
               if(CategoriePlainte.length <=8 && CategoriePlainte.length>=1){
                 return (
                     <div className="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table className="table table-bordered table-striped table-hover mb-0 ">
+                    <table id="myTable" className="table table-bordered table-striped table-hover mb-0 ">
                         <thead >
                             <th>
                                 <span class="custom-checkbox">
@@ -296,7 +343,7 @@ class AllCategoriePlainte extends Component {
                             <th>Actions</th>
                         </thead>
                         
-                        <tbody>
+                        <tbody id="tableBody">
                             {content}
                         </tbody>
                     </table>
@@ -308,7 +355,7 @@ class AllCategoriePlainte extends Component {
               if(CategoriePlainte.length>8){
                 return (
                     <div className="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table className="table table-bordered table-striped table-hover mb-0 ">
+                    <table id="myTable" className="table table-bordered table-striped table-hover mb-0 ">
                         <thead >
                             <th>
                                 <span class="custom-checkbox">
@@ -352,7 +399,7 @@ class AllCategoriePlainte extends Component {
                 
                         </thead>
                         
-                        <tbody>
+                        <tbody id="tableBody">
                             {content}
                         </tbody>
                     </table>
