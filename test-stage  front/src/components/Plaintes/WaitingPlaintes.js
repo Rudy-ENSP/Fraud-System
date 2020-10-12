@@ -13,6 +13,7 @@ import {MdEdit } from 'react-icons/md';
 import 'bootstrap/dist/css/bootstrap.css';
 import  Loader from '../loader'
 import $ from 'jquery'
+import moment  from 'moment'
 
 import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
 
@@ -27,7 +28,7 @@ class WaitingPlaintes extends Component {
             deletemodalVisible:false,
             deletemultimodalVisible:false,
             editmodalVisible:false,
-            plaintes:[],
+            plainte:[],
             id:'',
             title:'',
             entité:'',
@@ -41,11 +42,11 @@ class WaitingPlaintes extends Component {
             Entité: "Collaborateur",
             Description:'',
             Assignation:'',
-            Categorie:'',
-            entités:[],
-            categoriePlainte:[],
-            plainte:[],
-            Users:[],
+            categorie:'',
+            entités:props.entités,
+            categoriePlainte:props.categoriePlainte,
+            plaintes:props.plaintes,
+            Users:props.Users,
             nom_auteur:'',
             nom_entité:'',
             nom_Categorie:'',
@@ -56,6 +57,11 @@ class WaitingPlaintes extends Component {
 
     componentDidMount() {
 
+      }
+      UNSAFE_componentWillReceiveProps(props) {
+
+        this.setState({entités: props.entités,plaintes:props.plaintes ,categoriePlainte: props.categoriePlainte,Users:props.Users });
+    
       }
       onChangeReponse = (event) => {
         this.setState({Reponse: event.target.value});
@@ -79,7 +85,7 @@ class WaitingPlaintes extends Component {
         console.log('Assignation',event.value)
       }
       onChangeCategorie= (event) => {
-        this.setState({Categorie: event.value});
+        this.setState({categorie: event.value});
         console.log('Categorie',event.value)
       }
       onCancel=()=>{
@@ -120,47 +126,79 @@ class WaitingPlaintes extends Component {
       }
       onSendPlainte=(event)=>{
         event.preventDefault();
-          let newPlainte={
-              'cas' : this.state.Titre,
-              'description': this.state.Description,
-              'state': 'ajoutée',
-              'entité':this.state.Entité,
-              'user':username,
-              'password':password
+          let newplainte={
+            'id':this.state.id,
+            'cas' : this.state.Titre,
+            'description': this.state.Description,
+            'entité':this.state.Entité,
+            'user':username,
+            'password':password,
+            'Assignation':this.state.Assignation,
+            'nom_assigne':this.state.nom_assigne,
+            'nom_entité':this.state.nom_entité,
+            'nom_Categorie':this.state.nom_Categorie,
+            'Categorie':this.state.categorie,
+            'state':'ajoutée'
           };
-          axios.post('http://localhost:8000/plaintes/enregistrer/', newPlainte)
+          axios.post('http://localhost:8000/plaintes/enregistrer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
             if(res.data['state']==='success'){
-              alert( "PLAINTE " +newPlainte.cas.toLocaleUpperCase() +" crée avec succèss" );
+              alert( "PLAINTE " +newplainte.cas.toLocaleUpperCase() +" crée avec succèss" );
               this.setState ({
                 Titre: '',
                 Entité: "Collaborateur",
                 Description:'',
+                Assignation:''
               });
-              var max=0
-              var i=0
-           while(i<list_id.length){
-             if(list_id[i]>max){max=list_id[i]}
-             i++
-           }
-           max++
+
+              var new_name_entité=''
+              const content_entité = this.state.entités.map((entité) => {
+
+                if (entité.id == newplainte.entité) {
+                  new_name_entité=entité.name ;
+                  
+                }
+    
+              })
+              var new_name_categorie=''
+              const content_categorie = this.state.categoriePlainte.map((categorie) => {
+
+                if (categorie.id == newplainte.Categorie) {
+                  new_name_categorie=categorie.name ;
+                  
+                }
+    
+              })
+              var new_name_assignation=''
+              const content_assignation = this.state.Users.map((user) => {
+
+                if (user.id == newplainte.Assignation) {
+                  new_name_assignation=user.user ;
+                  
+                }
+    
+              })
+              /*console.log(new_name_assignation)
+              console.log(this.state.Users)*/
+            
+    
+             this.state.plaintes.push({id: res.data['id'], 
+             "title": newplainte.cas,
+              "nom_entité": new_name_entité,
+              "entité":newplainte.entité,
+              "categorie":newplainte.Categorie,
+              "nom_Categorie":new_name_categorie,
+              "assignation":newplainte.Assignation,
+              "nom_assigne":new_name_assignation,
+              "details":newplainte.description,
+              "nom_auteur":res.data['username'],
+              "state":'waiting',
+              "date_création":moment().format('YYYY-MM-DD hh:mm:ss')
+             })
 
              
-              var id='#'+list_id[0]
-              var td1='<td> <span class="custom-checkbox">'+$(id).html()+'	<label for="checkbox1"></label> </span> </td>'
-              var td3='<td id="name3">'+newPlainte.cas+'</td>'
-              var td2='<th id="'+max+'">'+max+'</th>'
-              var td5='<td id="entité3">'+newPlainte.entité+'</td>'
-              var td4='<td id="cat3">'+newPlainte.Categorie+'</td>'
-              var td7='<td id="date">'+Date.now()+'</td>'
-              var td6='<td id="date">'+newPlainte.Assignation+'</td>'
-              var td8='<td id="date">ajoutée</td>'
-             
-              var td9='<td style="display: flex; justify-content: space-between;"><a class="edit" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path></svg></a><a class="delete" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg></a></td>'
-              var row='<tr>'+td1+td2+td3+td4+td5+td6+td7+td8+td9+'</tr>'
-              $('#myTable > tbody:last-child').append(row);
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -168,24 +206,38 @@ class WaitingPlaintes extends Component {
           })
           .catch(err => console.log(err));
 
-          //
+          
          
       }
       
       onDeletePlainte=(event)=>{
         event.preventDefault();
-          let plainte={
+          let newplainte={
               'id':this.state.id,
               
           };
-          axios.post('http://localhost:8000/plaintes/delete/', plainte)
+          axios.post('http://localhost:8000/plaintes/delete/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
-            if(res.data['status']=='success'){
-              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" supprimé avec succèss" );
-              const id='#tablerow'+this.state.id
-              $(id).remove();
+            if(res.data['state']=='success'){
+              
+
+                var id_remove=0;
+                var i=0
+                
+                const content = this.state.plaintes.map((cas) => {
+
+                  if (cas.id == newplainte.id) {
+                    id_remove=i
+                  }
+                i++
+                })
+                console.log(id_remove)
+                console.log(newplainte.id)
+                this.state.plaintes.splice(id_remove,1)
+
+                alert( "PLAINTE  supprimé avec succèss" );
             }
             else{
                 alert('echec de lors de la suppression de la  plaintes')
@@ -207,15 +259,33 @@ class WaitingPlaintes extends Component {
             console.log(res);
             console.log(res.data);
             if(res.data['status']=='success'){
-              alert( "Plaintes  supprimées avec succèss" );
-              var i=0
-                  while(i<(liste_id_element_check).length){
-                  console.log('#tablerow'+(liste_id_element_check)[i]);
-                  $('#tablerow'+(liste_id_element_check)[i]).remove();
-                  i++
-                  }
-                  liste_id_element_check=[]
               
+              var i = 0
+                while (i < (liste_id_element_check).length) {
+                  //console.log('#tablerow' + (liste_id_element_check)[i]);
+                  //$('#tablerow' + (liste_id_element_check)[i]).remove();
+                      var id_remove=0;
+                      var p=0
+                      const content = this.state.plaintes.map((plainte) => {
+      
+                        if ((liste_id_element_check).includes(plainte.id) ) {
+                          id_remove=p
+                        }
+                      p++
+                      })
+                      this.state.plaintes.splice(id_remove,1)
+                  i++
+                }
+                var checkbox = $('table tbody input[type="checkbox"]');
+                            checkbox.each(function () {
+                                this.checked = false;
+                                var id = this.getAttribute('id');
+                                liste_id_element_check = []
+      
+                              });
+                      
+                liste_id_element_check = []
+                alert( "Plaintes  supprimées avec succèss" );
             }
             else{
                 alert('echec de lors de la suppression des  plaintes')
@@ -228,7 +298,7 @@ class WaitingPlaintes extends Component {
       }
       onEditPlainte=(event)=>{
         event.preventDefault();
-          let plainte={
+          let newplainte={
               'id':this.state.id,
               'cas' : this.state.Titre,
               'description': this.state.Description,
@@ -236,29 +306,68 @@ class WaitingPlaintes extends Component {
               'user':username,
               'password':password,
               'Assignation':this.state.Assignation,
-              'nom_assigne':this.state.nom_assigne
+              'nom_assigne':this.state.nom_assigne,
+              'nom_entité':this.state.nom_entité,
+              'nom_Categorie':this.state.nom_Categorie,
+              'categorie':this.state.categorie,
           };
-          axios.post('http://localhost:8000/plaintes/editer/', plainte)
+          axios.post('http://localhost:8000/plaintes/editer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
             if(res.data['state']==='success'){
-              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
+             
               this.setState ({
                 Titre: '',
                 Entité: "Collaborateur",
                 Description:'',
+                Assignation:''
               });
-              const id='#title'+this.state.id
-                
-                $(id).html(plainte.Nom);
-                const id1='#nom_entité'+this.state.id
-                
-                $(id1).html(plainte.nom_entité);
-                const id2='#nom_Categorie'+this.state.id
-                $(id2).html(plainte.nom_entité);
-                const id3='#nom_assigne'+this.state.id
-                $(id3).html(plainte.nom_assigne);
+               
+                var new_name_entité=''
+                const content_entité = this.state.entités.map((entité) => {
+
+                  if (entité.id == newplainte.entité) {
+                    new_name_entité=entité.name ;
+                    
+                  }
+      
+                })
+                var new_name_categorie=''
+                const content_categorie = this.state.categoriePlainte.map((categorie) => {
+
+                  if (categorie.id == newplainte.categorie) {
+                    new_name_categorie=categorie.name ;
+                    
+                  }
+      
+                })
+                var new_name_assignation=''
+                const content_assignation = this.state.Users.map((user) => {
+
+                  if (user.id == newplainte.Assignation) {
+                    new_name_assignation=user.user ;
+                    
+                  }
+      
+                })
+                /*console.log(new_name_assignation)
+                console.log(this.state.Users)*/
+                const content = this.state.plaintes.map((plainte) => {
+
+                  if (plainte.id == newplainte.id) {
+                    plainte.title = newplainte.cas;
+                    plainte.entité = newplainte.entité
+                    plainte.nom_entité=new_name_entité
+                    plainte.categorie = newplainte.categorie
+                    plainte.nom_Categorie=new_name_categorie
+                    plainte.assignation=newplainte.Assignation
+                    plainte.nom_assigne=new_name_assignation  
+                    plainte.details=newplainte.description
+                  }
+      
+                })
+                alert( "PLAINTE " +newplainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -266,7 +375,7 @@ class WaitingPlaintes extends Component {
           })
           .catch(err => console.log(err));
 
-          //
+          
          
       }
     ShowModal(){
@@ -358,9 +467,9 @@ class WaitingPlaintes extends Component {
     }
 
     render(){
-        const assignation = this.props.Users
-        const entité = this.props.entités
-        const categorie = this.props.categoriePlainte
+        const assignation = this.state.Users
+        const entité = this.state.entités
+        const categorie = this.state.categoriePlainte
           const entité_select=[]
           const temp1 = entité.map((option) =>
           entité_select.push({ value: option.id, label: option.name })
@@ -376,7 +485,7 @@ class WaitingPlaintes extends Component {
           assignation_select.push({ value: option.id, label: option.user })
            
           );
-        const MyPlaintes = this.props.plaintes
+        const MyPlaintes = this.state.plaintes
         const test=MyPlaintes.map((entité) =>
         list_id.push(entité.id))
         /* [
@@ -413,19 +522,20 @@ class WaitingPlaintes extends Component {
           <tr id={'tablerow'+plainte.id} onClick={
             ()=>this.setState({
                 id:plainte.id,
-                title:plainte.title,
-                entité:plainte.entité,
-                auteur:plainte.auteur,
-                date:plainte.date_création,
-                etat:plainte.state,
-                contenu:plainte.details,
-                reponse:plainte.response,
-                categorie:plainte.Categorie,
-                nom_auteur:plainte.nom_auteur,
-                nom_entité:plainte.nom_entité,
-                nom_Categorie:plainte.nom_Categorie,
-                nom_assigne:plainte.nom_assigne,
-                assignation:plainte.assignation
+                        title:plainte.title,
+                        entité:plainte.entité,
+                        auteur:plainte.auteur,
+                        date:plainte.date_création,
+                        etat:plainte.state,
+                        contenu:plainte.details,
+                        reponse:plainte.response,
+                        categorie:plainte.Categorie,
+                        assignation:plainte.assignation,
+                        nom_auteur:plainte.nom_auteur,
+                        nom_entité:plainte.nom_entité,
+                        nom_Categorie:plainte.nom_Categorie,
+                        nom_assigne:plainte.nom_assigne,
+                        details:plainte.details
                 })}>
             <td>
                     <span class="custom-checkbox">

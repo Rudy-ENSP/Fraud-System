@@ -14,25 +14,27 @@ class EntitéSideBar extends Component {
           
             
             reload:false,
-            entités:[],
+            entités:  [],
             
         }
+       
+        axios.get('http://localhost:8000/plaintes/listeEntite/')
+        .then(res => {
+          const entités = res.data;
+          this.setState({entités: entités  });
+          console.log('entités', entités)
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        console.log('entités_Constructeur')
     }
     componentDidMount() {
-       
-          axios.get('http://localhost:8000/plaintes/listeEntite/')
-          .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
-            console.log('entités', entités)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        
+         
       }
     callbackParent=(reload)=>{
-        this.setState({reload:reload})
-        this.setState({state:this.state})
+        this.setState({reload:reload, state:this.state})
         this.forceUpdate()
         console.log({'reload':reload})
     }

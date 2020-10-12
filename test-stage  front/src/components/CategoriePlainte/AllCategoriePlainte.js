@@ -30,11 +30,11 @@ class AllCategoriePlainte extends Component {
           deletemodalVisible:false,
           deletemultimodalVisible:false,
           editmodalVisible:false,
-          categoriePlainte:[],
+          categoriePlainte:props.categoriePlainte,
           id:'',
           Nom:'',
           Adresse:'',
-          entités:[],
+          entités:props.entités,
           Entité:'',
           selectOptions : [],
           reload:false,
@@ -44,6 +44,11 @@ class AllCategoriePlainte extends Component {
 
     componentDidMount() {
      
+    }
+    UNSAFE_componentWillReceiveProps(props) {
+
+      this.setState({ categoriePlainte: props.categoriePlainte,entités:props.entités })
+  
     }
       onChangeNom = (event) => {
         this.setState({Nom: event.target.value});
@@ -65,11 +70,12 @@ class AllCategoriePlainte extends Component {
           let newCategoriePlainte={
               Nom : this.state.Nom,
               Entité: this.state.Entité,
+              nom_entité:this.state.nom_entité
           }
          
           axios.post('http://localhost:8000/plaintes/createCategoriePlainte/', newCategoriePlainte)
             .then(res => {console.log(res);
-              console.log(res.data);
+              console.log(res.id);
               if(res.data['state']==='success'){
                 alert( "Categorie :" +newCategoriePlainte.Nom +" crée avec succèss" );
                 this.setState ({
@@ -77,24 +83,23 @@ class AllCategoriePlainte extends Component {
                   Entité:'',
                 });
 
-                var max=0
-                var i=0
-             while(i<list_id.length){
-               if(list_id[i]>max){max=list_id[i]}
-               i++
-             }
-             max++
+                
+
+             var new_name=''
+                const content_entité = this.state.entités.map((entité) => {
+
+                  if (entité.id == newCategoriePlainte.Entité) {
+                    new_name=entité.name ;
+                    
+                  }
+      
+                })
+
+             
+             this.state.categoriePlainte.push({ id: res.data['id'], "entité": newCategoriePlainte.Entité, "nom_entité": new_name,"name":newCategoriePlainte.Nom })
 
                
-                var id='#'+list_id[0]
-                var td1='<td> <span class="custom-checkbox">'+$(id).html()+'	<label for="checkbox1"></label> </span> </td>'
-                var td4='<td id="name3">'+newCategoriePlainte.Nom+'</td>'
-                var td2='<th id="'+max+'">'+max+'</th>'
-                var td3='<td id="entité3">'+newCategoriePlainte.Entité+'</td>'
-               
-                var td5='<td style="display: flex; justify-content: space-between;"><a class="edit" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 576 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M402.6 83.2l90.2 90.2c3.8 3.8 3.8 10 0 13.8L274.4 405.6l-92.8 10.3c-12.4 1.4-22.9-9.1-21.5-21.5l10.3-92.8L388.8 83.2c3.8-3.8 10-3.8 13.8 0zm162-22.9l-48.8-48.8c-15.2-15.2-39.9-15.2-55.2 0l-35.4 35.4c-3.8 3.8-3.8 10 0 13.8l90.2 90.2c3.8 3.8 10 3.8 13.8 0l35.4-35.4c15.2-15.3 15.2-40 0-55.2zM384 346.2V448H64V128h229.8c3.2 0 6.2-1.3 8.5-3.5l40-40c7.6-7.6 2.2-20.5-8.5-20.5H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V306.2c0-10.7-12.9-16-20.5-8.5l-40 40c-2.2 2.3-3.5 5.3-3.5 8.5z"></path></svg></a><a class="delete" data-toggle="modal"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M432 32H312l-9.4-18.7A24 24 0 0 0 281.1 0H166.8a23.72 23.72 0 0 0-21.4 13.3L136 32H16A16 16 0 0 0 0 48v32a16 16 0 0 0 16 16h416a16 16 0 0 0 16-16V48a16 16 0 0 0-16-16zM53.2 467a48 48 0 0 0 47.9 45h245.8a48 48 0 0 0 47.9-45L416 128H32z"></path></svg></a></td>'
-                var row='<tr>'+td1+td2+td4+td3+td5+'</tr>'
-                $('#myTable > tbody:last-child').append(row);
+              
 
                
                 
@@ -124,12 +129,26 @@ class AllCategoriePlainte extends Component {
                   Nom:'',
                   Entité:'',
                 });
-                const id='#name'+this.state.id
                 
-                $(id).html(newCategoriePlainte.Nom);
-                const id1='#entité'+this.state.id
-                
-                $(id1).html(newCategoriePlainte.nom_entité);
+                var new_name=''
+                const content_entité = this.state.entités.map((entité) => {
+
+                  if (entité.id == newCategoriePlainte.Entité) {
+                    new_name=entité.name ;
+                    
+                  }
+      
+                })
+                const content = this.state.categoriePlainte.map((categorie) => {
+
+                  if (categorie.id == newCategoriePlainte.id) {
+                    categorie.name = newCategoriePlainte.Nom;
+                    categorie.entité = newCategoriePlainte.entité
+                    categorie.nom_entité=new_name
+                   
+                  }
+      
+                })
 
               }
               else{
@@ -137,7 +156,7 @@ class AllCategoriePlainte extends Component {
               }
               
             })
-         this.forceUpdate(()=>{this.setState({reload:true})})    
+             
       }
       onDeleteMultiCategoriePlainte=(event)=>{
         event.preventDefault()
@@ -147,18 +166,37 @@ class AllCategoriePlainte extends Component {
             .then(res => {console.log(res);
               console.log(res.data);
               if(res.data['status']==='success'){
-                alert( "Categories  supprimées avec succèss" );
+               
                 this.setState ({
                   Nom:'',
                   Entité:'',
                 });
-                var i=0
-                while(i<(liste_id_element_check).length){
-                  console.log('#tablerow'+(liste_id_element_check)[i]);
-                  $('#tablerow'+(liste_id_element_check)[i]).remove();
+                var i = 0
+                while (i < (liste_id_element_check).length) {
+                  //console.log('#tablerow' + (liste_id_element_check)[i]);
+                  //$('#tablerow' + (liste_id_element_check)[i]).remove();
+                      var id_remove=0;
+                      var p=0
+                      const content = this.state.categoriePlainte.map((categoriePlainte) => {
+      
+                        if ((liste_id_element_check).includes(categoriePlainte.id) ) {
+                          id_remove=p
+                        }
+                      p++
+                      })
+                      this.state.categoriePlainte.splice(id_remove,1)
                   i++
                 }
-                liste_id_element_check=[]
+                var checkbox = $('table tbody input[type="checkbox"]');
+                            checkbox.each(function () {
+                                this.checked = false;
+                                var id = this.getAttribute('id');
+                                liste_id_element_check = []
+      
+                              });
+                      
+                liste_id_element_check = []
+                alert( "Categories  supprimées avec succèss" );
               }
               else{
                   alert('echec de lors de la suppression de notre categorie')
@@ -183,8 +221,18 @@ class AllCategoriePlainte extends Component {
                   Nom:'',
                   Entité:'',
                 });
-                const id='#tablerow'+this.state.id
-                $(id).remove();
+               
+                var id_remove=0;
+                var i=0
+                const content = this.state.categoriePlainte.map((categorie) => {
+
+                  if (categorie.id == newCategoriePlainte.id) {
+                    id_remove=i
+                  }
+                i++
+                })
+                this.state.categoriePlainte.splice(id_remove,1)
+
               }
               else{
                   alert('echec de lors de la suppression de notre categorie')
@@ -195,8 +243,8 @@ class AllCategoriePlainte extends Component {
       }
     render(){
 
-      const CategoriePlainte = this.props.categoriePlainte
-      const entité =this.props.entités
+      const CategoriePlainte = this.state.categoriePlainte
+      const entité =this.state.entités
 
       const test=CategoriePlainte.map((entité) =>
              list_id.push(entité.id))

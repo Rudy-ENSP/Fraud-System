@@ -52,7 +52,7 @@ def createEntité(request):
     data={'state':"success"}
     #echec={'state':"echec"}
     entité.save()
-    return JsonResponse(data)
+    return JsonResponse({'id':entité.id,'state':"success"})
 
 @api_view(['POST'])
 def deleteEntité(request):
@@ -98,7 +98,7 @@ def createCategoriePlainte(request):
     data={'state':"success"}
     #echec={'state':"echec"}
     categoriePlainte.save()
-    return JsonResponse(data)
+    return JsonResponse({'id':categoriePlainte.id,'state':"success"})
 
 @api_view(['POST'])
 def deleteCategoriePlainte(request):
@@ -145,7 +145,7 @@ def listeCategoriePlainte(request):
 def delete(request):
     plainte=get_object_or_404(Plainte, id = request.data['id'])
     plainte.delete()
-    data={'status':'success'}
+    data={'state':'success'}
     return JsonResponse(data)
 
 @api_view(['POST'])
@@ -190,7 +190,7 @@ def enregistrer(request):
     )
     data={'state':"success"}
     plainte.save()
-    return JsonResponse(data)
+    return JsonResponse({'id':plainte.id,'state':"success",'username':request.data['user']})
 
 @api_view(['POST'])
 def resoudre(request):
@@ -239,7 +239,8 @@ def getResolues(request):
                                 'title':plainte.title,
                                 'state':plainte.state,
                                 'assignation':(plainte.assignation).id,
-                                'nom_assigne':name
+                                'nom_assigne':name,
+                                'username':request.data['user']
                                 })
         return JsonResponse(plaintes, safe=False)
     return JsonResponse(data)
@@ -273,7 +274,8 @@ def getWaiting(request):
                                 'title':plainte.title,
                                 'state':plainte.state,
                                 'assignation':(plainte.assignation).id,
-                                'nom_assigne':name
+                                'nom_assigne':name,
+                                'username':request.data['user']
                                 })
                                 
         return JsonResponse(plaintes, safe=False)
@@ -308,7 +310,8 @@ def getNonResolues(request):
                                 'title':plainte.title,
                                 'state':plainte.state,
                                 'assignation':(plainte.assignation).id,
-                                'nom_assigne':name
+                                'nom_assigne':name,
+                                'username':request.data['user']
                                 })
                                 
         return JsonResponse(plaintes, safe=False)
@@ -352,7 +355,8 @@ def listePlainte(request):
                                 'title':plainte.title,
                                 'state':plainte.state,
                                 'assignation':(plainte.assignation).id,
-                                'nom_assigne':name
+                                'nom_assigne':name,
+                                'username':request.data['user']
                                 })
                                 
         return JsonResponse(plaintes, safe=False)

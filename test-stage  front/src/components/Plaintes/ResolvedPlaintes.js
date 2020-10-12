@@ -27,7 +27,7 @@ class ResolvedPlaintes extends Component {
             deletemodalVisible:false,
             deletemultimodalVisible:false,
             editmodalVisible:false,
-            plaintes:[],
+            plainte:[],
             id:'',
             title:'',
             entité:'',
@@ -42,11 +42,11 @@ class ResolvedPlaintes extends Component {
             Entité: "Collaborateur",
             Description:'',
             Assignation:'',
-            Categorie:'',
-            entités:[],
-            categoriePlainte:[],
-            plainte:[],
-            Users:[],
+            categorie:'',
+            entités:props.entités,
+            categoriePlainte:props.categoriePlainte,
+            plaintes:props.plaintes,
+            Users:props.Users,
             nom_auteur:'',
             nom_entité:'',
             nom_Categorie:'',
@@ -57,6 +57,11 @@ class ResolvedPlaintes extends Component {
 
     componentDidMount() {
       
+      }
+    UNSAFE_componentWillReceiveProps(props) {
+
+        this.setState({entités: props.entités,plaintes:props.plaintes ,categoriePlainte: props.categoriePlainte,Users:props.Users });
+    
       }
       onChangeReponse = (event) => {
         this.setState({Reponse: event.target.value});
@@ -79,7 +84,7 @@ class ResolvedPlaintes extends Component {
         console.log('Assignation',event.value)
       }
       onChangeCategorie= (event) => {
-        this.setState({Categorie: event.value});
+        this.setState({categorie: event.value});
         console.log('Categorie',event.value)
       }
       onCancel=()=>{
@@ -94,18 +99,32 @@ class ResolvedPlaintes extends Component {
       }
       onDeletePlainte=(event)=>{
         event.preventDefault();
-          let plainte={
+          let newplainte={
               'id':this.state.id,
               
           };
-          axios.post('http://localhost:8000/plaintes/delete/', plainte)
+          axios.post('http://localhost:8000/plaintes/delete/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
-            if(res.data['status']=='success'){
-              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" supprimé avec succèss" );
-              const id='#tablerow'+this.state.id
-              $(id).remove();
+            if(res.data['state']=='success'){
+              
+
+                var id_remove=0;
+                var i=0
+                
+                const content = this.state.plaintes.map((cas) => {
+
+                  if (cas.id == newplainte.id) {
+                    id_remove=i
+                  }
+                i++
+                })
+                console.log(id_remove)
+                console.log(newplainte.id)
+                this.state.plaintes.splice(id_remove,1)
+
+                alert( "PLAINTE  supprimé avec succèss" );
             }
             else{
                 alert('echec de lors de la suppression de la  plaintes')
@@ -127,15 +146,33 @@ class ResolvedPlaintes extends Component {
             console.log(res);
             console.log(res.data);
             if(res.data['status']=='success'){
-              alert( "Plaintes  supprimées avec succèss" );
-              var i=0
-                  while(i<(liste_id_element_check).length){
-                  console.log('#tablerow'+(liste_id_element_check)[i]);
-                  $('#tablerow'+(liste_id_element_check)[i]).remove();
-                  i++
-                  }
-                  liste_id_element_check=[]
               
+              var i = 0
+                while (i < (liste_id_element_check).length) {
+                  //console.log('#tablerow' + (liste_id_element_check)[i]);
+                  //$('#tablerow' + (liste_id_element_check)[i]).remove();
+                      var id_remove=0;
+                      var p=0
+                      const content = this.state.plaintes.map((plainte) => {
+      
+                        if ((liste_id_element_check).includes(plainte.id) ) {
+                          id_remove=p
+                        }
+                      p++
+                      })
+                      this.state.plaintes.splice(id_remove,1)
+                  i++
+                }
+                var checkbox = $('table tbody input[type="checkbox"]');
+                            checkbox.each(function () {
+                                this.checked = false;
+                                var id = this.getAttribute('id');
+                                liste_id_element_check = []
+      
+                              });
+                      
+                liste_id_element_check = []
+                alert( "Plaintes  supprimées avec succèss" );
             }
             else{
                 alert('echec de lors de la suppression des  plaintes')
@@ -148,7 +185,7 @@ class ResolvedPlaintes extends Component {
       }
       onEditPlainte=(event)=>{
         event.preventDefault();
-          let plainte={
+          let newplainte={
               'id':this.state.id,
               'cas' : this.state.Titre,
               'description': this.state.Description,
@@ -156,20 +193,24 @@ class ResolvedPlaintes extends Component {
               'user':username,
               'password':password,
               'Assignation':this.state.Assignation,
-              'nom_assigne':this.state.nom_assigne
+              'nom_assigne':this.state.nom_assigne,
+              'nom_entité':this.state.nom_entité,
+              'nom_Categorie':this.state.nom_Categorie,
+              'categorie':this.state.categorie,
           };
-          axios.post('http://localhost:8000/plaintes/editer/', plainte)
+          axios.post('http://localhost:8000/plaintes/editer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
             if(res.data['state']==='success'){
-              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
+             
               this.setState ({
                 Titre: '',
                 Entité: "Collaborateur",
                 Description:'',
+                Assignation:''
               });
-              const id='#title'+this.state.id
+               /* const id='#title'+this.state.id
                 
                 $(id).html(plainte.Nom);
                 const id1='#nom_entité'+this.state.id
@@ -178,7 +219,51 @@ class ResolvedPlaintes extends Component {
                 const id2='#nom_Categorie'+this.state.id
                 $(id2).html(plainte.nom_entité);
                 const id3='#nom_assigne'+this.state.id
-                $(id3).html(plainte.nom_assigne);
+                $(id3).html(plainte.nom_assigne);*/
+                var new_name_entité=''
+                const content_entité = this.state.entités.map((entité) => {
+
+                  if (entité.id == newplainte.entité) {
+                    new_name_entité=entité.name ;
+                    
+                  }
+      
+                })
+                var new_name_categorie=''
+                const content_categorie = this.state.categoriePlainte.map((categorie) => {
+
+                  if (categorie.id == newplainte.categorie) {
+                    new_name_categorie=categorie.name ;
+                    
+                  }
+      
+                })
+                var new_name_assignation=''
+                const content_assignation = this.state.Users.map((user) => {
+
+                  if (user.id == newplainte.Assignation) {
+                    new_name_assignation=user.user ;
+                    
+                  }
+      
+                })
+                /*console.log(new_name_assignation)
+                console.log(this.state.Users)*/
+                const content = this.state.plaintes.map((plainte) => {
+
+                  if (plainte.id == newplainte.id) {
+                    plainte.title = newplainte.cas;
+                    plainte.entité = newplainte.entité
+                    plainte.nom_entité=new_name_entité
+                    plainte.categorie = newplainte.categorie
+                    plainte.nom_Categorie=new_name_categorie
+                    plainte.assignation=newplainte.Assignation
+                    plainte.nom_assigne=new_name_assignation  
+                    plainte.details=newplainte.description
+                  }
+      
+                })
+                alert( "PLAINTE " +newplainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -186,7 +271,7 @@ class ResolvedPlaintes extends Component {
           })
           .catch(err => console.log(err));
 
-          //
+          
          
       }
     ShowModal(){
@@ -275,9 +360,9 @@ class ResolvedPlaintes extends Component {
     }
     
     render(){
-        const assignation = this.props.Users
-        const entité = this.props.entités
-        const categorie = this.props.categoriePlainte
+        const assignation = this.state.Users
+        const entité = this.state.entités
+        const categorie = this.state.categoriePlainte
           const entité_select=[]
           const temp1 = entité.map((option) =>
           entité_select.push({ value: option.id, label: option.name })
@@ -293,7 +378,7 @@ class ResolvedPlaintes extends Component {
           assignation_select.push({ value: option.id, label: option.user })
            
           );
-        const MyPlaintes = this.props.plaintes /*[
+        const MyPlaintes = this.state.plaintes /*[
             {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resoluee',Content:'Nothing'},
             {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'En attente',Content:'Nothing'},
             {id: 3, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'rudy',Date:'12/05/2020',Etat:'resolue',Content:'Nothing'},
@@ -321,19 +406,20 @@ class ResolvedPlaintes extends Component {
          <tr id={'tablerow'+plainte.id} onClick={
             ()=>this.setState({
                 id:plainte.id,
-                title:plainte.title,
-                entité:plainte.entité,
-                auteur:plainte.auteur,
-                date:plainte.date_création,
-                etat:plainte.state,
-                contenu:plainte.details,
-                reponse:plainte.response,
-                categorie:plainte.Categorie,
-                nom_auteur:plainte.nom_auteur,
-                nom_entité:plainte.nom_entité,
-                nom_Categorie:plainte.nom_Categorie,
-                nom_assigne:plainte.nom_assigne,
-                assignation:plainte.assignation,
+                        title:plainte.title,
+                        entité:plainte.entité,
+                        auteur:plainte.auteur,
+                        date:plainte.date_création,
+                        etat:plainte.state,
+                        contenu:plainte.details,
+                        reponse:plainte.response,
+                        categorie:plainte.Categorie,
+                        assignation:plainte.assignation,
+                        nom_auteur:plainte.nom_auteur,
+                        nom_entité:plainte.nom_entité,
+                        nom_Categorie:plainte.nom_Categorie,
+                        nom_assigne:plainte.nom_assigne,
+                        details:plainte.details
 
                 })}>
             <td>
