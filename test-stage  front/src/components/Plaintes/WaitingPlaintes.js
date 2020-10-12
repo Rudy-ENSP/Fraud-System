@@ -51,7 +51,8 @@ class WaitingPlaintes extends Component {
             nom_entité:'',
             nom_Categorie:'',
             assignation:'',
-            nom_assigne:''
+            nom_assigne:'',
+            SearchTerm:''
         }
     }
 
@@ -63,6 +64,26 @@ class WaitingPlaintes extends Component {
         this.setState({entités: props.entités,plaintes:props.plaintes ,categoriePlainte: props.categoriePlainte,Users:props.Users });
     
       }
+      onEditSearchTerm=(e)=>{
+        this.setState({SearchTerm:e.target.value})
+       }
+       dynamicSearch=()=>{
+           if (this.state.SearchTerm==''){
+             return this.state.plaintes
+           }
+           else{
+             return this.state.plaintes.filter((plainte) => plainte.title.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.nom_assigne.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.nom_entité.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.nom_Categorie.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.state.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.date_création.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.details.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+             plainte.id.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())
+             )
+           }
+           
+       }
       onChangeReponse = (event) => {
         this.setState({Reponse: event.target.value});
         console.log('Reponse ',event.target.value)
@@ -138,7 +159,8 @@ class WaitingPlaintes extends Component {
             'nom_entité':this.state.nom_entité,
             'nom_Categorie':this.state.nom_Categorie,
             'Categorie':this.state.categorie,
-            'state':'ajoutée'
+            'state':'ajoutée',
+            "date_création":moment().format('YYYY-MM-DD hh:mm:ss')
           };
           axios.post('http://localhost:8000/plaintes/enregistrer/', newplainte)
           .then(res => {
@@ -180,8 +202,7 @@ class WaitingPlaintes extends Component {
                 }
     
               })
-              /*console.log(new_name_assignation)
-              console.log(this.state.Users)*/
+              
             
     
              this.state.plaintes.push({id: res.data['id'], 
@@ -485,25 +506,10 @@ class WaitingPlaintes extends Component {
           assignation_select.push({ value: option.id, label: option.user })
            
           );
-        const MyPlaintes = this.state.plaintes
+        const MyPlaintes = this.dynamicSearch()
         const test=MyPlaintes.map((entité) =>
         list_id.push(entité.id))
-        /* [
-            {id: 1, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
-            {id: 2, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 3, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
-            {id: 4, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 5, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
-            {id: 6, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 7, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 8, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 9, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
-            {id: 10, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 11, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 12, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'En attente',Content:'Rien'},
-            {id: 13, title: 'Bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
-            {id: 14, title: 'bonjour, monde', Entité: 'aide et support',Auteur:'Rudy',Date:'12/05/2020',Etat:'resolu',Content:'Rien'},
-          ];*/
+       
 
 
         function PlaintesWaiting(){
@@ -589,7 +595,7 @@ class WaitingPlaintes extends Component {
             <td onClick={
             ()=>this.setState({
                 modalVisible:true,
-                 })}>{plainte.date_création}</td>
+                 })}>{moment().format(plainte.date_création,'YYYY-MM-DDTHH:mm:ss',true)}</td>
             <td onClick={
             ()=>this.setState({
                 modalVisible:true,
@@ -748,6 +754,7 @@ class WaitingPlaintes extends Component {
                                                     <h2>Gestion de <b>Plaintes</b></h2>
                                                 </div>
                                                 <div class="col-sm-6">
+                                                <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
                                                 <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><i ><FaPlusCircle /></i> <span>Add Plainte</span></button>
                                                         <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Delete</span></button>
                                                     </div>
@@ -982,126 +989,6 @@ class WaitingPlaintes extends Component {
                     </form>    
         </BModal>
 
-
-<div id="addEmployeeModal" class="modal fade">
-<div class="modal-dialog">
-    <div class="modal-content">
-       <form onSubmit={this.onSendPlainte} >
-            <div class="modal-header">						
-                <h4 class="modal-title">Ajouter Plainte</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            </div>
-            <div class="modal-body">					
-                <div class="form-group">
-                <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-                    <input type='text' className ="form-control" name='Titre'
-               onChange={this.onChangeTitre} required />
-                </div>
-                <div class="form-group">
-                    <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-                    <select value={this.state.value} className ="form-control" 
-                              onChange={this.onChangeCategorie} required>
-                        <option value="Web-Defacement">Web-Defacement</option>
-                        <option value="Spam">Spam</option>
-                        <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                        <option value="FleeceWare">FleeceWare</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-                    <select value={this.state.value} className ="form-control" 
-                      onChange={this.onChangeEntité} required>
-                        <option value="CIRT">Equipe Aide</option>
-                        <option value="Entité 2">Direction du CIRT</option>
-                        <option value="Entité 3">Reseau et Systeme</option>
-                        <option value="Entité 4">Entité 4</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                          onChange={this.onChangeDescription} required/>
-                </div>					
-            </div>
-            <div class="modal-footer">
-                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-                <input type="submit" class="btn btn-success" value="Add"  />
-            </div>
-        </form>
-    </div>
-</div>
-</div>
-
-<div id="editEmployeeModal" class="modal fade">
-<div class="modal-dialog">
-    <div class="modal-content">
-    <form onSubmit={this.onEditPlainte} >
-            <div class="modal-header">						
-                <h4 class="modal-title">Editer Plainte</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            </div>
-            <div class="modal-body">					
-                <div class="form-group">
-                <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-                    <input type='text' className ="form-control" name='Titre'
-               onChange={this.onChangeTitre} required />
-                </div>
-                <div class="form-group">
-                    <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-                    <select value={this.state.value} className ="form-control" 
-                              onChange={this.onChangeCategorie} required>
-                        <option value="Web-Defacement">Web-Defacement</option>
-                        <option value="Spam">Spam</option>
-                        <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                        <option value="FleeceWare">FleeceWare</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-                    <select value={this.state.value} className ="form-control" 
-                      onChange={this.onChangeEntité} required>
-                        <option value="CIRT">Equipe Aide</option>
-                        <option value="Entité 2">Direction du CIRT</option>
-                        <option value="Entité 3">Reseau et Systeme</option>
-                        <option value="Entité 4">Entité 4</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                          onChange={this.onChangeDescription} required/>
-                </div>					
-            </div>
-            <div class="modal-footer">
-                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-                <input type="submit" class="btn btn-success" value="Save" />
-            </div>
-        </form>
-    </div>
-</div>
-</div>
-
-
-<div id="deleteEmployeeModal" class="modal fade">
-<div class="modal-dialog">
-    <div class="modal-content">
-        <form onSubmit={this.onDeletePlainte}>
-            <div class="modal-header">						
-                <h4 class="modal-title">Delete Plainte</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            </div>
-            <div class="modal-body">					
-                <p>Are you sure you want to delete this Records?</p>
-                <p class="text-warning"><small>This action cannot be undone.</small></p>
-            </div>
-            <div class="modal-footer">
-                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-                <input type="submit" class="btn btn-danger" value="Delete"/>
-            </div>
-        </form>
-    </div>
-</div>
-</div>
         </body>
     );
 }

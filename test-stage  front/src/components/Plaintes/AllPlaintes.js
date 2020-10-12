@@ -53,7 +53,8 @@ class AllPlaintes extends Component {
             nom_entité:'',
             nom_Categorie:'',
             assignation:'',
-            nom_assigne:''
+            nom_assigne:'',
+            SearchTerm:''
             
         }
     }
@@ -68,6 +69,26 @@ class AllPlaintes extends Component {
 
         this.setState({entités: props.entités,plainte:props.plainte ,categoriePlainte: props.categoriePlainte,Users:props.Users });
     
+      }
+      onEditSearchTerm=(e)=>{
+       this.setState({SearchTerm:e.target.value})
+      }
+      dynamicSearch=()=>{
+          if (this.state.SearchTerm==''){
+            return this.state.plainte
+          }
+          else{
+            return this.state.plainte.filter((plainte) => plainte.title.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.nom_assigne.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.nom_entité.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.nom_Categorie.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.state.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.date_création.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.details.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.id.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())
+            )
+          }
+          
       }
       onChangeTitre = (event) => {
         this.setState({Titre: event.target.value});
@@ -153,8 +174,7 @@ class AllPlaintes extends Component {
                 }
     
               })
-              /*console.log(new_name_assignation)
-              console.log(this.state.Users)*/
+             
             
     
              this.state.plainte.push({id: res.data['id'], 
@@ -168,7 +188,7 @@ class AllPlaintes extends Component {
               "details":newplainte.description,
               "nom_auteur":res.data['username'],
               "state":'ajoutée',
-              "date_création":moment().format('YYYY-MM-DD hh:mm:ss')
+              "date_création":moment().format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)
              })
 
              
@@ -237,8 +257,7 @@ class AllPlaintes extends Component {
               
               var i = 0
                 while (i < (liste_id_element_check).length) {
-                  //console.log('#tablerow' + (liste_id_element_check)[i]);
-                  //$('#tablerow' + (liste_id_element_check)[i]).remove();
+                 
                       var id_remove=0;
                       var p=0
                       const content = this.state.plainte.map((plainte) => {
@@ -472,7 +491,7 @@ class AllPlaintes extends Component {
                     <button  style={{marginLeft:'25%'}} onClick={()=>                          
                             this.solve(this.state.id)      
                     }
-                                className="btn btn-primary">plainte resolu</button>
+                                className="btn btn-primary">Resoudre</button>
                     <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                 </div>
@@ -548,7 +567,7 @@ class AllPlaintes extends Component {
 
 
 
-        const MyPlaintes = this.state.plainte
+        const MyPlaintes = this.dynamicSearch()
         const test=MyPlaintes.map((entité) =>
              list_id.push(entité.id))
           const content = MyPlaintes.map((plainte) =>
@@ -625,7 +644,7 @@ class AllPlaintes extends Component {
                     <td onClick={
                     ()=>this.setState({
                         modalVisible:true,
-                         })}>{moment().format(plainte.date_création,["YYYY", moment.ISO_8601],true)}</td>
+                         })}>{moment().format(plainte.date_création,'YYYY-MM-DDTHH:mm:ss',true)}</td>
                     <td onClick={
                     ()=>this.setState({
                         modalVisible:true,
@@ -782,8 +801,11 @@ class AllPlaintes extends Component {
                                             <div class="row">
                                                     <div class="col-sm-6">
                                                         <h2>Gestion de <b>Plaintes</b></h2>
+                                                        
                                                     </div>
+                                                       
                                                     <div class="col-sm-6">
+                                                    <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
                                                         <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><i ><FaPlusCircle /></i> <span>Add Plainte</span></button>
                                                         <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Delete</span></button>						
                                                         </div>
@@ -1017,147 +1039,6 @@ class AllPlaintes extends Component {
                             </BModal.Footer>
                     </form>    
         </BModal>
-           
-    
-
-        <div id="addEmployeeModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <form onSubmit={this.onSendPlainte} >
-                        <div class="modal-header">						
-                            <h4 class="modal-title">Ajouter Plainte</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">					
-                            <div class="form-group">
-                            <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-                                <input type='text' className ="form-control" name='Titre'
-                        onChange={this.onChangeTitre} required />
-                            </div>
-                            <div class="form-group">
-                                <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-                                <select value={this.state.value} className ="form-control" 
-                                        onChange={this.onChangeCategorie} required>
-                                    <option value="Web-Defacement">Web-Defacement</option>
-                                    <option value="Spam">Spam</option>
-                                    <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                                    <option value="FleeceWare">FleeceWare</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeEntité} required>
-                                    <option value="CIRT">Equipe Aide</option>
-                                    <option value="Entité 2">Direction du CIRT</option>
-                                    <option value="Entité 3">Reseau et Systeme</option>
-                                    <option value="Entité 4">Entité 4</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeAssignation} >
-                                    <option value="2">Rudy</option>
-                                    <option value="3">Arold</option>
-                                    <option value="4">Nick</option>
-                                    <option value="1">Cardoun</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                            <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                            <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                                    onChange={this.onChangeDescription} required/>
-                            </div>					
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-                            <input type="submit" class="btn btn-success" value="Add"  />
-                        </div>
-                    </form>
-                </div>
-            </div>
-            </div>
-<div id="editEmployeeModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-        <form onSubmit={this.onEditPlainte} >
-				<div class="modal-header">						
-					<h4 class="modal-title">Editer Plainte</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">					
-					<div class="form-group">
-                    <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-						<input type='text' className ="form-control" name='Titre'
-                   onChange={this.onChangeTitre} required />
-					</div>
-					<div class="form-group">
-						<label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-						<select value={this.state.value} className ="form-control" 
-                                  onChange={this.onChangeCategorie} required>
-                            <option value="Web-Defacement">Web-Defacement</option>
-                            <option value="Spam">Spam</option>
-                            <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                            <option value="FleeceWare">FleeceWare</option>
-                        </select>
-					</div>
-                    <div class="form-group">
-						<label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-						<select value={this.state.value} className ="form-control" 
-                          onChange={this.onChangeEntité} required>
-                            <option value="CIRT">Equipe Aide</option>
-                            <option value="Entité 2">Direction du CIRT</option>
-                            <option value="Entité 3">Reseau et Systeme</option>
-                            <option value="Entité 4">Entité 4</option>
-                        </select>
-					</div>
-                    <div class="form-group">
-                                <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeAssignation} >
-                                    <option value="2">Rudy</option>
-                                    <option value="3">Arold</option>
-                                    <option value="4">Nick</option>
-                                    <option value="1">Cardoun</option>
-                                </select>
-                            </div>
-					<div class="form-group">
-                    <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                              onChange={this.onChangeDescription} required/>
-					</div>					
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-					<input type="submit" class="btn btn-success" value="Save" />
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-
-
-<div id="deleteEmployeeModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form onSubmit={this.onDeletePlainte}>
-				<div class="modal-header">						
-					<h4 class="modal-title">Delete Plainte</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">					
-					<p>Are you sure you want to delete this Records?</p>
-					<p class="text-warning"><small>This action cannot be undone.</small></p>
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-					<input type="submit" class="btn btn-danger" value="Delete"/>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
             </body>
         );
     }

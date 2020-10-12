@@ -11,6 +11,7 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 import json
+from datetime import datetime
 
 #Methodes pour les Users
 
@@ -198,6 +199,7 @@ def resoudre(request):
     plainte = get_object_or_404(Plainte, id=request.data['id'])
     plainte.response=request.data['Reponse']
     plainte.state='resolu'
+    plainte.date_fin=datetime.now()
     data={'state':"success"}
     plainte.save()
     return JsonResponse(data)
@@ -207,6 +209,7 @@ def setState(request):
     user = authenticate(request, username = request.data['user'], password = request.data['password'])
     plainte = get_object_or_404(Plainte, id=request.data['id'])
     plainte.state='resolu'
+    plainte.date_fin=datetime.now()
     data={'state':"success"}
     plainte.save()
     return JsonResponse(data)
@@ -383,20 +386,16 @@ def CreateUser(request):
     sur_name = request.data['Prenom']
     
     fails = {"state":"User exist"}
-    user1=get_object_or_404(User, username=username)
-    if User.objects.get(username=username) is not None :
-            data = fails
-    else:
-        user = User.objects.create_user(username, mail, password)
-        user.last_name = sur_name
-        user.first_name=first_name
-        user.save()
-        utilisateur = Users(
-            entité=get_object_or_404(Entité, id=request.data['Entité']),
-            user=user,
-       )
-        utilisateur.save()
-        data = {"state":"success"} 
+    user = User.objects.create_user(username, mail, password)
+    user.last_name = sur_name
+    user.first_name=first_name
+    user.save()
+    utilisateur = Users(
+        entité=get_object_or_404(Entité, id=request.data['Entité']),
+        user=user,
+    )
+    utilisateur.save()
+    data = {"state":"success"} 
     return JsonResponse(data)
 
 

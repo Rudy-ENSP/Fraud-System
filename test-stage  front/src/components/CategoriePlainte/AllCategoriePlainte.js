@@ -38,7 +38,8 @@ class AllCategoriePlainte extends Component {
           Entité:'',
           selectOptions : [],
           reload:false,
-          nom_entité:''
+          nom_entité:'',
+          SearchTerm:''
         }
     }
 
@@ -50,6 +51,22 @@ class AllCategoriePlainte extends Component {
       this.setState({ categoriePlainte: props.categoriePlainte,entités:props.entités })
   
     }
+    onEditSearchTerm=(e)=>{
+      this.setState({SearchTerm:e.target.value})
+     }
+     dynamicSearch=()=>{
+         if (this.state.SearchTerm==''){
+           return this.state.categoriePlainte
+         }
+         else{
+           return this.state.categoriePlainte.filter((categorie) => categorie.name.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+           categorie.id.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+           categorie.nom_entité.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase()))
+           
+           
+         }
+         
+     }
       onChangeNom = (event) => {
         this.setState({Nom: event.target.value});
         console.log('Nom ',event.target.value)
@@ -243,7 +260,7 @@ class AllCategoriePlainte extends Component {
       }
     render(){
 
-      const CategoriePlainte = this.state.categoriePlainte
+      const CategoriePlainte = this.dynamicSearch()
       const entité =this.state.entités
 
       const test=CategoriePlainte.map((entité) =>
@@ -468,6 +485,7 @@ class AllCategoriePlainte extends Component {
                                                     <h2>Gestion des <b>Categories</b></h2>
                                                 </div>
                                                 <div class="col-sm-6">
+                                                <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
                                                 <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><i ><FaPlusCircle /></i> <span>Add Categorie</span></button>
                                                         <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({ deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Delete</span></button>
                                                     </div>

@@ -29,8 +29,8 @@ class AllEntités extends Component {
       id: '',
       Nom: '',
       Hierachie: '',
-      Entités: props.entités
-      
+      Entités: props.entités,
+      SearchTerm:''
     }
     
   }
@@ -44,7 +44,22 @@ class AllEntités extends Component {
 
   }
 
-  
+  onEditSearchTerm=(e)=>{
+    this.setState({SearchTerm:e.target.value})
+   }
+   dynamicSearch=()=>{
+       if (this.state.SearchTerm==''){
+         return this.state.Entités
+       }
+       else{
+         return this.state.Entités.filter((entité) => entité.name.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+         entité.hierarchie.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+         entité.id.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase()))
+         
+         
+       }
+       
+   }
   
   onChangeNom = (event) => {
     this.setState({ Nom: event.target.value });
@@ -206,7 +221,7 @@ class AllEntités extends Component {
   render() {
 
     //const Entités = this.state.entités
-    const Entités = this.state.Entités
+    const Entités = this.dynamicSearch()
     /*const Entités = [
         {id: 1, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
         {id: 2, Nom: 'Aide support',Date:'03/09/2020',Description:'Nothing'},
@@ -421,6 +436,7 @@ class AllEntités extends Component {
                     <h2>Gestion des <b>Entités</b></h2>
                   </div>
                   <div class="col-sm-6">
+                  <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
                     <button class="btn btn-success" data-toggle="modal" onClick={() => this.setState({ addmodalVisible: true })}><i ><FaPlusCircle /></i> <span>Add Entité</span></button>
                     <button class="btn btn-danger" data-toggle="modal" onClick={() => this.setState({ deletemultimodalVisible: true })}><i><FaMinusCircle /></i> <span>Delete</span></button>
                   </div>
