@@ -431,7 +431,11 @@ export  class Login extends Component {
 						isLogin=true
 					if(this.state.username!='admin'){
 						isLoginClient=true
-					}
+                    }
+                    if(this.state.username=='admin'){
+						isLoginAdmin=true
+                    }
+                    
                 this.setState({redirect:true})
                 //this.history.push("/Entree")
 					

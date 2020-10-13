@@ -623,11 +623,12 @@ class ResolvedPlaintes extends Component {
                                         <div class="row">
                                                 <div class="col-sm-6">
                                                     <h2>Gestion de <b>Plaintes</b></h2>
+                                                    <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
                                                 </div>
                                                 <div class="col-sm-6">
-                                                <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
                                                 
-                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Delete</span></button>
+                                                
+                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Supprimer</span></button>
                                                     </div>
                                                 </div>
                                 </div>
@@ -643,7 +644,7 @@ class ResolvedPlaintes extends Component {
             
            
 
-        <BModal
+            <BModal
           id="editmodal"
           size="sm"
           show={this.state.editmodalVisible}
@@ -651,12 +652,13 @@ class ResolvedPlaintes extends Component {
           aria-labelledby="contained-modal-title-vcenter"
          
         >           <form onSubmit={this.onEditPlainte} >
-                               <BModal.Header closeButton>
+                             <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-sm">
                                 <h4 class="modal-title">Ajouter Plainte</h4>
                                 </BModal.Title>
                             </BModal.Header>
                             <BModal.Body>
+                           
                                 <div style={{display:'flex',flexDirection:"column",justifyContent:'space-between'}}>
                                     <div class="form-group">
                                         <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
@@ -722,8 +724,8 @@ class ResolvedPlaintes extends Component {
                             </BModal.Body>
                             <BModal.Footer>
                             
-                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({editmodalVisible:false})}/>
-                                <input type="submit" class="btn btn-success" value="Save"  />
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({editmodalVisible:false})}/>
+                                <input type="submit" class="btn btn-success" value="Enregistrer"  />
                                 
                             </BModal.Footer>
                     </form>    
@@ -739,16 +741,16 @@ class ResolvedPlaintes extends Component {
         >          <form onSubmit={this.onDeletePlainte}>
                             <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-sm">
-                                <h4 class="modal-title">Delete Plainte</h4>
+                                <h4 class="modal-title">Supprimer Plainte</h4>
                                 </BModal.Title>
                             </BModal.Header>
                             <BModal.Body>
-                                <p>Are you sure you want to delete this Records?</p>
-                                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                                <p>Voulez vous supprimer cet enregistrement?</p>
+                                <p class="text-warning"><small>Cette action est definitive.</small></p>
                             </BModal.Body>
                             <BModal.Footer>
-                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({deletemodalVisible:false})}/>
-                                <input type="submit" class="btn btn-danger" value="Delete"/> 
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({deletemodalVisible:false})}/>
+                                <input type="submit" class="btn btn-danger" value="Supprimer"/> 
                             </BModal.Footer>
                     </form>    
         </BModal>
@@ -763,16 +765,16 @@ class ResolvedPlaintes extends Component {
         >          <form onSubmit={this.onDeleteMultiPlainte}>
                             <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-sm">
-                                <h4 class="modal-title">Delete Plainte</h4>
+                                <h4 class="modal-title">Supprimer Plainte</h4>
                                 </BModal.Title>
                             </BModal.Header>
                             <BModal.Body>
-                                <p>Are you sure you want to delete all the selected values?</p>
-                                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                                <p>Voulez vous supprimer ces enregistrements?</p>
+                                <p class="text-warning"><small>Cette action est definitive.</small></p>
                             </BModal.Body>
                             <BModal.Footer>
-                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({deletemultimodalVisible:false})}/>
-                                <input type="submit" class="btn btn-danger" value="Delete"/> 
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({deletemultimodalVisible:false})}/>
+                                <input type="submit" class="btn btn-danger" value="Supprimer"/> 
                             </BModal.Footer>
                     </form>    
         </BModal>

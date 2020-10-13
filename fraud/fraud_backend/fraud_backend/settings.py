@@ -41,8 +41,13 @@ INSTALLED_APPS = [
     'corsheaders',
     'drf_generators',
     'fraud_backend',
-    'Plaintes'
+    'Plaintes',
+    
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS':'fraud_backend.pagination.CustomPagination',
+    'PAGE_SIZE': 5
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',

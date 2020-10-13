@@ -12,8 +12,12 @@ from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
 import json
 from datetime import datetime
+from django.core.paginator import Paginator
 
-#Methodes pour les Users
+
+
+
+#Methodes pour les Users 
 
 @api_view(['GET'])
 def listeUsers(request):
@@ -26,7 +30,37 @@ def listeUsers(request):
     #print(users)
 
     return JsonResponse(users, safe=False)
-       
+
+@api_view(['GET'])
+def allUsers(request):
+    set=Users.objects.all()
+    users=[]
+    for utilisateur in set:
+        
+        Status=''
+        users1=get_object_or_404(User,id=(utilisateur.user).id)
+        
+
+        nom_entité=utilisateur.entité.name
+        if (users1.is_staff):
+            Status='Administrateur'
+        else:
+            Status='Utilisateur'
+        
+        users.append({'id':utilisateur.id,
+                      'Entité':(utilisateur.entité).id,
+                      'Username':users1.username,
+                      'Nom':users1.first_name,
+                      'Prenom':users1.last_name,
+                      'Email':users1.email,
+                      'Status':Status,
+                      'nom_entité':nom_entité
+
+                      })
+    #print(users)
+
+    return JsonResponse(users, safe=False)     
+
 @api_view(['POST'])
 def UserProfile(request):
     user = authenticate(request, username = request.data['user'], password = request.data['password'])
@@ -128,12 +162,13 @@ def editCategoriePlainte(request):
     return JsonResponse(data)
 @api_view(['GET'])
 def listeCategoriePlainte(request):
+    
     set = get_list_or_404(CatPlainte)
     cat=[]
     for catPlainte in set:
          entité=get_object_or_404(Entité,id=(catPlainte.entité).id)
          cat.append({'id':catPlainte.id,'entité':(entité).id,'nom_entité':(entité).name,'name':catPlainte.name})
-        
+    
     
    
     #serializer = CatPlainteSerializer(catPlainte,many=True)
@@ -246,6 +281,32 @@ def getResolues(request):
                                 'username':request.data['user']
                                 })
         return JsonResponse(plaintes, safe=False)
+    else:
+        set =Plainte.objects.filter(state = 'resolu').order_by('date_création').reverse()
+        for plainte in set:
+                entité=get_object_or_404(Entité,id=(plainte.entité).id)
+                cat=get_object_or_404(CatPlainte,id=(plainte.Categorie).id)
+                users=get_object_or_404(Users,id=(plainte.assignation).id)
+                user=get_object_or_404(User,id=(users.user).id)
+                name=user.first_name+" "+user.last_name
+                plaintes.append({'id':plainte.id,
+                                'entité':plainte.entité.id,
+                                'nom_entité':(entité).name,
+                                'auteur':plainte.auteur.id,
+                                'nom_auteur':plainte.auteur.username,
+                                'date_création':plainte.date_création,
+                                'etat':plainte.state,
+                                'details':plainte.details,
+                                'response':plainte.response,
+                                'Categorie':plainte.Categorie.id,
+                                'nom_Categorie':cat.name,
+                                'title':plainte.title,
+                                'state':plainte.state,
+                                'assignation':(plainte.assignation).id,
+                                'nom_assigne':name,
+                                'username':request.data['user']
+                                })
+        return JsonResponse(plaintes, safe=False)
     return JsonResponse(data)
 
 @api_view(['POST'])
@@ -282,6 +343,32 @@ def getWaiting(request):
                                 })
                                 
         return JsonResponse(plaintes, safe=False)
+    else:
+        set =Plainte.objects.filter(state = 'waiting').order_by('date_création').reverse()
+        for plainte in set:
+                entité=get_object_or_404(Entité,id=(plainte.entité).id)
+                cat=get_object_or_404(CatPlainte,id=(plainte.Categorie).id)
+                users=get_object_or_404(Users,id=(plainte.assignation).id)
+                user=get_object_or_404(User,id=(users.user).id)
+                name=user.first_name+" "+user.last_name
+                plaintes.append({'id':plainte.id,
+                                'entité':plainte.entité.id,
+                                'nom_entité':(entité).name,
+                                'auteur':plainte.auteur.id,
+                                'nom_auteur':plainte.auteur.username,
+                                'date_création':plainte.date_création,
+                                'etat':plainte.state,
+                                'details':plainte.details,
+                                'response':plainte.response,
+                                'Categorie':plainte.Categorie.id,
+                                'nom_Categorie':cat.name,
+                                'title':plainte.title,
+                                'state':plainte.state,
+                                'assignation':(plainte.assignation).id,
+                                'nom_assigne':name,
+                                'username':request.data['user']
+                                })
+        return JsonResponse(plaintes, safe=False)
     return JsonResponse(data)
 
 @api_view(['POST'])
@@ -317,6 +404,32 @@ def getNonResolues(request):
                                 'username':request.data['user']
                                 })
                                 
+        return JsonResponse(plaintes, safe=False)
+    else:
+        set =Plainte.objects.filter(state = 'ajoutée').order_by('date_création').reverse()
+        for plainte in set:
+                entité=get_object_or_404(Entité,id=(plainte.entité).id)
+                cat=get_object_or_404(CatPlainte,id=(plainte.Categorie).id)
+                users=get_object_or_404(Users,id=(plainte.assignation).id)
+                user=get_object_or_404(User,id=(users.user).id)
+                name=user.first_name+" "+user.last_name
+                plaintes.append({'id':plainte.id,
+                                'entité':plainte.entité.id,
+                                'nom_entité':(entité).name,
+                                'auteur':plainte.auteur.id,
+                                'nom_auteur':plainte.auteur.username,
+                                'date_création':plainte.date_création,
+                                'etat':plainte.state,
+                                'details':plainte.details,
+                                'response':plainte.response,
+                                'Categorie':plainte.Categorie.id,
+                                'nom_Categorie':cat.name,
+                                'title':plainte.title,
+                                'state':plainte.state,
+                                'assignation':(plainte.assignation).id,
+                                'nom_assigne':name,
+                                'username':request.data['user']
+                                })
         return JsonResponse(plaintes, safe=False)
     return JsonResponse(data)
 
@@ -363,6 +476,32 @@ def listePlainte(request):
                                 })
                                 
         return JsonResponse(plaintes, safe=False)
+    else:
+        set =Plainte.objects.filter().order_by('date_création').reverse()
+        for plainte in set:
+                entité=get_object_or_404(Entité,id=(plainte.entité).id)
+                cat=get_object_or_404(CatPlainte,id=(plainte.Categorie).id)
+                users=get_object_or_404(Users,id=(plainte.assignation).id)
+                user=get_object_or_404(User,id=(users.user).id)
+                name=user.first_name+" "+user.last_name
+                plaintes.append({'id':plainte.id,
+                                'entité':plainte.entité.id,
+                                'nom_entité':(entité).name,
+                                'auteur':plainte.auteur.id,
+                                'nom_auteur':plainte.auteur.username,
+                                'date_création':plainte.date_création,
+                                'etat':plainte.state,
+                                'details':plainte.details,
+                                'response':plainte.response,
+                                'Categorie':plainte.Categorie.id,
+                                'nom_Categorie':cat.name,
+                                'title':plainte.title,
+                                'state':plainte.state,
+                                'assignation':(plainte.assignation).id,
+                                'nom_assigne':name,
+                                'username':request.data['user']
+                                })
+        return JsonResponse(plaintes, safe=False)
     return JsonResponse(data)  
 
 #@api_view(['POST'])
@@ -396,8 +535,31 @@ def CreateUser(request):
     )
     utilisateur.save()
     data = {"state":"success"} 
-    return JsonResponse(data)
+    return JsonResponse({'id':utilisateur.id,'state':"success"})
 
+@api_view(['POST'])
+def editUsers(request):
+    username = request.data['Username']
+    mail = request.data['Email']
+    password = request.data['Password']
+    first_name = request.data['Nom']
+    sur_name = request.data['Prenom']
+    
+    fails = {"state":"User exist"}
+    users = get_object_or_404(Users, id=request.data['id'])
+    users.entité=get_object_or_404(Entité, id=request.data['Entité'])
+    
+    user=get_object_or_404(User, id=users.user.id)
+    user.last_name = sur_name
+    user.first_name=first_name
+    user.username=username
+    user.password=password
+    user.email=mail
+    user.save()
+    users.user=user
+    users.save()
+    data = {"state":"success"} 
+    return JsonResponse(data)
 
 @api_view(['POST'])
 def loginUser(request):
@@ -408,10 +570,10 @@ def loginUser(request):
     
     user = authenticate(request, username = username, password = password)
     if user is not None:
-        if user.is_staff==False:
-            login(request, user)
-            print(success)
-            return JsonResponse(success)
+        login(request, user)
+        print(success)
+        return JsonResponse(success)
+        
     else:
         print(fail)
         return JsonResponse(fail)
@@ -433,11 +595,27 @@ def loginAdmin(request):
 
 @api_view(['POST'])
 def deleteUser(request):
-    user=Users.get(request.data['id'])
+    user=get_object_or_404(Users, id = request.data['id'])
+    u=get_object_or_404(User, id = user.user.id)
     user.delete()
+    u.delete()
+    user.user.delete()
+
     data={'status':'success'}
     return JsonResponse(data)
 
+
+@api_view(['POST'])
+def deletemultiUser(request):
+    list=request.data['delete_list']
+    for i in list:
+       user=get_object_or_404(Users, id = i)
+       u=get_object_or_404(User, id = user.user.id)
+       user.delete()
+       u.delete()
+       user.user.delete()
+    data={'status':'success'}
+    return JsonResponse(data)
 #@action(methods = ['GET'], detail = False)
 #def logout(request):
   #  logout(request)

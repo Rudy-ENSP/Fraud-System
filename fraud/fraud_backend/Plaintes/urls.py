@@ -35,6 +35,11 @@ urlpatterns = [
     path('UserProfile/', views.UserProfile, name="UserProfile"),
     path('listeUsers/', views.listeUsers, name="listeUsers"),
     path('CreateUser/', views.CreateUser, name="CreateUser"),
+    path('allUsers/', views.allUsers, name="allUsers"),
+    path('editUsers/', views.editUsers, name="editUsers"),
+    path('deleteUser/', views.deleteUser, name="deleteUser"),
+    path('deletemultiUser/', views.deletemultiUser, name="deletemultiUser")
+    
 
 ]
 

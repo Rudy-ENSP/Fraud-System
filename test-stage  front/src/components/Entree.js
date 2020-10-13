@@ -6,6 +6,7 @@ import Accueil from './Accueil';
 import Entités from './Entités/Entités'
 import Plaintes from './Plaintes/Plaintes'
 import CategoriePlainte from './CategoriePlainte/CategoriePlainte'
+import Users from './Users/Users'
 import '../styles.css';
 import { isLoginAdmin,isLogin,isLoginClient } from './Login/login';
 
@@ -31,6 +32,10 @@ export class Entree extends Component {
                                 </Route>
                                 <Route  path="/fraud/Entités">
                                 <Entités/>
+                                
+                                </Route>
+                                <Route  path="/fraud/Users">
+                                <Users/>
                                 
                                 </Route>
                                 

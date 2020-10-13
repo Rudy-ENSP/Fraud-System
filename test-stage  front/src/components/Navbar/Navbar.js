@@ -105,7 +105,7 @@ class Navbar extends Component {
             isLoginClient:isLoginClient,
           });
       }
-    IsLogin=()=>{
+    /*IsLogin=()=>{
         if(this.state.isLogin){
 
             if(this.state.isLoginAdmin){
@@ -150,7 +150,7 @@ class Navbar extends Component {
                 </li>
             )
         }
-    }
+    }*/
     render(){
         const MyProfile = this.state.Profile
         var nom=this.state.Profile.nom
@@ -164,72 +164,147 @@ class Navbar extends Component {
          prenom=Profile.prenom
          email=Profile.email}
         );
-        return (
-            <body>
-
-            <header>
-              
-              <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
-                <a class="nav-link" href=""><span id="fraud">Fraud Stats</span></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarCollapse">
-                  <ul class="navbar-nav mr-auto">
-                    <li class="nav-item active">
-                    <NavLink exact to="/fraud/home"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
-                      
-                    </li>
-                    <li class="nav-item">
-                    <NavLink to="/fraud/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
-                      
-                    </li>
+        if (isLoginAdmin){
+            return (
+                <body>
+    
+                <header>
                   
-                    <li class="nav-item">
-                    <NavLink to="/fraud/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
+                  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                    <a class="nav-link" href=""><span id="fraud">Fraud Stats</span></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                      <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                        <NavLink exact to="/fraud/home"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
+                          
+                        </li>
+                        <li class="nav-item">
+                        <NavLink to="/fraud/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
+                          
+                        </li>
                       
-                    </li>
-                    <li class="nav-item">
-                    <NavLink to="/fraud/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
-                    
-                    </li>
-                  </ul>
-                  <span style={{color:'white',fontWeight:'bold'}}>{user}</span>
-                  <div className="ecartnav"></div>
-                  <button style={{color:'white'}}      onClick={() => this.setState({profilemodalVisible:true})}><h1><FaUserCircle /></h1></button>
-                </div>
-                <BModal
-                        id="profilemodal"
-                        size="sm"
-                        style={{marginLeft:'420px',marginTop:'-5px'}}
-                        show={this.state.profilemodalVisible}
-                        onHide={() => this.setState({profilemodalVisible:false})}
-                        aria-labelledby="contained-modal-title-vcenter">          
+                        <li class="nav-item">
+                        <NavLink to="/fraud/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
+                          
+                        </li>
+                        <li class="nav-item">
+                        <NavLink to="/fraud/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
                         
+                        </li>
+                        <li class="nav-item">
+                        <NavLink to="/fraud/Users"><a class="nav-link" onClick={this.onclickEntité} href="" >Utilisateurs</a></NavLink>
                         
-                            <BModal.Header closeButton>
-                                <BModal.Title id="example-modal-sizes-title-sm">
-                                <h4 class="modal-title">Profile </h4>
-                                </BModal.Title>
-                            </BModal.Header>
-                            <BModal.Body>
-                                
-                                <p class="text-warning">Nom d'Utilisateur : {username} </p>
-                                <p class="text-warning">Nom : {nom} </p>
-                                <p class="text-warning">Prenom : {prenom} </p>
-                                <p class="text-warning">Email : {email} </p>
-                            </BModal.Body>
-                            <BModal.Footer>
-                            <button style={{color:'blue',alignContent:'center'}}      onClick={this.deconnexion}><h1><RiLogoutCircleRFill /></h1></button>
-                            </BModal.Footer>
-                     
-        </BModal>
-              </nav>
-              
-            </header>
+                        </li>
+                      </ul>
+                      <span style={{color:'white',fontWeight:'bold'}}>{user}</span>
+                      <div className="ecartnav"></div>
+                      <button style={{color:'white'}}      onClick={() => this.setState({profilemodalVisible:true})}><h1><FaUserCircle /></h1></button>
+                    </div>
+                    <BModal
+                            id="profilemodal"
+                            size="sm"
+                            style={{marginLeft:'420px',marginTop:'-5px'}}
+                            show={this.state.profilemodalVisible}
+                            onHide={() => this.setState({profilemodalVisible:false})}
+                            aria-labelledby="contained-modal-title-vcenter">          
+                            
+                            
+                                <BModal.Header closeButton>
+                                    <BModal.Title id="example-modal-sizes-title-sm">
+                                    <h4 class="modal-title">Profile </h4>
+                                    </BModal.Title>
+                                </BModal.Header>
+                                <BModal.Body>
+                                    
+                                    <p class="text-warning">Nom d'Utilisateur : {username} </p>
+                                    <p class="text-warning">Nom : {nom} </p>
+                                    <p class="text-warning">Prenom : {prenom} </p>
+                                    <p class="text-warning">Email : {email} </p>
+                                </BModal.Body>
+                                <BModal.Footer>
+                                <button style={{color:'blue',alignContent:'center'}}      onClick={this.deconnexion}><h1><RiLogoutCircleRFill /></h1></button>
+                                </BModal.Footer>
+                         
+            </BModal>
+                  </nav>
+                  
+                </header>
+            
+            </body>
+            );
+        }
+        if (isLoginClient){
+            return (
+                <body>
+    
+                <header>
+                  
+                  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                    <a class="nav-link" href=""><span id="fraud">Fraud Stats</span></a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                      <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                      <ul class="navbar-nav mr-auto">
+                        <li class="nav-item active">
+                        <NavLink exact to="/fraud/home"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
+                          
+                        </li>
+                        <li class="nav-item">
+                        <NavLink to="/fraud/Plaintes"><a class="nav-link" href="" onClick={this.onclickPlaintes} >Plaintes</a></NavLink>
+                          
+                        </li>
+                      
+                        <li class="nav-item">
+                        <NavLink to="/fraud/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
+                          
+                        </li>
+                        <li class="nav-item">
+                        <NavLink to="/fraud/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
+                        
+                        </li>
+                      </ul>
+                      <span style={{color:'white',fontWeight:'bold'}}>{user}</span>
+                      <div className="ecartnav"></div>
+                      <button style={{color:'white'}}      onClick={() => this.setState({profilemodalVisible:true})}><h1><FaUserCircle /></h1></button>
+                    </div>
+                    <BModal
+                            id="profilemodal"
+                            size="sm"
+                            style={{marginLeft:'420px',marginTop:'-5px'}}
+                            show={this.state.profilemodalVisible}
+                            onHide={() => this.setState({profilemodalVisible:false})}
+                            aria-labelledby="contained-modal-title-vcenter">          
+                            
+                            
+                                <BModal.Header closeButton>
+                                    <BModal.Title id="example-modal-sizes-title-sm">
+                                    <h4 class="modal-title">Profile </h4>
+                                    </BModal.Title>
+                                </BModal.Header>
+                                <BModal.Body>
+                                    
+                                    <p class="text-warning">Nom d'Utilisateur : {username} </p>
+                                    <p class="text-warning">Nom : {nom} </p>
+                                    <p class="text-warning">Prenom : {prenom} </p>
+                                    <p class="text-warning">Email : {email} </p>
+                                </BModal.Body>
+                                <BModal.Footer>
+                                <button style={{color:'blue',alignContent:'center'}}      onClick={this.deconnexion}><h1><RiLogoutCircleRFill /></h1></button>
+                                </BModal.Footer>
+                         
+            </BModal>
+                  </nav>
+                  
+                </header>
+            
+            </body>
+            );
+        }
         
-        </body>
-        );
     }
 }
 
