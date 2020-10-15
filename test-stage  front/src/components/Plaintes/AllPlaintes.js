@@ -18,6 +18,7 @@ import moment  from 'moment'
 
 import '../Login/Login_v2/fonts/font-awesome-4.7.0/css/font-awesome.css';
 import { username ,password, isLoginAdmin} from '../Login/login';
+import { RiTShirtAirFill } from 'react-icons/ri';
 var liste_id_element_check=[] 
 var list_id=[]
 
@@ -41,20 +42,24 @@ class AllPlaintes extends Component {
             Reponse:'Aucune reponse pour le moment',
             addresponse:'',
             Titre: '',
-            Entité: "Collaborateur",
+            Entité: props.entitéselect,
             Description:'',
-            Assignation:'',
-            categorie:'',
+            Assignation:props.userselect,
+            categorie:props.categorieselect,
             entités:props.entités,
             categoriePlainte:props.categoriePlainte,
             Users:props.Users,
             plainte:props.plainte,
+            count:props.count,
+            previous:props.previous,
+            next:props.next,
             nom_auteur:'',
             nom_entité:'',
             nom_Categorie:'',
             assignation:'',
             nom_assigne:'',
-            SearchTerm:''
+            SearchTerm:'',
+            
             
         }
     }
@@ -63,15 +68,43 @@ class AllPlaintes extends Component {
     //on recupère les données back end
 
     componentDidMount() {
+
+      $('.table-wrapper-scroll-y my-custom-scrollbar').scroll(function() {
+        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+           this.scrollbar()
+        }
+    });
      
       }
     UNSAFE_componentWillReceiveProps(props) {
 
-        this.setState({entités: props.entités,plainte:props.plainte ,categoriePlainte: props.categoriePlainte,Users:props.Users });
+        this.setState({Assignation:props.userselect, Entité:props.entitéselect ,categorie:props.categorieselect,next:props.next,previous:props.previous,count:props.count,entités: props.entités,plainte:props.plainte ,categoriePlainte: props.categoriePlainte,Users:props.Users });
     
       }
+     
+      scrollbar=(e)=>{
+        let data={
+          'user':username,
+          'password':password
+      };
+        if (this.state.next!=null){
+          axios.post(this.state.next,data)
+          .then(res => {
+            const plainteA = res.data.results;
+            this.state.plainte.push(plainteA)
+            this.state.previous=res.data.previous
+            this.data.next=res.data.next
+            //console.log(plainteA)
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        }
+       }
       onEditSearchTerm=(e)=>{
-       this.setState({SearchTerm:e.target.value})
+      
+        this.setState({SearchTerm:e.target.value})
+        
       }
       dynamicSearch=()=>{
           if (this.state.SearchTerm==''){
@@ -563,8 +596,7 @@ class AllPlaintes extends Component {
           assignation_select.push({ value: option.id, label: option.user })
            
           );
-          
-
+        
 
 
         const MyPlaintes = this.dynamicSearch()
@@ -672,7 +704,7 @@ class AllPlaintes extends Component {
                 return (
                     
                         
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                        <div className="table-wrapper-scroll-y my-custom-scrollbar"  >
                             <table className="table table-bordered table-striped table-hover mb-0 ">
                                 <thead >
                                     <th>
@@ -734,7 +766,7 @@ class AllPlaintes extends Component {
                    
               
               
-                    <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                    <div className="table-wrapper-scroll-y my-custom-scrollbar"  >
                     <table className="table table-bordered table-striped table-hover mb-0">
                         <thead >
                             <th>
@@ -816,6 +848,8 @@ class AllPlaintes extends Component {
                                     {this.ShowModal()}
 
                                     </div>
+                                  
+                                    
                     </div>    
                 </div>
                 

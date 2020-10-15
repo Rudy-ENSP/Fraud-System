@@ -22,6 +22,21 @@ class PlainteSideBar extends Component {
             plainteNR:[],
             plainteR:[],
             plainteW:[],
+            nextA:'',
+            previousA:'',
+            countA:'',
+            nextNR:'',
+            previousNR:'',
+            countNR:'',
+            nextR:'',
+            previousR:'',
+            countR:'',
+            nextW:'',
+            previousW:'',
+            countW:'',
+            userselect:'',
+            categorieselect:'',
+            entitéselect:''
             
         }
     }
@@ -47,8 +62,8 @@ class PlainteSideBar extends Component {
           axios.get('http://localhost:8000/plaintes/listeUsers/')
           .then(res => {
             const Users = res.data;
-            this.setState({Users: Users  });
-            //console.log('Users', Users)
+            this.setState({Users: Users ,userselect:res.data[0].id});
+            
           })
           .catch(function (error) {
             console.log(error);
@@ -56,9 +71,11 @@ class PlainteSideBar extends Component {
 
           axios.post('http://localhost:8000/plaintes/listePlainte/',data)
           .then(res => {
-            const plainteA = res.data;
-            this.setState({plainteA: plainteA  });
-            //console.log(plainteA)
+            const plainteA = res.data.results;
+            this.setState({plainteA: plainteA,nextA:res.data.next,previousA:res.data.previous,countA:res.data.count  });
+            
+            
+
           })
           .catch(function (error) {
             console.log(error);
@@ -66,8 +83,8 @@ class PlainteSideBar extends Component {
 
           axios.post('http://localhost:8000/plaintes/nonresolues/',data)
         .then(res => {
-            const plainteNR = res.data;
-          this.setState({plainteNR: plainteNR });
+            const plainteNR = res.data.results;
+            this.setState({plainteNR: plainteNR,nextNR:res.data.next,previousNR:res.data.previous,countNR:res.data.count  });
           //console.log(plainteNR)
         })
         .catch(function (error) {
@@ -75,8 +92,8 @@ class PlainteSideBar extends Component {
         });
         axios.post('http://localhost:8000/plaintes/waiting/',data)
           .then(res => {
-            const plainteW = res.data;
-            this.setState({plainteW: plainteW  });
+            const plainteW = res.data.results;
+            this.setState({plainteW: plainteW,nextW:res.data.next,previousW:res.data.previous,countW:res.data.count  });
             //console.log('plainteW', plainteW)
           })
           .catch(function (error) {
@@ -85,8 +102,8 @@ class PlainteSideBar extends Component {
 
         axios.post('http://localhost:8000/plaintes/resolues/',data)
           .then(res => {
-            const plainteR = res.data;
-            this.setState({plainteR: plainteR  });
+            const plainteR = res.data.results;
+            this.setState({plainteR: plainteR,nextR:res.data.next,previousR:res.data.previous,countR:res.data.count  });
            // console.log(plainteR)
           })
           .catch(function (error) {
@@ -95,8 +112,8 @@ class PlainteSideBar extends Component {
 
           axios.get('http://localhost:8000/plaintes/listeEntite/')
           .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
+            const entités = res.data.results;
+            this.setState({entités: entités ,entitéselect:res.data.results[0].id });
             //console.log('entités', entités)
           })
           .catch(function (error) {
@@ -105,8 +122,8 @@ class PlainteSideBar extends Component {
 
           axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
           .then(res => {
-            const categoriePlainte = res.data;
-            this.setState({categoriePlainte: categoriePlainte  });
+            const categoriePlainte = res.data.results;
+            this.setState({categoriePlainte: categoriePlainte ,categorieselect:res.data.results[0].id });
             //console.log('Categorieplaintes', categoriePlainte)
           })
           .catch(function (error) {
@@ -138,16 +155,16 @@ class PlainteSideBar extends Component {
                 <Route>   
                 
                     <Route path="/fraud/Plaintes/All Plaintes" >
-                    <AllPlaintes Users= {this.state.Users} plainte={this.state.plainteA} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités}/>
+                    <AllPlaintes userselect={this.state.userselect} entitéselect={this.state.entitéselect} categorieselect={this.state.categorieselect} Users= {this.state.Users} plainte={this.state.plainteA} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités} next={this.state.nextA} previous={this.state.previousA} count={this.state.countA}/>
                    </Route>
                    <Route path="/fraud/Plaintes/plaintes résolues" >
-                    <ResolvedPlaintes Users= {this.state.Users} plaintes={this.state.plainteR} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités}/>
+                    <ResolvedPlaintes  userselect={this.state.userselect} entitéselect={this.state.entitéselect} categorieselect={this.state.categorieselect} Users= {this.state.Users} plaintes={this.state.plainteR} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités} next={this.state.nextR} previous={this.state.previousR} count={this.state.countR}/>
                    </Route>
                    <Route path="/fraud/Plaintes/plaintes non résolues" >
-                    <NoResolvedPlaintes Users= {this.state.Users} plaintes={this.state.plainteNR} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités}/>
+                    <NoResolvedPlaintes userselect={this.state.userselect} entitéselect={this.state.entitéselect} categorieselect={this.state.categorieselect} Users= {this.state.Users} plaintes={this.state.plainteNR} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités} next={this.state.nextNR} previous={this.state.previousNR} count={this.state.countNR}/>
                    </Route>
                    <Route path="/fraud/Plaintes/Plaintes en attente" >
-                    <WaitingPlaintes Users= {this.state.Users} plaintes={this.state.plainteW} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités}/>
+                    <WaitingPlaintes userselect={this.state.userselect} entitéselect={this.state.entitéselect} categorieselect={this.state.categorieselect} Users= {this.state.Users} plaintes={this.state.plainteW} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités} next={this.state.nextW} previous={this.state.previousW} count={this.state.countW}/>
                    </Route>
 
                     <Route path="/fraud/Plaintes/Nouvelles plaintes" component={NewPlaintes}/>

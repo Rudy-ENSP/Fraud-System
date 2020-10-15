@@ -940,7 +940,7 @@ onChangeConfPassword = (event) => {
         >          <form onSubmit={this.onDeleteUser}>
             <BModal.Header closeButton>
               <BModal.Title id="example-modal-sizes-title-sm">
-                <h4 class="modal-title">Supprimer Entité</h4>
+                <h4 class="modal-title">Supprimer Utilisateur</h4>
               </BModal.Title>
             </BModal.Header>
             <BModal.Body>
@@ -964,7 +964,7 @@ onChangeConfPassword = (event) => {
         >          <form onSubmit={this.onDeleteMultiUser}>
             <BModal.Header closeButton>
               <BModal.Title id="example-modal-sizes-title-sm">
-                <h4 class="modal-title">Supprimer Entité</h4>
+                <h4 class="modal-title">Supprimer Utilisateur</h4>
               </BModal.Title>
             </BModal.Header>
             <BModal.Body>
@@ -1062,7 +1062,7 @@ onChangeConfPassword = (event) => {
             <div class="modal-content">
               <form onSubmit={this.onDeleteEntité}>
                 <div class="modal-header">
-                  <h4 class="modal-title">Supprimer Entité</h4>
+                  <h4 class="modal-title">Supprimer l'utilisateur</h4>
                   <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 </div>
                 <div class="modal-body">

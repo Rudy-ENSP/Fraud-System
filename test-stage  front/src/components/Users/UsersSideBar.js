@@ -21,7 +21,7 @@ class EntitéSideBar extends Component {
        
         axios.get('http://localhost:8000/plaintes/listeEntite/')
         .then(res => {
-          const entités = res.data;
+          const entités = res.data.results;
           this.setState({entités: entités  });
           console.log('entités', entités)
         })
@@ -33,7 +33,7 @@ class EntitéSideBar extends Component {
 
         axios.get('http://localhost:8000/plaintes/allUsers/')
         .then(res => {
-          const Users = res.data;
+          const Users = res.data.results;
           this.setState({Users: Users  });
           console.log('Users', Users)
         })
@@ -63,7 +63,7 @@ class EntitéSideBar extends Component {
                     <div class="list-group list-group-flush">
                         <Link class="list-group-item list-group-item-action bg-light" to="/fraud/Users/All Users">Tous Les Utilisateurs</Link>
                         
-                        <Link class="list-group-item list-group-item-action bg-light" to="/fraud/Users/New Users">Nouvel Utilisateur</Link>
+                        
                     </div>
                </div>
                 <Route>

@@ -29,6 +29,7 @@ export class Entree extends Component {
                                 <Route  path="/fraud/Plaintes">
                                 
                                 <Plaintes/>
+                                
                                 </Route>
                                 <Route  path="/fraud/Entités">
                                 <Entités/>

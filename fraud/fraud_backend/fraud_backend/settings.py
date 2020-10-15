@@ -44,9 +44,10 @@ INSTALLED_APPS = [
     'Plaintes',
     
 ]
+
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS':'fraud_backend.pagination.CustomPagination',
-    'PAGE_SIZE': 5
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+     'PAGE_SIZE': 10
 }
 
 MIDDLEWARE = [

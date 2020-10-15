@@ -187,15 +187,15 @@ class Navbar extends Component {
                         </li>
                       
                         <li class="nav-item">
-                        <NavLink to="/fraud/Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
+                        <NavLink to="/fraud/Entités/All Entités"><a class="nav-link" onClick={this.onclickEntité} href="" >Entités</a></NavLink>
                           
                         </li>
                         <li class="nav-item">
-                        <NavLink to="/fraud/CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
+                        <NavLink to="/fraud/CategoriePlainte/All CategoriePlainte"><a class="nav-link" onClick={this.onclickEntité} href="" >Categories de Plainte</a></NavLink>
                         
                         </li>
                         <li class="nav-item">
-                        <NavLink to="/fraud/Users"><a class="nav-link" onClick={this.onclickEntité} href="" >Utilisateurs</a></NavLink>
+                        <NavLink to="/fraud/Users/All Users"><a class="nav-link" onClick={this.onclickEntité} href="" >Utilisateurs</a></NavLink>
                         
                         </li>
                       </ul>

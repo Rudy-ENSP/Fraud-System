@@ -14,15 +14,18 @@ class EntitéSideBar extends Component {
             categoriePlainte:[],
             
             entités:[],
+            count:'',
+            entitéselect:''
             
         }
     }
     componentDidMount() {
         axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
           .then(res => {
-            const categoriePlainte = res.data;
-            this.setState({categoriePlainte: categoriePlainte  });
+            const categoriePlainte = res.data.results;
+            this.setState({categoriePlainte: categoriePlainte ,count:res.data.count });
             console.log('Categorieplaintes', categoriePlainte)
+            console.log('Categorieplaintes', res)
           })
           .catch(function (error) {
             console.log(error);
@@ -30,8 +33,8 @@ class EntitéSideBar extends Component {
           
           axios.get('http://localhost:8000/plaintes/listeEntite/')
           .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
+            const entités = res.data.results;
+            this.setState({entités: entités,entitéselect:res.data.results[0].id  });
             console.log('entités', entités)
           })
           .catch(function (error) {
@@ -50,15 +53,15 @@ class EntitéSideBar extends Component {
                     <div class="list-group list-group-flush">
                         <Link class="list-group-item list-group-item-action bg-light" to="/fraud/CategoriePlainte/All CategoriePlainte">Toutes Les Categories</Link>
                         
-                        <Link class="list-group-item list-group-item-action bg-light" to="/fraud/CategoriePlainte/Nouvelle Categorie">Nouvelle Categorie</Link>
+                        
                     </div>
                </div>
                 <Route>
                     <Route path="/fraud/CategoriePlainte/All CategoriePlainte" >
-                    <AllCategoriePlainte categoriePlainte={this.state.categoriePlainte} entités={this.state.entités}/>
+                    <AllCategoriePlainte Entité={this.state.entitéselect} categoriePlainte={this.state.categoriePlainte} entités={this.state.entités} count={this.state.count}/>
                     </Route>
                     
-                    <Route path="/fraud/CategoriePlainte/Nouvelle Categorie" component={NewCategoriePlainte}/>
+                    
                 </Route>
                 </Router>
             </div>

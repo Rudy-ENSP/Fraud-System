@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.core import serializers
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from rest_framework.decorators import api_view, action,permission_classes
 from rest_framework.response import Response
 from .models import Plainte,CatPlainte, Entité,Users
@@ -10,9 +10,13 @@ from django.contrib.auth import authenticate, get_user_model, logout, login
 from django.shortcuts import get_object_or_404, get_list_or_404
 from rest_framework.parsers import JSONParser
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination,LimitOffsetPagination
 import json
 from datetime import datetime
 from django.core.paginator import Paginator
+from rest_framework.generics import ListAPIView 
+from rest_framework.generics import ListCreateAPIView  
+from rest_framework import viewsets  ,status 
 
 
 
@@ -31,8 +35,8 @@ def listeUsers(request):
 
     return JsonResponse(users, safe=False)
 
-@api_view(['GET'])
-def allUsers(request):
+
+class listeUsersListView(ListAPIView):
     set=Users.objects.all()
     users=[]
     for utilisateur in set:
@@ -59,7 +63,9 @@ def allUsers(request):
                       })
     #print(users)
 
-    return JsonResponse(users, safe=False)     
+    queryset=users
+    serializer_class=UsersSerializer
+    pagination_class=PageNumberPagination    
 
 @api_view(['POST'])
 def UserProfile(request):
@@ -115,11 +121,12 @@ def editEntité(request):
     data = {'status':'success'}
     return JsonResponse(data)
 
-@api_view(['GET'])
-def listeEntite(request):
+class listeEntiteListView(ListAPIView):
     entité = get_list_or_404(Entité)
-    serializer = EntitéSerializer(entité,many=True)
-    return JsonResponse(serializer.data, safe=False)
+    queryset=entité
+    serializer_class=EntitéSerializer
+    pagination_class=PageNumberPagination
+
 
 
 #Methodes pour les Categories de Plainte
@@ -171,9 +178,21 @@ def listeCategoriePlainte(request):
     
     
    
-    #serializer = CatPlainteSerializer(catPlainte,many=True)
+    serializer = CatPlainteSerializer(cat,many=True)
     #return JsonResponse(serializer.data, safe=False)
-    return JsonResponse(cat, safe=False)
+    
+    return JsonResponse(serializer.data, safe=False)
+
+class CatPlainteListView(ListAPIView):
+    set = get_list_or_404(CatPlainte)
+    cat=[]
+    for catPlainte in set:
+         entité=get_object_or_404(Entité,id=(catPlainte.entité).id)
+         cat.append({'id':catPlainte.id,'entité':(entité).id,'nom_entité':(entité).name,'name':catPlainte.name})
+    
+    queryset=cat
+    serializer_class=CatPlainteSerializer
+    pagination_class=PageNumberPagination
 
 
 #Methodes pour les Plaintes
@@ -263,6 +282,7 @@ def getResolues(request):
                 users=get_object_or_404(Users,id=(plainte.assignation).id)
                 user=get_object_or_404(User,id=(users.user).id)
                 name=user.first_name+" "+user.last_name
+
                 plaintes.append({'id':plainte.id,
                                 'entité':plainte.entité.id,
                                 'nom_entité':(entité).name,
@@ -280,7 +300,13 @@ def getResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        return JsonResponse(plaintes, safe=False)
+                                
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     else:
         set =Plainte.objects.filter(state = 'resolu').order_by('date_création').reverse()
         for plainte in set:
@@ -306,8 +332,15 @@ def getResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        return JsonResponse(plaintes, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     return JsonResponse(data)
+
+
 
 @api_view(['POST'])
 def getWaiting(request):
@@ -342,7 +375,12 @@ def getWaiting(request):
                                 'username':request.data['user']
                                 })
                                 
-        return JsonResponse(plaintes, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     else:
         set =Plainte.objects.filter(state = 'waiting').order_by('date_création').reverse()
         for plainte in set:
@@ -368,7 +406,12 @@ def getWaiting(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        return JsonResponse(plaintes, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     return JsonResponse(data)
 
 @api_view(['POST'])
@@ -403,8 +446,12 @@ def getNonResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-                                
-        return JsonResponse(plaintes, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     else:
         set =Plainte.objects.filter(state = 'ajoutée').order_by('date_création').reverse()
         for plainte in set:
@@ -430,18 +477,17 @@ def getNonResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        return JsonResponse(plaintes, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     return JsonResponse(data)
 
-#id:plainte.id,
- #                       title:plainte.title,
-  #                      entité:plainte.entité,
-   #                     auteur:plainte.auteur,
-    #                    date:plainte.date_création,
-     #                   etat:plainte.state,
-      #                  contenu:plainte.details,
-       #                 reponse:plainte.response,
-       #categorie:plainte.Categorie
+
+
+
 @api_view(['POST'])
 def listePlainte(request):
     plaintes=[]
@@ -474,8 +520,12 @@ def listePlainte(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-                                
-        return JsonResponse(plaintes, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
     else:
         set =Plainte.objects.filter().order_by('date_création').reverse()
         for plainte in set:
@@ -501,18 +551,14 @@ def listePlainte(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        return JsonResponse(plaintes, safe=False)
-    return JsonResponse(data)  
-
-#@api_view(['POST'])
-#def getSolved(request):
- #   data = {"echec":"echec"}
-  #  user = authenticate(request, username = request.data['user'], password = request.data['password'])
-   # plainte = Plainte.objects.filter(state = 'resolu', auteur = user).order_by('date_création').reverse()
-    #serializer = PlainteSerializer(plainte,many=True)
-    #return JsonResponse(serializer.data, safe=False)
+        paginator=PageNumberPagination()
+        paginator.PAGE_SIZE=10
+        plaintes_objects=plaintes
+        result_page=paginator.paginate_queryset(plaintes_objects,request)
+        serializer=PlainteSerializer(result_page,many=True)
+        return paginator.get_paginated_response(serializer.data)
    
-
+    
 #Autres méthodes
 
 

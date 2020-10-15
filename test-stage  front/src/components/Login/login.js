@@ -76,7 +76,7 @@ export  class Login extends Component {
           });
 		axios.get('http://localhost:8000/plaintes/listeEntite/')
           .then(res => {
-            const entités = res.data;
+            const entités = res.data.results;
             this.setState({entités: entités  });
             console.log('entités', entités)
           })

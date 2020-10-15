@@ -39,10 +39,10 @@ class WaitingPlaintes extends Component {
             Reponse:'Aucune reponse pour le moment',
             addresponse:'',
             Titre: '',
-            Entité: "Collaborateur",
+            Entité: props.entitéselect,
             Description:'',
-            Assignation:'',
-            categorie:'',
+            Assignation:props.userselect,
+            categorie:props.categorieselect,
             entités:props.entités,
             categoriePlainte:props.categoriePlainte,
             plaintes:props.plaintes,
@@ -57,13 +57,14 @@ class WaitingPlaintes extends Component {
     }
 
     componentDidMount() {
-
+       
       }
       UNSAFE_componentWillReceiveProps(props) {
 
-        this.setState({entités: props.entités,plaintes:props.plaintes ,categoriePlainte: props.categoriePlainte,Users:props.Users });
+        this.setState({Assignation:props.userselect, Entité:props.entitéselect ,categorie:props.categorieselect,next:props.next,previous:props.previous,count:props.count,entités: props.entités,plainte:props.plainte ,categoriePlainte: props.categoriePlainte,Users:props.Users });
     
       }
+
       onEditSearchTerm=(e)=>{
         this.setState({SearchTerm:e.target.value})
        }

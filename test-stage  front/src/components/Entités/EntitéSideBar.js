@@ -15,13 +15,14 @@ class EntitéSideBar extends Component {
             
             reload:false,
             entités:  [],
+            hierachie:''
             
         }
        
         axios.get('http://localhost:8000/plaintes/listeEntite/')
         .then(res => {
-          const entités = res.data;
-          this.setState({entités: entités  });
+          const entités = res.data.results;
+          this.setState({entités: entités ,hierachie:"1" });
           console.log('entités', entités)
         })
         .catch(function (error) {
@@ -50,15 +51,15 @@ class EntitéSideBar extends Component {
                     <div class="list-group list-group-flush">
                         <Link class="list-group-item list-group-item-action bg-light" to="/fraud/Entités/All Entités">Toutes Les Entités</Link>
                         
-                        <Link class="list-group-item list-group-item-action bg-light" to="/fraud/Entités/Nouvelle Entité">Nouvelles Entités</Link>
+                        
                     </div>
                </div>
                 <Route>
                     <Route path="/fraud/Entités/All Entités" >
-                     <AllEntités  entités={this.state.entités} callbackParent={this.callbackParent}/>
+                     <AllEntités  entités={this.state.entités} Hierarchie={this.state.hierachie} callbackParent={this.callbackParent}/>
                     </Route>
                    
-                    <Route path="/fraud/Entités/Nouvelle Entité" component={NewEntités}/>
+                    
                 </Route>
                 </Router>
             </div>

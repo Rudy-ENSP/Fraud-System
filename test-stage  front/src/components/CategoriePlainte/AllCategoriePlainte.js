@@ -35,7 +35,8 @@ class AllCategoriePlainte extends Component {
           Nom:'',
           Adresse:'',
           entités:props.entités,
-          Entité:'',
+          count:props.count,
+          Entité:props.Entité,
           selectOptions : [],
           reload:false,
           nom_entité:'',
@@ -48,7 +49,7 @@ class AllCategoriePlainte extends Component {
     }
     UNSAFE_componentWillReceiveProps(props) {
 
-      this.setState({ categoriePlainte: props.categoriePlainte,entités:props.entités })
+      this.setState({ Entité:props.Entité,categoriePlainte: props.categoriePlainte,entités:props.entités,count:props.count })
   
     }
     onEditSearchTerm=(e)=>{
@@ -293,6 +294,15 @@ class AllCategoriePlainte extends Component {
            
           );
           
+          var i=1
+          var liste=(nombrepage)=>{
+             
+            while(i<=nombrepage){
+
+            }
+          }
+          
+          
           const content = CategoriePlainte.map((categoriePlainte) =>
             
                 <tr id={'tablerow'+categoriePlainte.id} onClick={
@@ -495,7 +505,8 @@ class AllCategoriePlainte extends Component {
                                 {showTable()}
                                
 
-                                </div>
+                          </div>
+                          
                 </div>    
             </div>
             
