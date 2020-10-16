@@ -18,6 +18,7 @@ import './Login_v2/vendor/daterangepicker/daterangepicker.css'
 import $ from 'jquery'
 import { FcCheckmark } from 'react-icons/fc';
 import Alert from 'react-bootstrap/Alert'
+import {serveur} from '../../serveur'
 
 import 'jquery-validation'
 
@@ -65,7 +66,7 @@ export  class Login extends Component {
 	}
 	
     componentDidMount() {
-	    axios.get('http://localhost:8000/plaintes/listeUsers/')
+	    axios.get(serveur+'listeUsers/')
           .then(res => {
             const Users = res.data;
             this.setState({Users: Users  });
@@ -74,7 +75,7 @@ export  class Login extends Component {
           .catch(function (error) {
             console.log(error);
           });
-		axios.get('http://localhost:8000/plaintes/listeEntite/')
+		axios.get(serveur+'listeEntite/')
           .then(res => {
             const entités = res.data.results;
             this.setState({entités: entités  });
@@ -374,7 +375,7 @@ export  class Login extends Component {
               'password':password,
               
           };
-          axios.post('http://localhost:8000/plaintes/CreateUser/', newUser)
+          axios.post(serveur+'CreateUser/', newUser)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -421,7 +422,7 @@ export  class Login extends Component {
             this.setState ({
                 loginalertvisible:false
                 });
-			axios.post('http://localhost:8000/plaintes/login/', AuthInfos)
+			axios.post(serveur+'login/', AuthInfos)
 			.then(res => {
 			  console.log(res);
 			  console.log(res.data);

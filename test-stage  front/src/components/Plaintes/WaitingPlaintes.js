@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import  Loader from '../loader'
 import $ from 'jquery'
 import moment  from 'moment'
+import {serveur} from '../../serveur'
 
 import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
 
@@ -129,7 +130,7 @@ class WaitingPlaintes extends Component {
               'password':password,
               'Reponse':this.state.Reponse
           };
-          axios.post('http://localhost:8000/plaintes/resoudre/', newPlainte)
+          axios.post(serveur+'resoudre/', newPlainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -163,7 +164,7 @@ class WaitingPlaintes extends Component {
             'state':'waiting',
             "date_création":moment().format('YYYY-MM-DD hh:mm:ss')
           };
-          axios.post('http://localhost:8000/plaintes/enregistrer/', newplainte)
+          axios.post(serveur+'enregistrer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -238,7 +239,7 @@ class WaitingPlaintes extends Component {
               'id':this.state.id,
               
           };
-          axios.post('http://localhost:8000/plaintes/delete/', newplainte)
+          axios.post(serveur+'delete/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -276,7 +277,7 @@ class WaitingPlaintes extends Component {
           let plainte={
               'delete_list':liste_id_element_check
                };
-          axios.post('http://localhost:8000/plaintes/deletemulti/', plainte)
+          axios.post(serveur+'deletemulti/', plainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -333,7 +334,7 @@ class WaitingPlaintes extends Component {
               'nom_Categorie':this.state.nom_Categorie,
               'categorie':this.state.categorie,
           };
-          axios.post('http://localhost:8000/plaintes/editer/', newplainte)
+          axios.post(serveur+'editer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);

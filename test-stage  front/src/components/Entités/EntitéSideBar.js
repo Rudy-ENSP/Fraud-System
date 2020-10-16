@@ -5,7 +5,8 @@ import './css/simple-sidebar.css'
 import './vendor/bootstrap/css/bootstrap.min.css'
 import NewEntités from './NewEntités'
 import AllEntités from './AllEntités'
-import axios from 'axios';
+import axios from 'axios'
+import {serveur} from '../../serveur'
 
 class EntitéSideBar extends Component {
     constructor(props){
@@ -15,15 +16,17 @@ class EntitéSideBar extends Component {
             
             reload:false,
             entités:  [],
-            hierachie:''
+            hierachie:'',
+            count:''
             
         }
        
-        axios.get('http://localhost:8000/plaintes/listeEntite/')
+        axios.get(serveur+'listeEntite/')
         .then(res => {
           const entités = res.data.results;
-          this.setState({entités: entités ,hierachie:"1" });
+          this.setState({entités: entités ,hierachie:"1" ,count:res.data.count});
           console.log('entités', entités)
+          console.log('entités',res.data.count)
         })
         .catch(function (error) {
           console.log(error);
@@ -56,7 +59,7 @@ class EntitéSideBar extends Component {
                </div>
                 <Route>
                     <Route path="/fraud/Entités/All Entités" >
-                     <AllEntités  entités={this.state.entités} Hierarchie={this.state.hierachie} callbackParent={this.callbackParent}/>
+                     <AllEntités  entités={this.state.entités} Hierarchie={this.state.hierachie} count={this.state.count} callbackParent={this.callbackParent}/>
                     </Route>
                    
                     

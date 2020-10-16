@@ -12,6 +12,7 @@ import { Modal as BModal, Button } from 'react-bootstrap'
 import 'bootstrap/dist/css/bootstrap.css';
 import Loader from '../loader'
 import $ from 'jquery'
+import {serveur} from '../../serveur'
 
 import 'jquery-validation'
 
@@ -248,11 +249,11 @@ onChangeConfPassword = (event) => {
       'Password': this.state.Password,
       'Email':this.state.Email,
       'Entité':this.state.Entité,
-      'Status':this.state.Status,
+      'Status':'Utilisateur',
       'nom_entité':this.state.nom_entité
     }
 
-    axios.post('http://localhost:8000/plaintes/CreateUser/', newUser)
+    axios.post(serveur+'CreateUser/', newUser)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -307,7 +308,7 @@ onChangeConfPassword = (event) => {
       'nom_entité':this.state.nom_entité
     }
 
-    axios.post('http://localhost:8000/plaintes/editUsers/', newUser)
+    axios.post(serveur+'editUsers/', newUser)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -364,7 +365,7 @@ onChangeConfPassword = (event) => {
     event.preventDefault()
     let Users = { delete_list: liste_id_element_check }
 
-    axios.post('http://localhost:8000/plaintes/deletemultiUser/', Users)
+    axios.post(serveur+'deletemultiUser/', Users)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -411,7 +412,7 @@ onChangeConfPassword = (event) => {
       Nom: this.state.Nom,
     }
 
-    axios.post('http://localhost:8000/plaintes/deleteUser/', newUsers)
+    axios.post(serveur+'deleteUser/', newUsers)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -767,23 +768,7 @@ onChangeConfPassword = (event) => {
 													onChange={this.onChangeEntité}
 												/>
 									</div>
-                  <div class="form-group">
-												<label for='Entité' style={{fontWeight:'bold'}}>Status</label>
-												<Select
-													className="basic-single"
-													classNamePrefix="select"
-													defaultValue={Status[0]}
-													isDisabled={false}
-													isLoading={false}
-													isClearable={false}
-													isRtl={false}
-													isSearchable={true}
-													name="Entité"
-													options={Status}
-													onChange={this.onChangeStatus}
-												/>
-									</div>
-									
+                  
 									<div class="form-group">
                                     <label for='password' style={{fontWeight:"bold"}}>Mot de passe</label>
                                             <div class="" id="" style={{display:"flex"}} >
@@ -876,22 +861,7 @@ onChangeConfPassword = (event) => {
 													onChange={this.onChangeEntité}
 												/>
 									</div>
-                  <div class="form-group">
-												<label for='Entité' style={{fontWeight:'bold'}}>Status</label>
-												<Select
-													className="basic-single"
-													classNamePrefix="select"
-													defaultValue={Status[0]}
-													isDisabled={false}
-													isLoading={false}
-													isClearable={false}
-													isRtl={false}
-													isSearchable={true}
-													name="Entité"
-													options={Status}
-													onChange={this.onChangeStatus}
-												/>
-									</div>
+                  
                   
 									
 									<div class="form-group">

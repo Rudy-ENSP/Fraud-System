@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route,Link} from 'react-router-dom';
 import '../../styles.css';
 import './css/simple-sidebar.css'
 import './vendor/bootstrap/css/bootstrap.min.css'
+import {serveur} from '../../serveur'
 
 import AllUsers from './AllUsers'
 import axios from 'axios';
@@ -19,7 +20,7 @@ class EntitéSideBar extends Component {
             
         }
        
-        axios.get('http://localhost:8000/plaintes/listeEntite/')
+        axios.get(serveur+'listeEntite/')
         .then(res => {
           const entités = res.data.results;
           this.setState({entités: entités  });
@@ -31,7 +32,7 @@ class EntitéSideBar extends Component {
        
 
 
-        axios.get('http://localhost:8000/plaintes/allUsers/')
+        axios.get(serveur+'allUsers/')
         .then(res => {
           const Users = res.data.results;
           this.setState({Users: Users  });

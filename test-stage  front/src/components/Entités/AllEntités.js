@@ -22,7 +22,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-
+import {serveur} from '../../serveur'
 
 var listeEntités
 var liste_id_element_check = []
@@ -112,7 +112,7 @@ class AllEntités extends Component {
       Hierarchie: this.state.Hierarchie,
     }
 
-    axios.post('http://localhost:8000/plaintes/createEntite/', newEntités)
+    axios.post(serveur+'createEntite/', newEntités)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -140,7 +140,7 @@ class AllEntités extends Component {
       Hierarchie: this.state.Hierarchie,
     }
 
-    axios.post('http://localhost:8000/plaintes/editEntite/', newEntités)
+    axios.post(serveur+'editEntite/', newEntités)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -170,7 +170,7 @@ class AllEntités extends Component {
     event.preventDefault()
     let Entités = { delete_list: liste_id_element_check }
 
-    axios.post('http://localhost:8000/plaintes/deletemultiEntite/', Entités)
+    axios.post(serveur+'deletemultiEntite/', Entités)
       .then(res => {
         console.log(res);
         console.log(res.data);
@@ -217,7 +217,7 @@ class AllEntités extends Component {
       Hierarchie: this.state.Hierarchie,
     }
 
-    axios.post('http://localhost:8000/plaintes/deleteEntite/', newEntités)
+    axios.post(serveur+'deleteEntite/', newEntités)
       .then(res => {
         console.log(res);
         console.log(res.data);

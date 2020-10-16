@@ -14,7 +14,7 @@ import { isLoginAdmin,isLogin,isLoginClient } from './Login/login';
 export class Entree extends Component {
     render(){
         return (
-            <div class="main">
+            <div class="main" style={{overflow:"scroll"}}>
                     <Router>
                     <Navbar isLoginAdmin={isLoginAdmin} isLogin={isLogin} isLoginClient={isLoginClient}/>
 
@@ -48,7 +48,7 @@ export class Entree extends Component {
                     <div class="space">
                     
                     </div>
-                    <Footer/>
+                   <Footer/>
                    </Router>
                     
                     

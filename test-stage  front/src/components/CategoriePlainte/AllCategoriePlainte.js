@@ -12,6 +12,7 @@ import  Loader from '../loader'
 import Select from 'react-select';
 import $ from 'jquery'
 import {Modal as BModal,Button} from 'react-bootstrap'
+import {serveur} from '../../serveur'
 var list_id=[]
 
 var listeCategoriePlainte
@@ -91,7 +92,7 @@ class AllCategoriePlainte extends Component {
               nom_entité:this.state.nom_entité
           }
          
-          axios.post('http://localhost:8000/plaintes/createCategoriePlainte/', newCategoriePlainte)
+          axios.post(serveur+'createCategoriePlainte/', newCategoriePlainte)
             .then(res => {console.log(res);
               console.log(res.id);
               if(res.data['state']==='success'){
@@ -138,7 +139,7 @@ class AllCategoriePlainte extends Component {
             nom_entité:this.state.nom_entité
           }
          
-          axios.post('http://localhost:8000/plaintes/editCategoriePlainte/', newCategoriePlainte)
+          axios.post(serveur+'editCategoriePlainte/', newCategoriePlainte)
             .then(res => {console.log(res);
               console.log(res.data);
               if(res.data['status']==='success'){
@@ -180,7 +181,7 @@ class AllCategoriePlainte extends Component {
         event.preventDefault()
           let delete_list={delete_list:liste_id_element_check}
          
-          axios.post('http://localhost:8000/plaintes/deletemultiCategoriePlainte/', delete_list)
+          axios.post(serveur+'deletemultiCategoriePlainte/', delete_list)
             .then(res => {console.log(res);
               console.log(res.data);
               if(res.data['status']==='success'){
@@ -230,7 +231,7 @@ class AllCategoriePlainte extends Component {
               Entité: this.state.Entité,
           }
          
-          axios.post('http://localhost:8000/plaintes/deleteCategoriePlainte/', newCategoriePlainte)
+          axios.post(serveur+'deleteCategoriePlainte/', newCategoriePlainte)
             .then(res => {console.log(res);
               console.log(res.data);
               if(res.data['status']==='success'){

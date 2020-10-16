@@ -8,7 +8,10 @@ export class Plaintes extends Component {
       
     render(){
         return (
-        <PlainteSideBar/>
+            <div id="main" >
+               <PlainteSideBar/>
+            </div>
+        
         );
     }
 }

@@ -14,6 +14,7 @@ import 'bootstrap/dist/css/bootstrap.css';
 import  Loader from '../loader'
 import $ from 'jquery'
 import moment  from 'moment'
+import {serveur} from '../../serveur'
 
 import { username ,password,isLoginAdmin,isLoginClient} from '../Login/login';
 
@@ -125,7 +126,7 @@ class ResolvedPlaintes extends Component {
               'id':this.state.id,
               
           };
-          axios.post('http://localhost:8000/plaintes/delete/', newplainte)
+          axios.post(serveur+'delete/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -163,7 +164,7 @@ class ResolvedPlaintes extends Component {
           let plainte={
               'delete_list':liste_id_element_check
                };
-          axios.post('http://localhost:8000/plaintes/deletemulti/', plainte)
+          axios.post(serveur+'deletemulti/', plainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -219,7 +220,7 @@ class ResolvedPlaintes extends Component {
               'nom_Categorie':this.state.nom_Categorie,
               'categorie':this.state.categorie,
           };
-          axios.post('http://localhost:8000/plaintes/editer/', newplainte)
+          axios.post(serveur+'editer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);

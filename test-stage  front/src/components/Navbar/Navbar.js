@@ -166,19 +166,22 @@ class Navbar extends Component {
         );
         if (isLoginAdmin){
             return (
-                <body>
-    
-                <header>
-                  
-                  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+                  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark ">
                     <a class="nav-link" href=""><span id="fraud">Fraud Stats</span></a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <button onClick={ ()=>{
+                      const password = document.querySelector('#navbarCollapse');
+                      const classe = password.getAttribute('class') === 'navbar-collapse collapse show' ? 'navbar-collapse collapse' : 'navbar-collapse collapse show';
+                      password.setAttribute('class', classe);
+                    }
+                      
+
+                    }     class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="true" aria-label="Toggle navigation">
                       <span class="navbar-toggler-icon"></span>
                     </button>
-                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-collapse collapse" id="navbarCollapse">
                       <ul class="navbar-nav mr-auto">
                         <li class="nav-item active">
-                        <NavLink exact to="/fraud/home"><a class="nav-link"  href="" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
+                        <NavLink exact to="/fraud/home"><a class="nav-link"  href="/fraud/home" onClick={this.onclickAcceuil}>Acceuil </a></NavLink>
                           
                         </li>
                         <li class="nav-item">
@@ -231,9 +234,7 @@ class Navbar extends Component {
             </BModal>
                   </nav>
                   
-                </header>
-            
-            </body>
+               
             );
         }
         if (isLoginClient){

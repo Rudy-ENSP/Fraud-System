@@ -6,6 +6,7 @@ import './vendor/bootstrap/css/bootstrap.min.css'
 import NewCategoriePlainte from './NewCategoriePlainte'
 import AllCategoriePlainte from './AllCategoriePlainte'
 import axios from 'axios';
+import {serveur} from '../../serveur'
 class EntitéSideBar extends Component {
     constructor(props){
         super(props)
@@ -20,7 +21,7 @@ class EntitéSideBar extends Component {
         }
     }
     componentDidMount() {
-        axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
+        axios.get(serveur+'listeCategoriePlainte/')
           .then(res => {
             const categoriePlainte = res.data.results;
             this.setState({categoriePlainte: categoriePlainte ,count:res.data.count });
@@ -31,7 +32,7 @@ class EntitéSideBar extends Component {
             console.log(error);
           });
           
-          axios.get('http://localhost:8000/plaintes/listeEntite/')
+          axios.get(serveur+'listeEntite/')
           .then(res => {
             const entités = res.data.results;
             this.setState({entités: entités,entitéselect:res.data.results[0].id  });

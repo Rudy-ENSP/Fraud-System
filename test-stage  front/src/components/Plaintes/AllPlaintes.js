@@ -13,8 +13,17 @@ import { FaTrash } from 'react-icons/fa';
 import {MdEdit } from 'react-icons/md';
 import '../../styles.css';
 import  Loader from '../loader'
-import $ from 'jquery'
+import {serveur} from '../../serveur'
+
 import moment  from 'moment'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'jquery/dist/jquery.min.js';
+//Datatable Modules
+import "datatables.net-dt/js/dataTables.dataTables"
+import "datatables.net-dt/css/jquery.dataTables.min.css"
+import $ from 'jquery';
+
+
 
 import '../Login/Login_v2/fonts/font-awesome-4.7.0/css/font-awesome.css';
 import { username ,password, isLoginAdmin} from '../Login/login';
@@ -59,6 +68,7 @@ class AllPlaintes extends Component {
             assignation:'',
             nom_assigne:'',
             SearchTerm:'',
+            page:''
             
             
         }
@@ -68,12 +78,10 @@ class AllPlaintes extends Component {
     //on recupère les données back end
 
     componentDidMount() {
-
-      $('.table-wrapper-scroll-y my-custom-scrollbar').scroll(function() {
-        if($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
-           this.scrollbar()
-        }
-    });
+     /*
+      $(document).ready(function () {
+        $('#example').DataTable();
+    });*/
      
       }
     UNSAFE_componentWillReceiveProps(props) {
@@ -167,7 +175,7 @@ class AllPlaintes extends Component {
             'Categorie':this.state.categorie,
             'state':'ajoutée'
           };
-          axios.post('http://localhost:8000/plaintes/enregistrer/', newplainte)
+          axios.post(serveur+'enregistrer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -242,7 +250,7 @@ class AllPlaintes extends Component {
               'id':this.state.id,
               
           };
-          axios.post('http://localhost:8000/plaintes/delete/', newplainte)
+          axios.post(serveur+'delete/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -282,7 +290,7 @@ class AllPlaintes extends Component {
           let plainte={
               'delete_list':liste_id_element_check
                };
-          axios.post('http://localhost:8000/plaintes/deletemulti/', plainte)
+          axios.post(serveur+'deletemulti/', plainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -338,7 +346,7 @@ class AllPlaintes extends Component {
               'nom_Categorie':this.state.nom_Categorie,
               'categorie':this.state.categorie,
           };
-          axios.post('http://localhost:8000/plaintes/editer/', newplainte)
+          axios.post(serveur+'editer/', newplainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -413,7 +421,7 @@ class AllPlaintes extends Component {
             'password':password,
             'Reponse':this.state.Reponse
         };
-        axios.post('http://localhost:8000/plaintes/valider/',data)
+        axios.post(serveur+'valider/',data)
         .then(res => {
           console.log(res.data)
         })
@@ -439,7 +447,7 @@ class AllPlaintes extends Component {
               'password':password,
               'Reponse':this.state.Reponse
           };
-          axios.post('http://localhost:8000/plaintes/resoudre/', newPlainte)
+          axios.post(serveur+'resoudre/', newPlainte)
           .then(res => {
             console.log(res);
             console.log(res.data);
@@ -575,6 +583,14 @@ class AllPlaintes extends Component {
         )
     }
     
+    paginationclick=()=>{
+      
+         var id="page"+this.state.page
+        const password = document.querySelector(id);
+        const classe = password.getAttribute('class') === 'page-item' ? 'page-item active' : 'page-item';
+        password.setAttribute('class', classe);
+      
+    }
     
     render(){
         
@@ -597,8 +613,17 @@ class AllPlaintes extends Component {
            
           );
         
-
-
+        const count=this.state.count/10
+        const all=this.state.count
+        var pagelist=[]
+        var i=1
+        while(i<=count){
+          pagelist.push(i)
+          i++
+        }
+        
+       
+        
         const MyPlaintes = this.dynamicSearch()
         const test=MyPlaintes.map((entité) =>
              list_id.push(entité.id))
@@ -691,138 +716,138 @@ class AllPlaintes extends Component {
           );
 
          
-        function showTable(){
-
-            
+          function showTable(){
              
-              if(MyPlaintes.length ===0){
-                  return(
+            if(MyPlaintes.length ===0){
+                return(
                     <Loader/>
-                  )
-              }
-              if(MyPlaintes.length <=8 && MyPlaintes.length>=1){
-                return (
-                    
-                        
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar"  >
-                            <table className="table table-bordered table-striped table-hover mb-0 ">
-                                <thead >
-                                    <th>
-                                        <span class="custom-checkbox">
-                                        <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
-                                                       var selectAll= document.getElementById("selectAll")
-                                                        
-                                                            if(selectAll.checked){
-                                                                liste_id_element_check=[]
-                                                                checkbox.each(function(){
-                                                                    this.checked = true;
-                                                                    var id = parseInt(this.getAttribute('id')) ;
-                                                                    
-                                                                    liste_id_element_check.push(id)  
-                                                                                          
-                                                                });
-                                                                console.log(liste_id_element_check)
-                                                            } else{
-                                                                checkbox.each(function(){
-                                                                    this.checked = false; 
-                                                                    var id = this.getAttribute('id') ;
-                                                                    liste_id_element_check=[] 
-                                                                                         
-                                                                });
-                                                                console.log(liste_id_element_check)
-                                                            } 
-                                                        
-                                                        checkbox.click(function(){
-                                                            if(!this.checked){
-                                                                $("#selectAll").prop("checked", false);
-                                                            }
-                                                            
-                                                        });
-                                                        }}/>
-                                            <label for="selectAll"></label>
-                                        </span>
-                                    </th>
-                                    <th>Indice</th>
-                                    <th>Titre</th>
-                                    <th>Categorie</th>
-                                    <th>Entité</th>
-                                    <th>Assignation</th>
-                                    <th>Date</th> 
-                                    <th>Etat</th>
-                                    <th>Actions</th>
-                                </thead>
-                                
-                                <tbody>
-                                    {content}
-                                </tbody>
-                            </table>
-                            
-                        </div>
-                    
                 )
-                }
-              if(MyPlaintes.length>8){
-                return (
-                   
-              
-              
-                    <div className="table-wrapper-scroll-y my-custom-scrollbar"  >
-                    <table className="table table-bordered table-striped table-hover mb-0">
-                        <thead >
-                            <th>
-                                <span class="custom-checkbox">
-                                <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
-                                                       var selectAll= document.getElementById("selectAll")
-                                                        
-                                                            if(selectAll.checked){
-                                                                liste_id_element_check=[]
-                                                                checkbox.each(function(){
-                                                                    this.checked = true;
-                                                                    var id = parseInt(this.getAttribute('id')) ;
-                                                                    
-                                                                    liste_id_element_check.push(id)  
-                                                                                          
-                                                                });
-                                                                console.log(liste_id_element_check)
-                                                            } else{
-                                                                checkbox.each(function(){
-                                                                    this.checked = false; 
-                                                                    var id = this.getAttribute('id') ;
-                                                                    liste_id_element_check=[] 
-                                                                                         
-                                                                });
-                                                                console.log(liste_id_element_check)
-                                                            } 
-                                                        
-                                                        checkbox.click(function(){
-                                                            if(!this.checked){
-                                                                $("#selectAll").prop("checked", false);
-                                                            }
-                                                            
-                                                        });
-                                                        }}/>
-                                    <label for="selectAll"></label>
-                                </span>
-                            </th>
-                            <th>Indice</th>
-                            <th>Titre</th>
-                            <th>Categorie</th>
-                            <th>Entité</th>
-                            <th>Assignation</th>
-                            <th>Date</th> 
-                            <th>Etat</th>
-                            <th>Actions</th>
-                        </thead>
-                        <tbody>
-                            {content}
-                        </tbody>
-                    </table>
-                    
-                </div>
-            
-                )
-              }
             }
+            if(MyPlaintes.length <=8 && MyPlaintes.length>=1){
+              return (
+                  
+                      
+                      <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                          <table className="table table-bordered table-striped table-hover mb-0 ">
+                              <thead >
+                                  <th>
+                                      <span class="custom-checkbox">
+                                      <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
+                                                       var selectAll= document.getElementById("selectAll")
+                                                        
+                                                            if(selectAll.checked){
+                                                                liste_id_element_check=[]
+                                                                checkbox.each(function(){
+                                                                    this.checked = true;
+                                                                    var id = parseInt(this.getAttribute('id')) ;
+                                                                    
+                                                                    liste_id_element_check.push(id)  
+                                                                                          
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } else{
+                                                                checkbox.each(function(){
+                                                                    this.checked = false; 
+                                                                    var id = this.getAttribute('id') ;
+                                                                    liste_id_element_check=[] 
+                                                                                         
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } 
+                                                        
+                                                        checkbox.click(function(){
+                                                            if(!this.checked){
+                                                                $("#selectAll").prop("checked", false);
+                                                            }
+                                                            
+                                                        });
+                                                        }}/>
+                                          <label for="selectAll"></label>
+                                      </span>
+                                  </th>
+                                  <th>Indice</th>
+                                  <th>Titre</th>
+                                  <th>Categorie</th>
+                                  <th>Entité</th>
+                                  <th>Assignation</th>
+                                  <th>Date</th> 
+                                  <th>Etat</th>
+                                  <th>Actions</th>
+                              </thead>
+                              
+                              <tbody>
+                                  {content}
+                              </tbody>
+                          </table>
+                          
+                      </div>
+                  
+              )
+              }
+            if(MyPlaintes.length>8){
+              return (
+                 
+            
+            
+                  <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                  <table className="table table-bordered table-striped table-hover mb-0">
+                      <thead >
+                          <th>
+                              <span class="custom-checkbox">
+                              <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
+                                                       var selectAll= document.getElementById("selectAll")
+                                                        
+                                                            if(selectAll.checked){
+                                                                liste_id_element_check=[]
+                                                                checkbox.each(function(){
+                                                                    this.checked = true;
+                                                                    var id = parseInt(this.getAttribute('id')) ;
+                                                                    
+                                                                    liste_id_element_check.push(id)  
+                                                                                          
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } else{
+                                                                checkbox.each(function(){
+                                                                    this.checked = false; 
+                                                                    var id = this.getAttribute('id') ;
+                                                                    liste_id_element_check=[] 
+                                                                                         
+                                                                });
+                                                                console.log(liste_id_element_check)
+                                                            } 
+                                                        
+                                                        checkbox.click(function(){
+                                                            if(!this.checked){
+                                                                $("#selectAll").prop("checked", false);
+                                                            }
+                                                            
+                                                        });
+                                                        }}/>
+                                  <label for="selectAll"></label>
+                              </span>
+                          </th>
+                          <th>Indice</th>
+                          <th>Titre</th>
+                          <th>Categorie</th>
+                          <th>Entité</th>
+                          <th>Assignation</th>
+                          <th>Date</th> 
+                          <th>Etat</th>
+                          <th>Actions</th>
+                      </thead>
+                      <tbody>
+                          {content}
+                      </tbody>
+                  </table>
+                  
+              </div>
+          
+              )
+            }
+          }
+        
+          
           
         return (
             <body>
@@ -848,6 +873,7 @@ class AllPlaintes extends Component {
                                     {this.ShowModal()}
 
                                     </div>
+                                    
                                   
                                     
                     </div>    

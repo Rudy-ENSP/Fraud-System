@@ -9,6 +9,7 @@ import NoResolvedPlaintes from './NoResolvedPlaintes'
 import ResolvedPlaintes from './ResolvedPlaintes'
 import WaitingPlaintes from './WaitingPlaintes'
 import Rapport from '../Rapport/rapport.js'
+import {serveur} from '../../serveur'
 
 class PlainteSideBar extends Component {
     constructor(props){
@@ -59,7 +60,7 @@ class PlainteSideBar extends Component {
               'user':username,
               'password':password
           };
-          axios.get('http://localhost:8000/plaintes/listeUsers/')
+          axios.get(serveur+'listeUsers/')
           .then(res => {
             const Users = res.data;
             this.setState({Users: Users ,userselect:res.data[0].id});
@@ -69,9 +70,9 @@ class PlainteSideBar extends Component {
             console.log(error);
           });
 
-          axios.post('http://localhost:8000/plaintes/listePlainte/',data)
+          axios.post(serveur+'listePlainte/',data)
           .then(res => {
-            const plainteA = res.data.results;
+            const plainteA = res.data;
             this.setState({plainteA: plainteA,nextA:res.data.next,previousA:res.data.previous,countA:res.data.count  });
             
             
@@ -81,18 +82,18 @@ class PlainteSideBar extends Component {
             console.log(error);
           });
 
-          axios.post('http://localhost:8000/plaintes/nonresolues/',data)
+          axios.post(serveur+'nonresolues/',data)
         .then(res => {
-            const plainteNR = res.data.results;
+            const plainteNR = res.data;
             this.setState({plainteNR: plainteNR,nextNR:res.data.next,previousNR:res.data.previous,countNR:res.data.count  });
           //console.log(plainteNR)
         })
         .catch(function (error) {
           console.log(error);
         });
-        axios.post('http://localhost:8000/plaintes/waiting/',data)
+        axios.post(serveur+'waiting/',data)
           .then(res => {
-            const plainteW = res.data.results;
+            const plainteW = res.data;
             this.setState({plainteW: plainteW,nextW:res.data.next,previousW:res.data.previous,countW:res.data.count  });
             //console.log('plainteW', plainteW)
           })
@@ -100,9 +101,9 @@ class PlainteSideBar extends Component {
             console.log(error);
           });
 
-        axios.post('http://localhost:8000/plaintes/resolues/',data)
+        axios.post(serveur+'resolues/',data)
           .then(res => {
-            const plainteR = res.data.results;
+            const plainteR = res.data;
             this.setState({plainteR: plainteR,nextR:res.data.next,previousR:res.data.previous,countR:res.data.count  });
            // console.log(plainteR)
           })
@@ -110,7 +111,7 @@ class PlainteSideBar extends Component {
             console.log(error);
           });
 
-          axios.get('http://localhost:8000/plaintes/listeEntite/')
+          axios.get(serveur+'listeEntite/')
           .then(res => {
             const entités = res.data.results;
             this.setState({entités: entités ,entitéselect:res.data.results[0].id });
@@ -120,7 +121,7 @@ class PlainteSideBar extends Component {
             console.log(error);
           });
 
-          axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
+          axios.get(serveur+'listeCategoriePlainte/')
           .then(res => {
             const categoriePlainte = res.data.results;
             this.setState({categoriePlainte: categoriePlainte ,categorieselect:res.data.results[0].id });

@@ -301,12 +301,9 @@ def getResolues(request):
                                 'username':request.data['user']
                                 })
                                 
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+       
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     else:
         set =Plainte.objects.filter(state = 'resolu').order_by('date_création').reverse()
         for plainte in set:
@@ -332,12 +329,8 @@ def getResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     return JsonResponse(data)
 
 
@@ -375,12 +368,8 @@ def getWaiting(request):
                                 'username':request.data['user']
                                 })
                                 
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     else:
         set =Plainte.objects.filter(state = 'waiting').order_by('date_création').reverse()
         for plainte in set:
@@ -406,12 +395,8 @@ def getWaiting(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     return JsonResponse(data)
 
 @api_view(['POST'])
@@ -446,12 +431,8 @@ def getNonResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     else:
         set =Plainte.objects.filter(state = 'ajoutée').order_by('date_création').reverse()
         for plainte in set:
@@ -477,12 +458,8 @@ def getNonResolues(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     return JsonResponse(data)
 
 
@@ -520,12 +497,8 @@ def listePlainte(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
     else:
         set =Plainte.objects.filter().order_by('date_création').reverse()
         for plainte in set:
@@ -551,12 +524,8 @@ def listePlainte(request):
                                 'nom_assigne':name,
                                 'username':request.data['user']
                                 })
-        paginator=PageNumberPagination()
-        paginator.PAGE_SIZE=10
-        plaintes_objects=plaintes
-        result_page=paginator.paginate_queryset(plaintes_objects,request)
-        serializer=PlainteSerializer(result_page,many=True)
-        return paginator.get_paginated_response(serializer.data)
+        serializer=PlainteSerializer(plaintes,many=True)
+        return JsonResponse(serializer.data,safe=False)
    
     
 #Autres méthodes

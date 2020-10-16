@@ -37,13 +37,13 @@ export class Accueil extends Component {
                     <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:18, 
                         marginTop:10, marginBottom:20}}>NIVEAU DE SERVICE </Box>
                     <Box style={{textAlign:"center,",fontSize:15}}>Decrivez juste votre Typologie de Fraudes lors de la création  et le système 
-                        s'occupera du reste, vous laissant sans souci</Box>
+                        s'occupera du reste</Box>
 
                     <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:18, 
                         marginTop:25, marginBottom:20}}>FILTRAGE DE FRAUDE PAR CATEGORIES </Box>
-                    <Box style={{textAlign:"center",fontSize:15}}>Notre puissant système de filtrage
+                    <Box style={{textAlign:"center",fontSize:15}}>Notre  système de filtrage
                         des billets garantit que les bons billets sont acheminés au bon service, 
-                        vous laissant un environnement sans encombrement</Box>
+                        </Box>
                 </Box>
                 <Box p={1} bgcolor="white" style={{width:300, marginRight:50, borderRadius:10}}>
                     <Box display="flex" flexDirection="row" p={1} m={1} style={{marginBottom:40}}
@@ -58,13 +58,13 @@ export class Accueil extends Component {
                 <Box p={1} bgcolor="grey.300" style={{width:200, marginLeft:300, borderRadius:10}}>
                     <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:18, 
                         marginTop:10, marginBottom:20}}>PORTAIL DE SUPPORT CLIENT </Box>
-                    <Box style={{textAlign:"center",fontSize:15}}>Système de portail de support client robuste
-                        pour aider votre entreprise à Repertorier et a Traiter les fraudes et fausses alertes sur internet</Box>
+                    <Box style={{textAlign:"center",fontSize:15}}>Système concu
+                        pour aider l'entreprise à Repertorier et a Traiter les fraudes et fausses alertes sur internet</Box>
 
                     <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:18, 
                         marginTop:25, marginBottom:20}}>ET BEAUCOUP PLUS! </Box>
-                    <Box style={{textAlign:"center",fontSize:15}}>FraudStats est livré avec des tonnes de 
-                        fonctionnalités impressionnantes que vous devez essayer vous-même</Box>
+                    <Box style={{textAlign:"center",fontSize:15}}>FraudStats est livré avec des 
+                        fonctionnalités impressionnantes que vous devez essayer </Box>
                 </Box>
             </Box>
 
