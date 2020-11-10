@@ -32,7 +32,10 @@ export var isLoginClient;
 export var username;
 export var password;
 var inputform;
+var submitform;
+var nombre_login_fail=0
 var username_list=[];
+var matricule_list=[];
 
 
 
@@ -45,6 +48,8 @@ export  class Login extends Component {
             signupalertvisible:false,
             isLoginClient:false,
             isLoginAdmin:false,
+            forgetpasswordmodalVisible:false,
+            mailforpasswordmodalVisible:false,
             isLogin:false,
             isAdmin:false,
             username:'',
@@ -60,7 +65,14 @@ export  class Login extends Component {
 			Password:'',
             ConfPassword:'',
             Users:[],
-            username_list:[]
+            Matricule:'',
+            username_list:[],
+            matricule_list:[],
+            UsernameFP:'',
+            EmailV:'',
+            CodeBackend:'',
+            Code:''
+            
             
         }
 	}
@@ -75,10 +87,11 @@ export  class Login extends Component {
           .catch(function (error) {
             console.log(error);
           });
-		axios.get(serveur+'listeEntite/')
+	
+        axios.get(serveur+'listeEntite/')
           .then(res => {
-            const entités = res.data.results;
-            this.setState({entités: entités  });
+            const entités = res.data;
+            this.setState({entités: entités,Entité:res.data[0].id  });
             console.log('entités', entités)
           })
           .catch(function (error) {
@@ -224,7 +237,30 @@ export  class Login extends Component {
          }
        
         
-	  }
+      }
+      
+      onChangeMatricule= (event) => {
+        this.setState({Matricule: event.target.value});
+        console.log('Matricule',event.target.value)
+        var flag=(matricule_list).includes(event.target.value)
+        //console.log(username_list)
+         if(flag){
+            $("#matriculeE").html("Matricule déja attribué").css("color","red");
+            const input = document.querySelector('#input');
+            input.setAttribute('type','button'); 
+            inputform=0;
+         }
+         else{
+            $("#matriculeE").html("").css("color","red"); 
+            const input = document.querySelector('#input');
+            input.setAttribute('type','submit'); 
+            inputform=1;
+         }
+       
+        
+      }
+
+
 	  onChangeEmail = (event) => {
         this.setState({Email: event.target.value});
         console.log('Email ',event.target.value)
@@ -256,6 +292,56 @@ export  class Login extends Component {
         this.setState({Password: event.target.value});
         console.log('Password ',event.target.value)
       }
+      onChangeEmailVerification = (event) => {
+        this.setState({EmailV: event.target.value});
+        console.log('Email ',event.target.value)
+      }
+      onChangeCodeVerification=(event) => {
+        this.setState({Code: event.target.value});
+        if (this.state.CodeBackend!=event.target.value){
+            submitform=0
+        }
+        else{
+            submitform=1
+        }
+        console.log('Code ',event.target.value)
+      }
+      
+      
+      onSendEmailVerification= (event) => {
+       
+        event.preventDefault();
+        let EmailV={
+            
+            'Email': this.state.EmailV.toLocaleLowerCase(),
+           
+            
+        };
+
+        axios.post(serveur+'verifyEmail/',EmailV)
+          .then(res => {
+            const flag = res.data['state'];
+            this.setState({CodeBackend:res.data['Code']})
+
+            if (flag=='false') {
+                $("#verifyemail").html("Votre Email n'est pas enregistré Veuillez verifier la saisie").css("color","red");
+                
+    
+               
+                
+            }else{
+                $("#verifyemail").html("Votre Email est bien lié à un compte; Continuer la procédure jusqu'à la fin pour reinitialiser le mot de passe ").css("color","green");
+                   
+           }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+       
+       
+        
+      }
+
       inputmodif = (event) =>{
         
         if(inputform===0){
@@ -271,6 +357,23 @@ export  class Login extends Component {
             inputform=1;
         }
       }
+
+      submitmodif= (event) =>{
+        
+        if(submitform===0){
+            this.setState({signupalertvisible:true})
+            const input = document.querySelector('#submitway');
+            input.setAttribute('type','button'); 
+            
+        }
+        else{
+            const input = document.querySelector('#submitway');
+            
+            input.setAttribute('type','submit');
+            submitform=1;
+        }
+      }
+
 	  onChangeConfPassword = (event) => {
         const Password = this.state.Password
         const confPassword = event.target.value
@@ -361,7 +464,80 @@ export  class Login extends Component {
         event.preventDefault();
         this.setState({password: event.target.value});
         console.log('password ',event.target.value)
-	  }
+      }
+      
+    onUpdatePassword=(event)=>{
+
+
+        event.preventDefault();
+        let Code={
+            
+            'Code': this.state.Code,
+           
+            
+        };
+
+        axios.post(serveur+'verifyCode/',Code)
+          .then(res => {
+            const flag = res.data['state'];
+
+            if (flag=='false') {
+                $("#verifycode").html("Code Erroné veuillez verifier").css("color","red");
+                submitform=0
+                
+    
+               
+                
+            }else{
+                $("#verifycode").html("Code Correct").css("color","green");
+                   submitform=1
+           }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+       
+       
+
+
+
+
+
+        event.preventDefault();
+          let newUser={
+			  
+            'Email': this.state.EmailV.toLocaleLowerCase(),
+              'Password': this.state.Password,
+             
+              
+              
+          };
+          axios.post(serveur+'UpdatePassword/', newUser)
+          .then(res => {
+            console.log(res);
+            console.log(res.data);
+            if(res.data['state']==='success'){
+              alert( "Utilisateur " +newUser.Username.toLocaleUpperCase() +" modifié avec succèss" );
+              this.setState ({
+              
+              'Username':'',
+              'Password': '',
+              
+              });
+			}
+			else if(res.data['state']==='User exist'){
+				alert('Nom Utilisateur existant veuillez choisir un autre nom')
+			}
+            else{
+                alert('Echec de lors de la Création de Utilisateur;Veuillez modifier votre nom Utilisateur!')
+            }
+          })
+          .catch(err => console.log(err));
+
+          //
+         
+      }
+    
 	  
 	onSaveUser=(event)=>{
         event.preventDefault();
@@ -373,6 +549,7 @@ export  class Login extends Component {
               'Email':this.state.Email,
               'Entité':this.state.Entité,
               'password':password,
+              'Matricule':this.state.Matricule
               
           };
           axios.post(serveur+'CreateUser/', newUser)
@@ -389,6 +566,7 @@ export  class Login extends Component {
               'Email':'',
               'Entité':'',
               'password':'',
+              'Matricule':''
               });
 			}
 			else if(res.data['state']==='User exist'){
@@ -427,7 +605,7 @@ export  class Login extends Component {
 			  console.log(res);
 			  console.log(res.data);
 			  if(res.data['state']==='success'){
-						username=this.state.username
+						username=res.data['username']
 						password=this.state.password
 						isLogin=true
 					if(this.state.username!='admin'){
@@ -435,14 +613,22 @@ export  class Login extends Component {
                     }
                     if(this.state.username=='admin'){
 						isLoginAdmin=true
-                    }
+                    }  
                     
                 this.setState({redirect:true})
                 //this.history.push("/Entree")
 					
 				}
 				else{
-					alert('echec de connexion')
+                    alert('Échec de connexion : '+res.data['motif'])
+                    if (res.data['motif']=="Mot de passe Erroné"){
+                        nombre_login_fail++
+                        console.log(nombre_login_fail)
+                        if(nombre_login_fail>=2){
+                            document.getElementById('forgotpass').style.color = 'red'
+                        }
+                       
+                    }
 				}
 			  
 			})
@@ -455,7 +641,12 @@ export  class Login extends Component {
         const users = this.state.Users
        // const history=useHistory();
           const temp4 = users.map((option) =>
-          username_list.push( option.username )
+          {
+            username_list.push( option.username);
+            matricule_list.push(option.matricule)
+          }
+         
+
          
         );
         
@@ -499,7 +690,12 @@ export  class Login extends Component {
 						<input class="input100" type="password" name="password" onChange={this.onChangepassword} />
 						<span class="focus-input100" data-placeholder="Password"></span>
 					</div>
-                   
+                    
+                    <div> 
+                        <li className="nav-item" style={{marginLeft:"100px"}}>
+                        <Link className="nav-link" to="/Mot de passe Oublié" onClick={() => this.setState({mailforpasswordmodalVisible:true})}><span id="forgotpass">Mot de passe Oublié?</span></Link>
+                        </li>
+                    </div>
 
 					<div class="container-login100-form-btn">
 						<div class="wrap-login100-form-btn">
@@ -517,11 +713,139 @@ export  class Login extends Component {
 
 						<li className="nav-item">
                         <Link className="nav-link" to="/sign-up" onClick={() => this.setState({signupmodalVisible:true})}>Sign up</Link>
-                      </li>
+                        </li>
 					</div>
 				</form>
 			</div>
 		</div>
+        <BModal
+                        id="codeverificationmodal"
+                        size="xl"
+                        show={this.state.codeverificationmodalVisible}
+                        onHide={() => this.setState({codeverificationmodalVisible:false})}
+                        aria-labelledby="example-modal-sizes-title-lg">          
+                        
+						<form id="validationEmail" onSubmit={this.onUpdatePassword} >
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-lg">
+                                <h4 class="modal-title">Modification du mot de passe </h4>
+                                </BModal.Title>
+						
+                            </BModal.Header>
+                            <BModal.Body>
+                                    
+									<div class="form-group">
+                                    <label for='Email' style={{fontWeight:"bold"}}>Renseignez le code que vous avez recu dans votre boite</label>
+                                                                    <input id="email-validation" type='text' className ="form-control" name='Titre'
+                                                                    onChange={this.onChangeCodeVerification} required />
+                                    </div>                          
+                                    <div class="" id="verifycode"></div>		
+									
+                                   
+                                    
+									
+                                    
+									<input type="submit" id="submitway" onClick={this.submitmodif} style={{marginLeft:'235px'}} class="btn btn-success" value="Enregistrer"  />
+                            </BModal.Body>
+                            <BModal.Footer>
+							    <input type="button" class="btn btn-warning" data-dismiss="modal" value="Cancel" style={{marginRight:'40px'}} onClick={()=>this.setState({codeverificationmodalVisible:false})}/>
+                                <Link className="nav-link"  onClick={() => {this.setState({codeverificationmodalVisible:false})
+                            this.setState({codeverificationmodalVisible:false})
+                            } }>Connectez vous </Link>
+                            </BModal.Footer>
+							</form>
+        </BModal>
+
+        <BModal
+                        id="mailforpasswordmodal"
+                        size="xl"
+                        show={this.state.mailforpasswordmodalVisible}
+                        onHide={() => this.setState({mailforpasswordmodalVisible:false})}
+                        aria-labelledby="example-modal-sizes-title-lg">          
+                        
+						<form id="validationEmail" onSubmit={this.onSendEmailVerification} >
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-lg">
+                                <h4 class="modal-title">Modification du mot de passe </h4>
+                                </BModal.Title>
+						
+                            </BModal.Header>
+                            <BModal.Body>
+                                    
+									<div class="form-group">
+                                    <label for='Email' style={{fontWeight:"bold"}}>Renseignez l'email lié à votre compte</label>
+                                                                    <input id="email-validation" type='email' className ="form-control" name='Titre'
+                                                                    onChange={this.onChangeEmailVerification} required />
+                                    </div>                          
+                                    <div class="" id="verifyemail"></div>		
+									
+                                   
+                                    
+									
+                                    
+									<input type="submit" id="input" onClick={this.inputmodif} style={{marginLeft:'235px'}} class="btn btn-success" value="Valider"  />
+                            </BModal.Body>
+                            <BModal.Footer>
+							    <input type="button" class="btn btn-warning" data-dismiss="modal" value="Cancel" style={{marginRight:'40px'}} onClick={()=>this.setState({mailforpasswordmodalVisible:false})}/>
+                                <Link className="nav-link"  onClick={() => {this.setState({mailforpasswordmodalVisible:false})
+                            this.setState({forgetpasswordmodalVisible:true})
+                            } }>Suivant</Link>
+                            </BModal.Footer>
+							</form>
+        </BModal>
+
+        <BModal
+                        id="forgetpasswordmodal"
+                        size="xl"
+                        show={this.state.forgetpasswordmodalVisible}
+                        onHide={() => this.setState({forgetpasswordmodalVisible:false})}
+                        aria-labelledby="example-modal-sizes-title-lg">          
+                        
+						
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-lg">
+                                <h4 class="modal-title">Modification du mot de passe </h4>
+                                </BModal.Title>
+						
+                            </BModal.Header>
+                            <BModal.Body>
+									<div class="form-group">
+                                    <label for='password' style={{fontWeight:"bold"}}>Mot de passe</label>
+                                            <div class="" id="" style={{display:"flex"}} >
+                                                    
+                                                                    <input id="Password" type='password' className ="form-control" name='Titre'
+                                                                    onChange={this.onChangePassword} required />
+                                                               <h4><i style={{marginLeft:'-30px',cursor:'pointer',color:'#007bff'}} onClick={this.showPass} id="togglePassword" class="zmdi zmdi-eye"></i></h4> 
+                                            </div>
+												
+												<div class="" id="passb"></div>		
+									</div>
+                                    <div class="form-group">
+                                    <label for='confirm-password' style={{fontWeight:"bold"}}>Confirmer le mot de passe</label>
+                                            <div class="" id="" style={{display:"flex"}} >
+                                                    
+                                            <input id="ConfPassword" type='password' className ="form-control" name='Titre'
+													onChange={this.onChangeConfPassword} required />
+                                                               <h4><i style={{marginLeft:'-30px',cursor:'pointer',color:'#007bff'}} onClick={this.showPass1} id="togglePassword1" class="zmdi zmdi-eye"></i></h4> 
+                                            </div>
+												
+                                            <div class="" id="cpassb"></div>	
+									</div>
+                                    
+									
+                                    <div class="form-group" id="msg"></div>
+									<input type="submit" id="input" onClick={this.inputmodif} style={{marginLeft:'235px'}} class="btn btn-success" value="Valider"  />
+                            </BModal.Body>
+                            <BModal.Footer>
+							    <input type="button" class="btn btn-warning" data-dismiss="modal" value="Cancel" style={{marginRight:'40px'}} onClick={()=>this.setState({forgetpasswordmodalVisible:false})}/>
+                                <Link className="nav-link"  onClick={() => {this.setState({forgetpasswordmodalVisible:false})
+                            this.setState({codeverificationmodalVisible:true})
+                            
+                            }}>Continuer</Link>
+                            </BModal.Footer>
+							
+        </BModal>
+
 		<BModal
                         id="signupmodal"
                         size="xl"
@@ -544,6 +868,13 @@ export  class Login extends Component {
 														
 									</div>
                                     <div class="" id="userE"></div>
+                                    <div class="form-group">
+												<label for='matricule' style={{fontWeight:"bold"}}>Matricule</label>
+															<input type='text' className ="form-control" name='Titre'
+													onChange={this.onChangeMatricule} required />
+														
+									</div>
+                                    <div class="" id="matriculeE"></div>
 									<div class="form-group">
 												<label for='nom' style={{fontWeight:"bold"}}>Nom</label>
 															<input type='text' className ="form-control" name='Titre'
@@ -623,7 +954,7 @@ export  class Login extends Component {
                         show={this.state.loginalertvisible}
                         onHide={() => this.setState({loginalertvisible:false})}
                         aria-labelledby="example-modal-sizes-title-sm">
-        >
+        
         
         <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-lg">
@@ -653,7 +984,7 @@ export  class Login extends Component {
                         show={this.state.signupalertvisible}
                         onHide={() => this.setState({signupalertvisible:false})}
                         aria-labelledby="example-modal-sizes-title-sm">
-        >
+        
         
         <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-lg">

@@ -113,8 +113,8 @@ class PlainteSideBar extends Component {
 
           axios.get(serveur+'listeEntite/')
           .then(res => {
-            const entités = res.data.results;
-            this.setState({entités: entités ,entitéselect:res.data.results[0].id });
+            const entités = res.data;
+            this.setState({entités: entités ,entitéselect:res.data[0].id });
             //console.log('entités', entités)
           })
           .catch(function (error) {
@@ -123,8 +123,8 @@ class PlainteSideBar extends Component {
 
           axios.get(serveur+'listeCategoriePlainte/')
           .then(res => {
-            const categoriePlainte = res.data.results;
-            this.setState({categoriePlainte: categoriePlainte ,categorieselect:res.data.results[0].id });
+            const categoriePlainte = res.data;
+            this.setState({categoriePlainte: categoriePlainte ,categorieselect:res.data[0].id });
             //console.log('Categorieplaintes', categoriePlainte)
           })
           .catch(function (error) {

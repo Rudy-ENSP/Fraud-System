@@ -19,6 +19,7 @@ class UsersSerializer(serializers.Serializer):
     Email=serializers.CharField()
     Status=serializers.CharField()
     nom_entité=serializers.CharField()
+    #matricule=serializers.CharField()
 
 #class CatPlainteSerializer(ModelSerializer):
 #

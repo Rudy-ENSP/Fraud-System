@@ -1,3 +1,4 @@
+
 from django.shortcuts import render
 from django.core import serializers
 from django.http import JsonResponse,HttpResponse
@@ -17,11 +18,47 @@ from django.core.paginator import Paginator
 from rest_framework.generics import ListAPIView 
 from rest_framework.generics import ListCreateAPIView  
 from rest_framework import viewsets  ,status 
+from random import randint
+from django.conf import settings 
+from django.core.mail import send_mail 
 
 
 
-
+CodeV=0
 #Methodes pour les Users 
+@api_view(['POST'])
+def verifyEmail(request):
+    set=User.objects.all()
+    email=request.data['Email']
+    print(email)
+    emails=[]
+    for utilisateur in set:
+        emails.append(utilisateur.email)
+    if email in emails:
+        Code=randint(1000, 9999)
+        CodeV=Code
+        subject = 'Reinitilisation du Mot de passe de Connection sur Fraud System'
+        message = 'Votre code de reinitialisation est le suivant :'+str(Code)
+        email_from = settings.EMAIL_HOST_USER 
+        recipient_list = [email, ] 
+        send_mail( subject, message, email_from, recipient_list ) 
+
+        return JsonResponse({'state':"true","Code":Code})
+    else:
+        return JsonResponse({'state':"false"})
+
+@api_view(['POST'])
+def verifyCode(request):
+    
+    Code=request.data['Code']
+    print(Code)
+    if Code==CodeV:
+        return JsonResponse({'state':"true"})
+    else:
+        return JsonResponse({'state':"false"})
+     
+
+    
 
 @api_view(['GET'])
 def listeUsers(request):
@@ -30,13 +67,14 @@ def listeUsers(request):
     for utilisateur in set:
         users1=get_object_or_404(User,id=(utilisateur.user).id)
         name=users1.first_name +" "+users1.last_name
-        users.append({'id':utilisateur.id,'entité':(utilisateur.entité).id,'user':name,'username':users1.username})
-    #print(users)
+        users.append({'id':utilisateur.id,'entité':(utilisateur.entité).id,'user':name,'username':users1.username,'matricule':utilisateur.matricule})
+    print(users)
 
     return JsonResponse(users, safe=False)
 
 
-class listeUsersListView(ListAPIView):
+@api_view(['GET'])
+def allUsers(request):
     set=Users.objects.all()
     users=[]
     for utilisateur in set:
@@ -63,9 +101,7 @@ class listeUsersListView(ListAPIView):
                       })
     #print(users)
 
-    queryset=users
-    serializer_class=UsersSerializer
-    pagination_class=PageNumberPagination    
+    return JsonResponse(users, safe=False)   
 
 @api_view(['POST'])
 def UserProfile(request):
@@ -121,11 +157,15 @@ def editEntité(request):
     data = {'status':'success'}
     return JsonResponse(data)
 
-class listeEntiteListView(ListAPIView):
+@api_view(['GET'])
+def listeEntité(request):
     entité = get_list_or_404(Entité)
-    queryset=entité
-    serializer_class=EntitéSerializer
-    pagination_class=PageNumberPagination
+    serializer = EntitéSerializer(entité,many=True)
+    #return JsonResponse(serializer.data, safe=False)
+    
+    print(serializer.data)
+    
+    return JsonResponse(serializer.data, safe=False)
 
 
 
@@ -182,7 +222,7 @@ def listeCategoriePlainte(request):
     #return JsonResponse(serializer.data, safe=False)
     
     return JsonResponse(serializer.data, safe=False)
-
+"""
 class CatPlainteListView(ListAPIView):
     set = get_list_or_404(CatPlainte)
     cat=[]
@@ -194,7 +234,7 @@ class CatPlainteListView(ListAPIView):
     serializer_class=CatPlainteSerializer
     pagination_class=PageNumberPagination
 
-
+"""
 #Methodes pour les Plaintes
 @api_view(['POST'])
 def delete(request):
@@ -547,10 +587,28 @@ def CreateUser(request):
     utilisateur = Users(
         entité=get_object_or_404(Entité, id=request.data['Entité']),
         user=user,
+        matricule=request.data['Matricule']
     )
     utilisateur.save()
     data = {"state":"success"} 
     return JsonResponse({'id':utilisateur.id,'state':"success"})
+
+
+
+@api_view(['POST'])
+def UpdatePassword(request):
+    email = request.data['Email']
+    
+    password = request.data['Password']
+   
+    
+    
+    user = get_object_or_404(User, email=email)
+    user.set_password(password) 
+    user.save()
+    
+    data = {"state":"success"} 
+    return JsonResponse({'state':"success"})
 
 @api_view(['POST'])
 def editUsers(request):
@@ -580,18 +638,41 @@ def editUsers(request):
 def loginUser(request):
     password = request.data['password']
     username = request.data['username']
-    success = {'state':'success'}
-    fail = {'state':'fail'}
+    
+    
     
     user = authenticate(request, username = username, password = password)
     if user is not None:
         login(request, user)
+        success = {'state':'success','username':username}
         print(success)
         return JsonResponse(success)
         
     else:
-        print(fail)
-        return JsonResponse(fail)
+        
+        try:
+            users=get_object_or_404(Users,matricule=username)
+            name=users.user.username
+            user = authenticate(request, username = name, password = password)
+            #login(request, user)
+            if user is not None:
+                login(request, user)
+                success = {'state':'success','username':name}
+                print(success)
+                return JsonResponse(success)
+            else:
+               fail={'state':'fail','motif':'Mot de passe Erroné'}
+               print(fail)
+               return JsonResponse(fail) 
+        except :
+            try:
+               utilisateurs=get_object_or_404(User,username=username)
+               fail={'state':'fail','motif':'Mot de passe Erroné'}
+            except :
+               fail={'state':'fail','motif':'Utilisateur non Existant'}
+            
+            print(fail)
+            return JsonResponse(fail)
         
 
 @api_view(['POST'])
@@ -634,3 +715,4 @@ def deletemultiUser(request):
 #@action(methods = ['GET'], detail = False)
 #def logout(request):
   #  logout(request)
+  

@@ -1,6 +1,6 @@
 from django.db import models
+from dbview import DbView
 from django.contrib.auth.models import User
-
 
 class Entité(models.Model):
     id = models.AutoField(primary_key=True)
@@ -14,6 +14,7 @@ class Entité(models.Model):
 class Users(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     entité = models.ForeignKey(Entité, on_delete=models.CASCADE)
+    matricule=models.CharField(max_length=50)
     def __str__(self):
     	return str(self.user.username)+" "+str(self.user.id)
 
@@ -42,4 +43,9 @@ class Plainte(models.Model):
         self.state=state
     def __str__(self):
     	return str(self.title)
+
+class CustomerEMailList(DbView):
+    fieldA = models.OneToOneField(User, primary_key=True,
+        db_column='fielda__id')
+    fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
 

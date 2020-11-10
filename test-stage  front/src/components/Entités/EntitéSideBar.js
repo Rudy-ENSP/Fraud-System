@@ -23,7 +23,7 @@ class EntitéSideBar extends Component {
        
         axios.get(serveur+'listeEntite/')
         .then(res => {
-          const entités = res.data.results;
+          const entités = res.data;
           this.setState({entités: entités ,hierachie:"1" ,count:res.data.count});
           console.log('entités', entités)
           console.log('entités',res.data.count)

@@ -1,3 +1,4 @@
+
 from django.urls import path
 from django.conf.urls import url
 from rest_framework.urlpatterns import format_suffix_patterns
@@ -22,12 +23,12 @@ urlpatterns = [
     #path('loginClient/', views.connectUser, name="login"),
     path('login/', views.loginUser, name="login"),
 
-    path('listeEntite/', views.listeEntiteListView.as_view(), name="entités"),
+    path('listeEntite/', views.listeEntité, name="entités"),
     path('createEntite/', views.createEntité, name="createEntité"),
     path('editEntite/', views.editEntité, name="editEntité"),
     path('deleteEntite/', views.deleteEntité, name="deleteEntité"),
     path('deletemultiEntite/', views.deletemultiEntite, name="deletemultiEntite"),
-    path('listeCategoriePlainte/', views.CatPlainteListView.as_view(), name="CategoriePlainte"),
+    path('listeCategoriePlainte/', views.listeCategoriePlainte, name="CategoriePlainte"),
     path('createCategoriePlainte/', views.createCategoriePlainte, name="createCategoriePlainte"),
     path('editCategoriePlainte/', views.editCategoriePlainte, name="editCategoriePlainte"),
     path('deleteCategoriePlainte/', views.deleteCategoriePlainte, name="deleteCategoriePlainte"),
@@ -35,10 +36,14 @@ urlpatterns = [
     path('UserProfile/', views.UserProfile, name="UserProfile"),
     path('listeUsers/', views.listeUsers, name="listeUsers"),
     path('CreateUser/', views.CreateUser, name="CreateUser"),
-    path('allUsers/', views.listeUsersListView.as_view(), name="allUsers"),
+    path('UpdatePassword/', views.UpdatePassword, name="UpdatePassword"),
+    path('allUsers/', views.allUsers, name="allUsers"),
     path('editUsers/', views.editUsers, name="editUsers"),
     path('deleteUser/', views.deleteUser, name="deleteUser"),
-    path('deletemultiUser/', views.deletemultiUser, name="deletemultiUser")
+    path('deletemultiUser/', views.deletemultiUser, name="deletemultiUser"),
+    path('verifyEmail/',views.verifyEmail,name="verifyEmail"),
+     path('verifyCode/',views.verifyCode,name="verifyEmail"),
+    
     
 
 ]

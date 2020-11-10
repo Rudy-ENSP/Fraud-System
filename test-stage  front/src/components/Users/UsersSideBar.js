@@ -22,7 +22,7 @@ class EntitéSideBar extends Component {
        
         axios.get(serveur+'listeEntite/')
         .then(res => {
-          const entités = res.data.results;
+          const entités = res.data;
           this.setState({entités: entités  });
           console.log('entités', entités)
         })
@@ -34,7 +34,7 @@ class EntitéSideBar extends Component {
 
         axios.get(serveur+'allUsers/')
         .then(res => {
-          const Users = res.data.results;
+          const Users = res.data;
           this.setState({Users: Users  });
           console.log('Users', Users)
         })
