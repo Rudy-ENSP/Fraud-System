@@ -1,5 +1,4 @@
 from django.db import models
-from dbview import DbView
 from django.contrib.auth.models import User
 
 class Entité(models.Model):
@@ -44,8 +43,4 @@ class Plainte(models.Model):
     def __str__(self):
     	return str(self.title)
 
-class CustomerEMailList(DbView):
-    fieldA = models.OneToOneField(User, primary_key=True,
-        db_column='fielda__id')
-    fieldB = models.IntegerField(blank=True, null=True, db_column='fieldb')
 

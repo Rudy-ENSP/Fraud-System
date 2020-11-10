@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'drf_generators',
     'fraud_backend',
     'Plaintes',
-    'dbview',
+    
     
 ]
 
