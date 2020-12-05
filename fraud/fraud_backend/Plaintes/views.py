@@ -4,8 +4,8 @@ from django.core import serializers
 from django.http import JsonResponse,HttpResponse
 from rest_framework.decorators import api_view, action,permission_classes
 from rest_framework.response import Response
-from .models import Plainte,CatPlainte, Entité,Users
-from .serializers import PlainteSerializer,CatPlainteSerializer, UsersSerializer, EntitéSerializer
+from .models import Plainte,CatPlainte, Entité,Users,Verification
+from .serializers import PlainteSerializer,CatPlainteSerializer, UsersSerializer, EntitéSerializer,VerificationSerializer
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, get_user_model, logout, login
 from django.shortcuts import get_object_or_404, get_list_or_404
@@ -30,13 +30,17 @@ CodeV=0
 def verifyEmail(request):
     set=User.objects.all()
     email=request.data['Email']
-    print(email)
     emails=[]
     for utilisateur in set:
         emails.append(utilisateur.email)
     if email in emails:
         Code=randint(1000, 9999)
         CodeV=Code
+        verification = Verification(
+        email=email,
+        code=Code
+          )
+        verification.save()
         subject = 'Reinitilisation du Mot de passe de Connection sur Fraud System'
         message = 'Votre code de reinitialisation est le suivant :'+str(Code)
         email_from = settings.EMAIL_HOST_USER 
@@ -51,7 +55,7 @@ def verifyEmail(request):
 def verifyCode(request):
     
     Code=request.data['Code']
-    print(Code)
+    CodeV=Verification.objects.all()[0].code
     if Code==CodeV:
         return JsonResponse({'state':"true"})
     else:
@@ -68,7 +72,6 @@ def listeUsers(request):
         users1=get_object_or_404(User,id=(utilisateur.user).id)
         name=users1.first_name +" "+users1.last_name
         users.append({'id':utilisateur.id,'entité':(utilisateur.entité).id,'user':name,'username':users1.username,'matricule':utilisateur.matricule})
-    print(users)
 
     return JsonResponse(users, safe=False)
 
@@ -99,7 +102,7 @@ def allUsers(request):
                       'nom_entité':nom_entité
 
                       })
-    #print(users)
+    
 
     return JsonResponse(users, safe=False)   
 
@@ -110,7 +113,7 @@ def UserProfile(request):
     users=[]
     for utilisateur in set:
         users.append({'nom':utilisateur.first_name,'prenom':utilisateur.last_name,'email':utilisateur.email})
-    print(users)
+    
 
     return JsonResponse(users, safe=False)
             
@@ -163,7 +166,7 @@ def listeEntité(request):
     serializer = EntitéSerializer(entité,many=True)
     #return JsonResponse(serializer.data, safe=False)
     
-    print(serializer.data)
+   
     
     return JsonResponse(serializer.data, safe=False)
 
@@ -305,11 +308,11 @@ def getChart(request):
         ecart=year-yeard
     #placer l'element à sa position
         chart[12*ecart+month-1]=chart[12*ecart+month-1]+1
-    print(chart)
+    
     return JsonResponse({'chart':chart,'state':'success','labels':labels})
 @api_view(['POST'])
 def enregistrer(request):
-    print(request.data)
+    
     user = authenticate(request, username = request.data['user'], password = request.data['password'])
     entité = get_object_or_404(Entité, id=request.data['entité'])
     assignation= get_object_or_404(Users, id=request.data['Assignation'])
@@ -685,7 +688,7 @@ def loginUser(request):
     if user is not None:
         login(request, user)
         success = {'state':'success','username':username}
-        print(success)
+       
         return JsonResponse(success)
         
     else:
@@ -698,11 +701,11 @@ def loginUser(request):
             if user is not None:
                 login(request, user)
                 success = {'state':'success','username':name}
-                print(success)
+               
                 return JsonResponse(success)
             else:
                fail={'state':'fail','motif':'Mot de passe Erroné'}
-               print(fail)
+             
                return JsonResponse(fail) 
         except :
             try:
@@ -711,7 +714,7 @@ def loginUser(request):
             except :
                fail={'state':'fail','motif':'Utilisateur non Existant'}
             
-            print(fail)
+            
             return JsonResponse(fail)
         
 

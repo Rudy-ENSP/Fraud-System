@@ -9,6 +9,12 @@ class Entité(models.Model):
     def __str__(self):
     	return str(self.name)
 
+class Verification(models.Model):
+    id = models.AutoField(primary_key=True)
+    email = models.CharField(max_length=150)
+    code = models.CharField(max_length=50)
+    def __str__(self):
+    	return str(self.email)
 
 class Users(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -23,6 +29,7 @@ class CatPlainte(models.Model):
     entité = models.ForeignKey(Entité, on_delete=models.CASCADE)
     def __str__(self):
     	return str(self.name)
+
 
 class Plainte(models.Model):
     

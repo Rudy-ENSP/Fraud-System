@@ -1,12 +1,18 @@
 from rest_framework.serializers import ModelSerializer,Serializer
 from rest_framework import serializers
-from .models import Entité, Users, CatPlainte, Plainte
+from .models import Entité, Users, CatPlainte, Plainte,Verification
 
 
 class EntitéSerializer(ModelSerializer):
 
     class Meta:
         model = Entité
+        fields = '__all__'
+
+class VerificationSerializer(ModelSerializer):
+
+    class Meta:
+        model = Verification
         fields = '__all__'
 
 

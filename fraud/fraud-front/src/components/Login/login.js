@@ -469,73 +469,50 @@ export  class Login extends Component {
       
     onUpdatePassword=(event)=>{
 
-
-        event.preventDefault();
-        let Code={
+        if (this.state.Code!=this.state.CodeBackend) {
+            $("#verifycode").html("Code Erroné veuillez verifier").css("color","red");
+            submitform=0
             
-            'Code': this.state.Code,
+
            
             
-        };
-
-        axios.post(serveur+'verifyCode/',Code)
-          .then(res => {
-            const flag = res.data['state'];
-
-            if (flag=='false') {
-                $("#verifycode").html("Code Erroné veuillez verifier").css("color","red");
-                submitform=0
-                
-    
+        }else{
+            $("#verifycode").html("Code Correct;Mot de passe Réinitilisé avec success").css("color","green");
+               submitform=1
+               event.preventDefault();
+               let newUser={
+                   
+                 'Email': this.state.EmailV.toLocaleLowerCase(),
+                   'Password': this.state.Password,
+                  
+                   
+                   
+               };
+               axios.post(serveur+'UpdatePassword/', newUser)
+               .then(res => {
                
-                
-            }else{
-                $("#verifycode").html("Code Correct").css("color","green");
-                   submitform=1
-           }
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+                 if(res.data['state']==='success'){
+                   alert( "Utilisateur modifié avec succèss" );
+                   this.setState ({
+                   
+                   'Username':'',
+                   'Password': '',
+                   
+                   });
+                 }
+                 
+                 else{
+                     alert('Echec de lors de la Création de Utilisateur;Veuillez modifier votre nom Utilisateur!')
+                 }
+               })
+               .catch(err => console.log(err));
+
+              
+       }
+
+
+
        
-       
-
-
-
-
-
-        event.preventDefault();
-          let newUser={
-			  
-            'Email': this.state.EmailV.toLocaleLowerCase(),
-              'Password': this.state.Password,
-             
-              
-              
-          };
-          axios.post(serveur+'UpdatePassword/', newUser)
-          .then(res => {
-          
-            if(res.data['state']==='success'){
-              alert( "Utilisateur " +newUser.Username.toLocaleUpperCase() +" modifié avec succèss" );
-              this.setState ({
-              
-              'Username':'',
-              'Password': '',
-              
-              });
-			}
-			else if(res.data['state']==='User exist'){
-				alert('Nom Utilisateur existant veuillez choisir un autre nom')
-			}
-            else{
-                alert('Echec de lors de la Création de Utilisateur;Veuillez modifier votre nom Utilisateur!')
-            }
-          })
-          .catch(err => console.log(err));
-
-          //
-         
       }
     
 	  
@@ -546,7 +523,7 @@ export  class Login extends Component {
 			  'Prenom' : this.state.Prenom,
               'Username': this.state.Username,
               'Password': this.state.Password,
-              'Email':this.state.Email,
+              'Email':this.state.Email.toLocaleLowerCase(),
               'Entité':this.state.Entité,
               'password':password,
               'Matricule':this.state.Matricule
@@ -743,7 +720,7 @@ export  class Login extends Component {
                                     
 									
                                     
-									<input type="submit" id="submitway" onClick={this.submitmodif} style={{marginLeft:'235px'}} class="btn btn-success" value="Enregistrer"  />
+									<input type="submit" id="submitway" onClick={this.submitmodif} style={{marginLeft:'235px'}} class="btn btn-success" value="Valider"  />
                             </BModal.Body>
                             <BModal.Footer>
 							    <input type="button" class="btn btn-warning" data-dismiss="modal" value="Cancel" style={{marginRight:'40px'}} onClick={()=>this.setState({codeverificationmodalVisible:false})}/>
