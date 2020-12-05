@@ -79,32 +79,32 @@ class AllUsers extends Component {
    
 onChangeEntité=(event) =>{
   this.setState({Entité:event.value});
-  console.log('Entité ',event.value)
+  
  }
  onChangeStatus=(event) =>{
   this.setState({Status:event.value});
-  console.log('Status ',event.value)
+ 
  }
   onChangeNom = (event) => {
     this.setState({ Nom: event.target.value });
-    console.log('Nom ', event.target.value)
+   
   }
   onChangePrenom = (event) => {
     this.setState({ Prenom: event.target.value });
-    console.log('Prenom ', event.target.value)
+   
   }
   onChangeEmail = (event) => {
     this.setState({ Email: event.target.value });
-    console.log('Email ', event.target.value)
+    
   }
  
 
   //Cas de Create User
   onChangeUsername = (event) => {
     this.setState({Username: event.target.value});
-    console.log('Username ',event.target.value)
+  
     var flag=((username_list).includes(event.target.value) && event.target.value != this.state.ancien_nom)
-    console.log(username_list)
+   
      if(flag){
         $("#userE").html("Nom d'utilsateur deja utilsé").css("color","red");
         const input = document.querySelector('#input');
@@ -145,7 +145,7 @@ onChangeEntité=(event) =>{
         
    }
     this.setState({Password: event.target.value});
-    console.log('Password ',event.target.value)
+   
   }
   inputmodif = (event) =>{
     
@@ -193,7 +193,7 @@ onChangeConfPassword = (event) => {
             
       
     this.setState({ConfPassword: event.target.value});
-    console.log('ConfPassword ',event.target.value)
+   
   }
 
   showPass = (event) => {
@@ -255,8 +255,7 @@ onChangeConfPassword = (event) => {
 
     axios.post(serveur+'CreateUser/', newUser)
       .then(res => {
-        console.log(res);
-        console.log(res.data);
+        
         if (res.data['state'] === 'success') {
           alert("Entité : " + newUser.Username + " crée avec succèss");
           this.setState({
@@ -310,8 +309,7 @@ onChangeConfPassword = (event) => {
 
     axios.post(serveur+'editUsers/', newUser)
       .then(res => {
-        console.log(res);
-        console.log(res.data);
+       
         if (res.data['state'] === 'success') {
           alert("Utilisateur : " + newUser.Username + " Mise à jour avec succèss");
           this.setState({
@@ -367,14 +365,12 @@ onChangeConfPassword = (event) => {
 
     axios.post(serveur+'deletemultiUser/', Users)
       .then(res => {
-        console.log(res);
-        console.log(res.data);
+      
         if (res.data['status'] === 'success') {
           
           var i = 0
           while (i < (liste_id_element_check).length) {
-            //console.log('#tablerow' + (liste_id_element_check)[i]);
-            //$('#tablerow' + (liste_id_element_check)[i]).remove();
+            
                 var id_remove=0;
                 var p=0
                 const content = this.state.Users.map((user) => {
@@ -414,8 +410,7 @@ onChangeConfPassword = (event) => {
 
     axios.post(serveur+'deleteUser/', newUsers)
       .then(res => {
-        console.log(res);
-        console.log(res.data);
+        
         if (res.data['status'] === 'success') {
           alert("Utilisateur :" + newUsers.Username + " supprimée avec succèss");
           this.setState({
@@ -484,7 +479,7 @@ onChangeConfPassword = (event) => {
           'nom_entité':user.nom_entité,
           'ancien_nom':user.Username
         })
-        console.log(user)
+        
         }}>
         <td>
           <span class="custom-checkbox">
@@ -492,20 +487,19 @@ onChangeConfPassword = (event) => {
             <input type="checkbox" id={user.id} name="options[]" value="1" onClick={() => {
               var id = user.id
               var checkbox = document.getElementById(id);
-              console.log(checkbox.checked)
-
+              
               if (checkbox.checked) {
                 var flag = (liste_id_element_check).includes(user.id)
                 if (!flag) { liste_id_element_check.push(user.id) }
 
 
-                console.log(liste_id_element_check)
+                
               } else {
                 var index = liste_id_element_check.indexOf(user.id)
                 if (index >= 0) { (liste_id_element_check).splice(index, 1) }
 
 
-                console.log(liste_id_element_check)
+               
 
               }
 
@@ -580,7 +574,7 @@ onChangeConfPassword = (event) => {
                           liste_id_element_check.push(id)
 
                         });
-                        console.log(liste_id_element_check)
+                       
                       } else {
                         checkbox.each(function () {
                           this.checked = false;
@@ -588,7 +582,8 @@ onChangeConfPassword = (event) => {
                           liste_id_element_check = []
 
                         });
-                        console.log(liste_id_element_check)
+                       
+
                       }
 
                       checkbox.click(function () {
@@ -641,7 +636,7 @@ onChangeConfPassword = (event) => {
                           liste_id_element_check.push(id)
 
                         });
-                        console.log(liste_id_element_check)
+                       
                       } else {
                         checkbox.each(function () {
                           this.checked = false;
@@ -649,7 +644,7 @@ onChangeConfPassword = (event) => {
                           liste_id_element_check = []
 
                         });
-                        console.log(liste_id_element_check)
+                       
                       }
 
                       checkbox.click(function () {

@@ -1,1 +1,0 @@
-export  var serveur='http://localhost:8000/plaintes/'

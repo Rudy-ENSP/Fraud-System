@@ -24,10 +24,10 @@ class EntitéSideBar extends Component {
         .then(res => {
           const entités = res.data;
           this.setState({entités: entités  });
-          console.log('entités', entités)
+         
         })
         .catch(function (error) {
-          console.log(error);
+         
         });
        
 
@@ -36,7 +36,7 @@ class EntitéSideBar extends Component {
         .then(res => {
           const Users = res.data;
           this.setState({Users: Users  });
-          console.log('Users', Users)
+          
         })
         .catch(function (error) {
           console.log(error);
@@ -50,7 +50,7 @@ class EntitéSideBar extends Component {
     callbackParent=(reload)=>{
         this.setState({reload:reload, state:this.state})
         this.forceUpdate()
-        console.log({'reload':reload})
+        
     }
     
     render(){

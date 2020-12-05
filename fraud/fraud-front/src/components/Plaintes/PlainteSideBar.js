@@ -95,7 +95,7 @@ class PlainteSideBar extends Component {
           .then(res => {
             const plainteW = res.data;
             this.setState({plainteW: plainteW,nextW:res.data.next,previousW:res.data.previous,countW:res.data.count  });
-            //console.log('plainteW', plainteW)
+            
           })
           .catch(function (error) {
             console.log(error);
@@ -105,7 +105,7 @@ class PlainteSideBar extends Component {
           .then(res => {
             const plainteR = res.data;
             this.setState({plainteR: plainteR,nextR:res.data.next,previousR:res.data.previous,countR:res.data.count  });
-           // console.log(plainteR)
+           
           })
           .catch(function (error) {
             console.log(error);
@@ -115,7 +115,7 @@ class PlainteSideBar extends Component {
           .then(res => {
             const entités = res.data;
             this.setState({entités: entités ,entitéselect:res.data[0].id });
-            //console.log('entités', entités)
+           
           })
           .catch(function (error) {
             console.log(error);
@@ -125,7 +125,7 @@ class PlainteSideBar extends Component {
           .then(res => {
             const categoriePlainte = res.data;
             this.setState({categoriePlainte: categoriePlainte ,categorieselect:res.data[0].id });
-            //console.log('Categorieplaintes', categoriePlainte)
+           
           })
           .catch(function (error) {
             console.log(error);

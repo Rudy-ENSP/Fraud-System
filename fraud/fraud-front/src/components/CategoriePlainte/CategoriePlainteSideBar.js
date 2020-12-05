@@ -25,8 +25,7 @@ class EntitéSideBar extends Component {
           .then(res => {
             const categoriePlainte = res.data;
             this.setState({categoriePlainte: categoriePlainte ,count:res.data.count });
-            console.log('Categorieplaintes', categoriePlainte)
-            console.log('Categorieplaintes', res)
+            
           })
           .catch(function (error) {
             console.log(error);
@@ -36,7 +35,7 @@ class EntitéSideBar extends Component {
           .then(res => {
             const entités = res.data;
             this.setState({entités: entités,entitéselect:res.data[0].id  });
-            console.log('entités', entités)
+            
           })
           .catch(function (error) {
             console.log(error);
