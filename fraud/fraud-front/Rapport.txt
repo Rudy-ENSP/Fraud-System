@@ -1,0 +1,198 @@
+import React, {Component} from 'react';
+import Modal from 'react-modal'
+import '../../../src/';
+import {Line} from 'react-chart.js';
+import Box from '@material-ui/core/Box';
+import axios from 'axios';
+import {Redirect} from "react-router-dom";
+import Select from 'react-select';   
+import { RiArrowGoBackFill } from 'react-icons/ri';
+
+
+export class Rapport extends Component {
+
+    constructor(props){
+        super()
+        this.state={
+            isLoginClient:false,
+            isLoginAdmin:false,
+            isLogin:false,
+            isAdmin:false,
+            username:'',
+            password:'',
+            Entité:props.entitéselect,
+            entités:props.entités,
+            Assignation:props.userselect,
+            Users:props.Users,
+            Categorie:props.categorieselect,
+            categoriePlainte:props.categoriePlainte,
+            Etat:'',
+            Description:'',
+            plainte:{
+              labels:["1","2","3","4","5"],
+              datasets:[
+                 {
+                   label:"Videos Mades",
+                   backgroudColor:"rgba(255,0,255,0)",
+                   data:[4,5,1,10,32,2,12]
+
+                 },
+                 {
+                  label:"Subscriptions",
+                  backgroudColor:"rgba(0,255,0,0.75)",
+                  data:[14,8,12,1,30,2,12]
+
+                }
+
+              ]
+            }
+            
+            
+            
+            
+        }
+    }
+    
+    UNSAFE_componentWillReceiveProps(props) {
+
+        this.setState({Assignation:props.userselect, Entité:props.entitéselect ,Categorie:props.categorieselect,entités: props.entités,plainte:props.plainte ,categoriePlainte: props.categoriePlainte,Users:props.Users });
+    
+      }
+
+    onChangeEntité = (event) => {
+        this.setState({Entité: event.value});
+        console.log('Entité',event.value)
+      }
+    onChangeEtat = (event) => {
+        this.setState({Etat: event.value});
+        console.log('Etat',event.value)
+      }
+    onChangeCategorie = (event) => {
+        this.setState({Categorie: event.value});
+        console.log('Categorie',event.value)
+      }
+      onChangeAssignation = (event) => {
+        this.setState({Assignation: event.value});
+        console.log('Assignation',event.value)
+      }
+
+    render(){
+        var entités=this.state.entités
+        const entité_select=[]
+          const temp2 = entités.map((option) =>
+        entité_select.push({ value: option.id, label: option.name })
+         
+        );
+        var categories=this.state.categoriePlainte
+        const categorie_select=[]
+
+        const temp = categories.map((option) =>
+        categorie_select.push({ value: option.id, label: option.name })
+         
+        );
+        const assignation = this.state.Users
+        const assignation_select=[]
+        const temp3 = assignation.map((option) =>
+        assignation_select.push({ value: option.id, label: option.user })
+         
+        );
+
+        var etat_select = [
+            { value: '1', label: 'ajoutée' },
+            { value: '2', label: 'waiting' },
+            { value: '3', label: 'resolu' },
+          
+          ]
+        const date_select=[]
+      
+        return(
+<div class="d-flex" id="wrapper">
+<div class="bg-light border-right" id="sidebar-wrapper" style={{marginLeft:'40px'}}>
+            <div class="sidebar-heading">Paramètres du Filtre</div>
+            <div class="list-group list-group-flush" style={{display:"flex"}}>
+            <div class="form-group">
+                                    <label for='assignation' >Etat de la PLainte</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={etat_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Assignation"
+                                            options={etat_select}
+                                            onChange={this.onChangeEtat}
+                                        />
+            </div>
+            <div class="form-group">
+                                        <label for='Entité' >Entité</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={entité_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Entité"
+                                            options={entité_select}
+                                            onChange={this.onChangeEntité}
+                                        />
+            </div>
+            <div class="form-group">
+                                        <label for='Categorie' >Categorie</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={categorie_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Categorie"
+                                            options={categorie_select}
+                                            onChange={this.onChangeCategorie}
+                                        />
+             </div>
+            <div class="form-group">
+                                    <label for='assignation' >Employé Assigné</label>
+                                        <Select
+                                            className="basic-single"
+                                            classNamePrefix="select"
+                                            defaultValue={assignation_select[0]}
+                                            isDisabled={false}
+                                            isLoading={false}
+                                            isClearable={false}
+                                            isRtl={false}
+                                            isSearchable={true}
+                                            name="Assignation"
+                                            options={assignation_select}
+                                            onChange={this.onChangeAssignation}
+                                        />
+            </div>
+            </div>
+            
+        </div> 
+        <div style={{position:"relative",width:600,height:550}}>
+       <h3>Graphique</h3>
+       <Line
+         options={{
+           responsive:true
+         }}
+        data={this.state.plainte}
+       />
+
+       </div>
+</div>
+
+
+            
+        );
+    }
+}
+
+export default Rapport

@@ -5,37 +5,32 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.css';
 import { BrowserRouter as Router, Route} from 'react-router-dom';
 import * as serviceWorker from './serviceWorker';
-import Plaintes from './components/Plaintes/Plaintes';
+
 import {Accueil} from './components/Accueil';
-import {Body} from './components/Body';
+
 import {Entree} from './components/Entree';
-import Notifications from './components/Notifications/Notifications'
+
 import Login from './components/Login/login'
-import Auth from './components/Auth'
-import Staff from './components/Staff/Staff'
-import Entité from './components/Entités/Entités'
+
 import Navbar from './components/Navbar/Navbar'
 import Footer from './components/Footer/footer'
 import ProtectedRoute from'./components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import ClientRoute from './components/ClientRoute';
 import Entités from './components/Entités/Entités';
-
-
+import Plaintes from './components/Plaintes/Plaintes';
+import CategoriePlainte from './components/CategoriePlainte/CategoriePlainte';
 
 
 render(
   
   
 
-  <div>
+  <div id="root" >
     
     <Router>
         <Login/>
-        <PublicRoute exact path="/" component={Login}/>
-        <ProtectedRoute  path="/Acceuil" component={Entree}/>
-        <ProtectedRoute path="/Plaintes" component={Plaintes}/>
-        <ProtectedRoute path="/Entités" component={Entités}/>
+        <ProtectedRoute path="/fraud" component={Entree}/>
         
     </Router>
     

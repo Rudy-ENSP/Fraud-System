@@ -42,7 +42,8 @@ urlpatterns = [
     path('deleteUser/', views.deleteUser, name="deleteUser"),
     path('deletemultiUser/', views.deletemultiUser, name="deletemultiUser"),
     path('verifyEmail/',views.verifyEmail,name="verifyEmail"),
-     path('verifyCode/',views.verifyCode,name="verifyEmail"),
+    path('verifyCode/',views.verifyCode,name="verifyCode"),
+    path('getChart/',views.getChart,name="getChart"),
     
     
 

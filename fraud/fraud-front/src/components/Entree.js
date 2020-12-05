@@ -3,21 +3,18 @@ import Navbar from './Navbar/Navbar'
 import Footer from './Footer/footer'
 import { BrowserRouter as Router, Route, Switch,NavLink} from 'react-router-dom';
 import Accueil from './Accueil';
-import AllPlaintes from './Plaintes/AllPlaintes'
 import Entités from './Entités/Entités'
+import Plaintes from './Plaintes/Plaintes'
 import CategoriePlainte from './CategoriePlainte/CategoriePlainte'
-import NoResolvedPlaintes from './Plaintes/NoResolvedPlaintes'
-import ResolvedPlaintes from './Plaintes/ResolvedPlaintes'
-
-
+import Users from './Users/Users'
 import '../styles.css';
 import { isLoginAdmin,isLogin,isLoginClient } from './Login/login';
-import Plaintes from './Plaintes/Plaintes';
+
 
 export class Entree extends Component {
     render(){
         return (
-            <div class="main">
+            <div class="main" style={{overflow:"scroll"}}>
                     <Router>
                     <Navbar isLoginAdmin={isLoginAdmin} isLogin={isLogin} isLoginClient={isLoginClient}/>
 
@@ -25,20 +22,25 @@ export class Entree extends Component {
 
                     </div>
                     <Switch>
-                                <Route  exact path="/Acceuil">
+                                <Route  exact path="/fraud/home">
                                 <Accueil/>
                                 </Route>
                               
-                                <Route  path="/Plaintes">
+                                <Route  path="/fraud/Plaintes">
+                                
                                 <Plaintes/>
                                 
                                 </Route>
-                                <Route  path="/Entités">
+                                <Route  path="/fraud/Entités">
                                 <Entités/>
                                 
                                 </Route>
+                                <Route  path="/fraud/Users">
+                                <Users/>
                                 
-                                <Route  path="/CategoriePlainte">
+                                </Route>
+                                
+                                <Route  path="/fraud/CategoriePlainte">
                                 <CategoriePlainte/>
                                 
                                 </Route>
@@ -46,7 +48,7 @@ export class Entree extends Component {
                     <div class="space">
                     
                     </div>
-                    <Footer/>
+                   <Footer/>
                    </Router>
                     
                     

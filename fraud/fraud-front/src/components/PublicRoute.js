@@ -9,7 +9,7 @@ const PublicRoute = ({component: Component, restricted, ...rest}) => {
     return (
         <Route {...rest} render={props => (
             Login?
-                <Redirect to="/Acceuil" />
+                <Redirect to="/fraud/home" />
             : <Component {...props} />
         )} />
     );

@@ -21,7 +21,7 @@ from rest_framework import viewsets  ,status
 from random import randint
 from django.conf import settings 
 from django.core.mail import send_mail 
-
+import pandas as pd
 
 
 CodeV=0
@@ -267,6 +267,46 @@ def editer(request):
     data = {'state':'success'}
     return JsonResponse(data)
 
+
+@api_view(['POST'])
+def getChart(request):
+    chart=[]
+    date_debut=pd.to_datetime(request.data['Date1'])
+    date_fin=pd.to_datetime(request.data['Date2'])
+    set=Plainte.objects.filter().order_by('date_création').reverse()
+    if (request.data['Assignation']!='0'):
+        assignation= get_object_or_404(Users, id=request.data['Assignation'])
+        set=set.filter(assignation=assignation.id)
+    if (request.data['Entité']!='0'):
+        entité = get_object_or_404(Entité, id=request.data['Entité'])
+        set=set.filter(entité=entité.id)
+    if (request.data['Categorie']!='0'):
+        categorie=get_object_or_404(CatPlainte, id=request.data['Categorie'])
+        set=set.filter(Categorie=categorie.id)
+    if (request.data['Etat']=='1'):
+        set=set.filter(state='ajoutée')
+    if (request.data['Etat']=='2'):
+        set=set.filter(state='waiting')
+    if (request.data['Etat']=='3'):
+        set=set.filter(state='resolu')
+    yeard=date_debut.year
+    yearf=date_fin.year
+    labels=[]
+
+    for i in range (yeard,yearf+1):
+        labels.extend(['Janvier'+' '+str(i), 'Fevrier'+' '+str(i), 'Mars'+' '+str(i), 'Avril'+' '+str(i), 'Mai'+' '+str(i), 'Juin'+' '+str(i), 'Juillet'+' '+str(i),'Aout'+' '+str(i),'Septembre'+' '+str(i),'Octobre'+' '+str(i),'Nomvembre'+' '+str(i),'Decembre'+' '+str(i)])
+        chart.extend([0,0,0,0,0,0,0,0,0,0,0,0])
+    for plainte in set:
+      date=plainte.date_création
+      year=date.year
+      month=date.month
+      if (year<=date_fin.year and year>=date_debut.year):
+    #determinons l'ecart entre l'année actuelle avec l'année de debut de notre filtre
+        ecart=year-yeard
+    #placer l'element à sa position
+        chart[12*ecart+month-1]=chart[12*ecart+month-1]+1
+    print(chart)
+    return JsonResponse({'chart':chart,'state':'success','labels':labels})
 @api_view(['POST'])
 def enregistrer(request):
     print(request.data)

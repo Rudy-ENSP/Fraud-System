@@ -6,11 +6,30 @@ import Box from '@material-ui/core/Box';
 import Select from 'react-select';
 import 'bootstrap/dist/css/bootstrap.css';
 import axios from 'axios';
+import { FaPlusCircle } from 'react-icons/fa';
+import { FaMinusCircle } from 'react-icons/fa';
+import { FaEdit } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
+import {MdEdit } from 'react-icons/md';
 import '../../styles.css';
-import './css/style.css';
+import  Loader from '../loader'
+import {serveur} from '../../serveur'
+
+import moment  from 'moment'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'jquery/dist/jquery.min.js';
+//Datatable Modules
+import "datatables.net-dt/js/dataTables.dataTables"
+import "datatables.net-dt/css/jquery.dataTables.min.css"
+import $ from 'jquery';
+
+
+
 import '../Login/Login_v2/fonts/font-awesome-4.7.0/css/font-awesome.css';
 import { username ,password, isLoginAdmin} from '../Login/login';
-
+import { RiTShirtAirFill } from 'react-icons/ri';
+var liste_id_element_check=[] 
+var list_id=[]
 
 class AllPlaintes extends Component {
 
@@ -20,6 +39,7 @@ class AllPlaintes extends Component {
             modalVisible:false,
             addmodalVisible:false,
             deletemodalVisible:false,
+            deletemultimodalVisible:false,
             editmodalVisible:false,
             id:'',
             title:'',
@@ -31,14 +51,25 @@ class AllPlaintes extends Component {
             Reponse:'Aucune reponse pour le moment',
             addresponse:'',
             Titre: '',
-            Entité: "Collaborateur",
+            Entité: props.entitéselect,
             Description:'',
-            Assignation:'',
-            Categorie:'',
-            entités:[],
-            categoriePlainte:[],
-            Users:[],
-            plainte:[]
+            Assignation:props.userselect,
+            categorie:props.categorieselect,
+            entités:props.entités,
+            categoriePlainte:props.categoriePlainte,
+            Users:props.Users,
+            plainte:props.plainte,
+            count:props.count,
+            previous:props.previous,
+            next:props.next,
+            nom_auteur:'',
+            nom_entité:'',
+            nom_Categorie:'',
+            assignation:'',
+            nom_assigne:'',
+            SearchTerm:'',
+            page:''
+            
             
         }
     }
@@ -47,70 +78,78 @@ class AllPlaintes extends Component {
     //on recupère les données back end
 
     componentDidMount() {
-		let data={
-              'user':username,
-              'password':password
-          };
-          axios.post('http://localhost:8000/plaintes/listePlainte/',data)
-          .then(res => {
-            const plainte = res.data;
-            this.setState({plainte: plainte  });
-            console.log(plainte)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+     /*
+      $(document).ready(function () {
+        $('#example').DataTable();
+    });*/
+     
+      }
+    UNSAFE_componentWillReceiveProps(props) {
 
-          axios.get('http://localhost:8000/plaintes/listeEntite/')
+        this.setState({Assignation:props.userselect, Entité:props.entitéselect ,categorie:props.categorieselect,next:props.next,previous:props.previous,count:props.count,entités: props.entités,plainte:props.plainte ,categoriePlainte: props.categoriePlainte,Users:props.Users });
+    
+      }
+     
+      scrollbar=(e)=>{
+        let data={
+          'user':username,
+          'password':password
+      };
+        if (this.state.next!=null){
+          axios.post(this.state.next,data)
           .then(res => {
-            const entités = res.data;
-            this.setState({entités: entités  });
-            console.log('entités', entités)
+            const plainteA = res.data.results;
+            this.state.plainte.push(plainteA)
+            this.state.previous=res.data.previous
+            this.data.next=res.data.next
+           
           })
           .catch(function (error) {
             console.log(error);
           });
-
-          axios.get('http://localhost:8000/plaintes/listeCategoriePlainte/')
-          .then(res => {
-            const categoriePlainte = res.data;
-            this.setState({categoriePlainte: categoriePlainte  });
-            console.log('Categorieplaintes', categoriePlainte)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
-
-          axios.get('http://localhost:8000/plaintes/listeUsers/')
-          .then(res => {
-            const Users = res.data;
-            this.setState({Users: Users  });
-            console.log('Users', Users)
-          })
-          .catch(function (error) {
-            console.log(error);
-          });
+        }
+       }
+      onEditSearchTerm=(e)=>{
+      
+        this.setState({SearchTerm:e.target.value})
         
+      }
+      dynamicSearch=()=>{
+          if (this.state.SearchTerm==''){
+            return this.state.plainte
+          }
+          else{
+            return this.state.plainte.filter((plainte) => plainte.title.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.nom_assigne.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.nom_entité.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.nom_Categorie.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.state.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.date_création.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.details.toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())||
+            plainte.id.toString().toLocaleUpperCase().includes(this.state.SearchTerm.toLocaleUpperCase())
+            )
+          }
+          
       }
       onChangeTitre = (event) => {
         this.setState({Titre: event.target.value});
-        console.log('Titre ',event.target.value)
+       
       }
       onChangeEntité = (event) => {
         this.setState({Entité: event.value});
-        console.log('Entité',event.value)
+        
       }
       onChangeDescription = (event) => {
         this.setState({Description: event.target.value});
-        console.log('Description',event.target.value)
+        
       }
       onChangeAssignation = (event) => {
         this.setState({Assignation: event.value});
-        console.log('Assignation',event.value)
+       
       }
       onChangeCategorie= (event) => {
-        this.setState({Categorie: event.value});
-        console.log('Categorie',event.value)
+        this.setState({categorie: event.value});
+        
       }
       onCancel=()=>{
         this.setState({
@@ -119,29 +158,80 @@ class AllPlaintes extends Component {
           Description:'',
         })
       }
+    
       onSendPlainte=(event)=>{
         event.preventDefault();
-          let newPlainte={
-              'cas' : this.state.Titre,
-              'description': this.state.Description,
-              'state': 'ajoutée',
-              'entité':this.state.Entité,
-              'user':username,
-              'password':password,
-              'Assignation':this.state.Assignation
+          let newplainte={
+            'id':this.state.id,
+            'cas' : this.state.Titre,
+            'description': this.state.Description,
+            'entité':this.state.Entité,
+            'user':username,
+            'password':password,
+            'Assignation':this.state.Assignation,
+            'nom_assigne':this.state.nom_assigne,
+            'nom_entité':this.state.nom_entité,
+            'nom_Categorie':this.state.nom_Categorie,
+            'Categorie':this.state.categorie,
+            'state':'ajoutée'
           };
-          axios.post('http://localhost:8000/plaintes/enregistrer/', newPlainte)
+          axios.post(serveur+'enregistrer/', newplainte)
           .then(res => {
-            console.log(res);
-            console.log(res.data);
+            
             if(res.data['state']==='success'){
-              alert( "PLAINTE " +newPlainte.cas.toLocaleUpperCase() +" crée avec succèss" );
+              alert( "PLAINTE " +newplainte.cas.toLocaleUpperCase() +" crée avec succèss" );
               this.setState ({
                 Titre: '',
                 Entité: "Collaborateur",
                 Description:'',
                 Assignation:''
               });
+
+              var new_name_entité=''
+              const content_entité = this.state.entités.map((entité) => {
+
+                if (entité.id == newplainte.entité) {
+                  new_name_entité=entité.name ;
+                  
+                }
+    
+              })
+              var new_name_categorie=''
+              const content_categorie = this.state.categoriePlainte.map((categorie) => {
+
+                if (categorie.id == newplainte.Categorie) {
+                  new_name_categorie=categorie.name ;
+                  
+                }
+    
+              })
+              var new_name_assignation=''
+              const content_assignation = this.state.Users.map((user) => {
+
+                if (user.id == newplainte.Assignation) {
+                  new_name_assignation=user.user ;
+                  
+                }
+    
+              })
+             
+            
+    
+             this.state.plainte.push({id: res.data['id'], 
+             "title": newplainte.cas,
+              "nom_entité": new_name_entité,
+              "entité":newplainte.entité,
+              "categorie":newplainte.Categorie,
+              "nom_Categorie":new_name_categorie,
+              "assignation":newplainte.Assignation,
+              "nom_assigne":new_name_assignation,
+              "details":newplainte.description,
+              "nom_auteur":res.data['username'],
+              "state":'ajoutée',
+              "date_création":moment().format(moment.HTML5_FMT.DATETIME_LOCAL_SECONDS)
+             })
+
+             
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -149,23 +239,38 @@ class AllPlaintes extends Component {
           })
           .catch(err => console.log(err));
 
-          //
+          
          
       }
       
       onDeletePlainte=(event)=>{
         event.preventDefault();
-          let plainte={
+          let newplainte={
               'id':this.state.id,
               
           };
-          axios.post('http://localhost:8000/plaintes/delete/', plainte)
+          axios.post(serveur+'delete/', newplainte)
           .then(res => {
-            console.log(res);
-            console.log(res.data);
-            if(res.data['status']=='success'){
-              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" supprimé avec succèss" );
+            
+            if(res.data['state']=='success'){
               
+              /*const id='#tablerow'+this.state.id
+              $(id).remove();*/
+
+                var id_remove=0;
+                var i=0
+               
+                const content = this.state.plainte.map((cas) => {
+
+                  if (cas.id == newplainte.id) {
+                    id_remove=i
+                  }
+                i++
+                })
+               
+                this.state.plainte.splice(id_remove,1)
+
+                alert( "PLAINTE  supprimé avec succèss" );
             }
             else{
                 alert('echec de lors de la suppression de la  plaintes')
@@ -176,29 +281,122 @@ class AllPlaintes extends Component {
           //
          
       }
-      onEditPlainte=(event)=>{
+
+      onDeleteMultiPlainte=(event)=>{
         event.preventDefault();
           let plainte={
+              'delete_list':liste_id_element_check
+               };
+          axios.post(serveur+'deletemulti/', plainte)
+          .then(res => {
+            
+            if(res.data['status']=='success'){
+              
+              var i = 0
+                while (i < (liste_id_element_check).length) {
+                 
+                      var id_remove=0;
+                      var p=0
+                      const content = this.state.plainte.map((plainte) => {
+      
+                        if ((liste_id_element_check).includes(plainte.id) ) {
+                          id_remove=p
+                        }
+                      p++
+                      })
+                      this.state.plainte.splice(id_remove,1)
+                  i++
+                }
+                var checkbox = $('table tbody input[type="checkbox"]');
+                            checkbox.each(function () {
+                                this.checked = false;
+                                var id = this.getAttribute('id');
+                                liste_id_element_check = []
+      
+                              });
+                      
+                liste_id_element_check = []
+                alert( "Plaintes  supprimées avec succèss" );
+            }
+            else{
+                alert('echec de lors de la suppression des  plaintes')
+            }
+          })
+          .catch(err => console.log(err));
+
+          //
+         
+      }
+      onEditPlainte=(event)=>{
+        event.preventDefault();
+          let newplainte={
               'id':this.state.id,
               'cas' : this.state.Titre,
               'description': this.state.Description,
               'entité':this.state.Entité,
               'user':username,
               'password':password,
-              'Assignation':this.state.Assignation
+              'Assignation':this.state.Assignation,
+              'nom_assigne':this.state.nom_assigne,
+              'nom_entité':this.state.nom_entité,
+              'nom_Categorie':this.state.nom_Categorie,
+              'categorie':this.state.categorie,
           };
-          axios.post('http://localhost:8000/plaintes/editer/', plainte)
+          axios.post(serveur+'editer/', newplainte)
           .then(res => {
-            console.log(res);
-            console.log(res.data);
+           
             if(res.data['state']==='success'){
-              alert( "PLAINTE " +plainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
+             
               this.setState ({
                 Titre: '',
                 Entité: "Collaborateur",
                 Description:'',
                 Assignation:''
               });
+              
+                var new_name_entité=''
+                const content_entité = this.state.entités.map((entité) => {
+
+                  if (entité.id == newplainte.entité) {
+                    new_name_entité=entité.name ;
+                    
+                  }
+      
+                })
+                var new_name_categorie=''
+                const content_categorie = this.state.categoriePlainte.map((categorie) => {
+
+                  if (categorie.id == newplainte.categorie) {
+                    new_name_categorie=categorie.name ;
+                    
+                  }
+      
+                })
+                var new_name_assignation=''
+                const content_assignation = this.state.Users.map((user) => {
+
+                  if (user.id == newplainte.Assignation) {
+                    new_name_assignation=user.user ;
+                    
+                  }
+      
+                })
+               
+                const content = this.state.plainte.map((plainte) => {
+
+                  if (plainte.id == newplainte.id) {
+                    plainte.title = newplainte.cas;
+                    plainte.entité = newplainte.entité
+                    plainte.nom_entité=new_name_entité
+                    plainte.categorie = newplainte.categorie
+                    plainte.nom_Categorie=new_name_categorie
+                    plainte.assignation=newplainte.Assignation
+                    plainte.nom_assigne=new_name_assignation  
+                    plainte.details=newplainte.description
+                  }
+      
+                })
+                alert( "PLAINTE " +newplainte.cas.toLocaleUpperCase() +" mise a jour avec succèss" );
             }
             else{
                 alert('echec de lors de la création de la  plaintes')
@@ -206,7 +404,7 @@ class AllPlaintes extends Component {
           })
           .catch(err => console.log(err));
 
-          //
+          
          
       }
       solve(id_plainte){
@@ -217,15 +415,15 @@ class AllPlaintes extends Component {
             'password':password,
             'Reponse':this.state.Reponse
         };
-        axios.post('http://localhost:8000/plaintes/valider/',data)
+        axios.post(serveur+'valider/',data)
         .then(res => {
-          console.log(res.data)
+          
         })
         .catch(function (error) {
           console.log(error);
         });
         this.setState({modalVisible:false})
-        console.log('Plainte Resolue :',id_plainte)
+       
       }
 
 
@@ -243,10 +441,9 @@ class AllPlaintes extends Component {
               'password':password,
               'Reponse':this.state.Reponse
           };
-          axios.post('http://localhost:8000/plaintes/resoudre/', newPlainte)
+          axios.post(serveur+'resoudre/', newPlainte)
           .then(res => {
-            console.log(res);
-            console.log(res.data);
+            
             if(res.data['state']==='success'){
               alert( "LA PLAINTE " +newPlainte.title.toLocaleUpperCase() +" mise a jour avec succes" );
              
@@ -328,7 +525,7 @@ class AllPlaintes extends Component {
                     <button  style={{marginLeft:'25%'}} onClick={()=>                          
                             this.solve(this.state.id)      
                     }
-                                className="btn btn-primary">plainte resolu</button>
+                                className="btn btn-primary">Resoudre</button>
                     <button  style={{marginLeft:10}} onClick={()=>this.setState({modalVisible:false})}
                                 className="btn btn-warning">Fermer la fenêtre</button>
                 </div>
@@ -350,17 +547,17 @@ class AllPlaintes extends Component {
                     bgcolor="background.paper" justifyContent='space-between'>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold',fontSize:16}}>Entité </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.entité}</Box>
+                        <Box style={{textAlign:"center"}}>{this.state.nom_entité}</Box>
                     </Box>
                     <Box p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black',fontWeight:'bold' ,fontSize:16}}>Auteur </Box>
-                        <Box style={{textAlign:"center"}}>{this.state.auteur}</Box>
+                        <Box style={{textAlign:"center"}}>{this.state.nom_auteur}</Box>
                     </Box>
                     <Box  p={1} bgcolor="grey.300">
                         <Box style={{textAlign:'center',color:'black' ,fontWeight:'bold',fontSize:16}}>Date de Création</Box>
                         <Box style={{textAlign:"center"}}> {this.state.date}</Box>
                     </Box>
-                    
+                   
                 </Box>
                 </div>
                 <div>
@@ -379,6 +576,14 @@ class AllPlaintes extends Component {
         )
     }
     
+    paginationclick=()=>{
+      
+         var id="page"+this.state.page
+        const password = document.querySelector(id);
+        const classe = password.getAttribute('class') === 'page-item' ? 'page-item active' : 'page-item';
+        password.setAttribute('class', classe);
+      
+    }
     
     render(){
         
@@ -397,16 +602,27 @@ class AllPlaintes extends Component {
           );
           const assignation_select=[]
           const temp3 = assignation.map((option) =>
-          assignation_select.push({ value: option.id, label: option.user.Username })
+          assignation_select.push({ value: option.id, label: option.user })
            
           );
-
-
-
-        const MyPlaintes = this.state.plainte
+        
+        const count=this.state.count/10
+        const all=this.state.count
+        var pagelist=[]
+        var i=1
+        while(i<=count){
+          pagelist.push(i)
+          i++
+        }
+        
+       
+        
+        const MyPlaintes = this.dynamicSearch()
+        const test=MyPlaintes.map((entité) =>
+             list_id.push(entité.id))
           const content = MyPlaintes.map((plainte) =>
             
-                <tr onClick={
+                <tr id={'tablerow'+plainte.id} onClick={
                     ()=>this.setState({
                         id:plainte.id,
                         title:plainte.title,
@@ -416,10 +632,39 @@ class AllPlaintes extends Component {
                         etat:plainte.state,
                         contenu:plainte.details,
                         reponse:plainte.response,
+                        categorie:plainte.Categorie,
+                        assignation:plainte.assignation,
+                        nom_auteur:plainte.nom_auteur,
+                        nom_entité:plainte.nom_entité,
+                        nom_Categorie:plainte.nom_Categorie,
+                        nom_assigne:plainte.nom_assigne,
+                        details:plainte.details
                         })}>
                     <td>
 							<span class="custom-checkbox">
-								<input type="checkbox" id="checkbox1" name="options[]" value="1"/>
+								
+                                <input type="checkbox" id={plainte.id} name="options[]" value="1" onClick={()=>{
+                                    var id=plainte.id
+                                    var checkbox = document.getElementById(id);
+                                    
+                                                        
+                                                            if(checkbox.checked){
+                                                                var flag=(liste_id_element_check).includes(plainte.id)
+                                                                if(!flag){ liste_id_element_check.push(plainte.id)}
+                                                               
+                                                                
+                                                                
+                                                            } else{
+                                                               var index=liste_id_element_check.indexOf(plainte.id)
+                                                               if(index>=0){ (liste_id_element_check).splice(index,1)}
+                                                               
+                                                                    
+                                                                                      
+                                                              
+                                                            } 
+                                                       
+            
+                                                        }}/>
 								<label for="checkbox1"></label>
 							</span>
 					</td>
@@ -428,106 +673,174 @@ class AllPlaintes extends Component {
                     ()=>this.setState({
                         modalVisible:true,
                         })} >{plainte.id}</th>
-                    <td onClick={
+                    <td id={'title'+plainte.id} onClick={
                     ()=>this.setState({
                         modalVisible:true,
                          })}>{plainte.title}</td>
-                    <td onClick={
+                    <td  id={'nom_Categorie'+plainte.id} onClick={
                     ()=>this.setState({
                         modalVisible:true,
-                         })}>{plainte.entité}</td>
+                         })}>{plainte.nom_Categorie}</td>
+                    <td id={'nom_entité'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_entité}</td>
+                    <td id={'nom_assigne'+plainte.id} onClick={
+                    ()=>this.setState({
+                        modalVisible:true,
+                         })}>{plainte.nom_assigne}</td>
+                    
                         
                     <td onClick={
                     ()=>this.setState({
                         modalVisible:true,
-                         })}>{plainte.date_création}</td>
+                         })}>{moment().format(plainte.date_création,'YYYY-MM-DDTHH:mm:ss',true)}</td>
                     <td onClick={
                     ()=>this.setState({
                         modalVisible:true,
                        })}>{plainte.state}</td>
                         
                     <td style={{display:"flex",justifyContent:"space-between"}}>
-							<a  class="edit" data-toggle="modal" onClick={()=>this.setState({editmodalVisible:true})}><span class="glyphicon glyphicon-pencil"></span></a>
-							<a  class="delete" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><span class="glyphicon glyphicon-trash"></span></a>
+							<a  class="edit" data-toggle="modal" onClick={()=>this.setState({editmodalVisible:true})}><FaEdit /></a>
+							<a  class="delete" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><FaTrash/></a>
 					</td>
                 </tr>
            
           );
 
          
-        function showTable(){
-
-            
+          function showTable(){
              
-              if(MyPlaintes.length ===0){
-                  return(
-                    <h1 style={{textAlign:'center',marginTop:70}}>
-                        <Spinner animation="border" role="status">
-  <span className="sr-only">Loading...</span>
-</Spinner></h1>
-                  )
-              }
-              if(MyPlaintes.length <=8 && MyPlaintes.length>=1){
-                return (
-                    
-                        
-                        <div className="table-wrapper-scroll-y my-custom-scrollbar" >
-                            <table className="table table-bordered table-striped table-hover mb-0 ">
-                                <thead >
-                                    <th>
-                                        <span class="custom-checkbox">
-                                            <input type="checkbox" id="selectAll"/>
-                                            <label for="selectAll"></label>
-                                        </span>
-                                    </th>
-                                    <th>Indice</th>
-                                    <th>Titre</th>
-                                    <th>Entité</th>
-                                    <th>Date</th> 
-                                    <th>Etat</th>
-                                    <th>Actions</th>
-                                </thead>
-                                
-                                <tbody>
-                                    {content}
-                                </tbody>
-                            </table>
-                            
-                        </div>
-                    
+            if(MyPlaintes.length ===0){
+                return(
+                    <Loader/>
                 )
-                }
-              if(MyPlaintes.length>8){
-                return (
-                   
-              
-              
-                    <div className="table-wrapper-scroll-y my-custom-scrollbar" >
-                    <table className="table table-bordered table-striped table-hover mb-0">
-                        <thead >
-                            <th>
-                                <span class="custom-checkbox">
-                                    <input type="checkbox" id="selectAll"/>
-                                    <label for="selectAll"></label>
-                                </span>
-                            </th>
-                            <th>Indice</th>
-                            <th>Titre</th>
-                            <th>Entité</th>
-                            <th>Date</th> 
-                            <th>Etat</th>
-                            <th>Actions</th>
-                        </thead>
-                        <tbody>
-                            {content}
-                        </tbody>
-                    </table>
-                    
-                </div>
-            
-                )
-              }
             }
+            if(MyPlaintes.length <=8 && MyPlaintes.length>=1){
+              return (
+                  
+                      
+                      <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                          <table className="table table-bordered table-striped table-hover mb-0 ">
+                              <thead >
+                                  <th>
+                                      <span class="custom-checkbox">
+                                      <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
+                                                       var selectAll= document.getElementById("selectAll")
+                                                        
+                                                            if(selectAll.checked){
+                                                                liste_id_element_check=[]
+                                                                checkbox.each(function(){
+                                                                    this.checked = true;
+                                                                    var id = parseInt(this.getAttribute('id')) ;
+                                                                    
+                                                                    liste_id_element_check.push(id)  
+                                                                                          
+                                                                });
+                                                                
+                                                            } else{
+                                                                checkbox.each(function(){
+                                                                    this.checked = false; 
+                                                                    var id = this.getAttribute('id') ;
+                                                                    liste_id_element_check=[] 
+                                                                                         
+                                                                });
+                                                               
+                                                            } 
+                                                        
+                                                        checkbox.click(function(){
+                                                            if(!this.checked){
+                                                                $("#selectAll").prop("checked", false);
+                                                            }
+                                                            
+                                                        });
+                                                        }}/>
+                                          <label for="selectAll"></label>
+                                      </span>
+                                  </th>
+                                  <th>Indice</th>
+                                  <th>Titre</th>
+                                  <th>Categorie</th>
+                                  <th>Entité</th>
+                                  <th>Assignation</th>
+                                  <th>Date</th> 
+                                  <th>Etat</th>
+                                  <th>Actions</th>
+                              </thead>
+                              
+                              <tbody>
+                                  {content}
+                              </tbody>
+                          </table>
+                          
+                      </div>
+                  
+              )
+              }
+            if(MyPlaintes.length>8){
+              return (
+                 
+            
+            
+                  <div className="table-wrapper-scroll-y my-custom-scrollbar" >
+                  <table className="table table-bordered table-striped table-hover mb-0">
+                      <thead >
+                          <th>
+                              <span class="custom-checkbox">
+                              <input type="checkbox" id="selectAll" onClick={()=>{var checkbox = $('table tbody input[type="checkbox"]');
+                                                       var selectAll= document.getElementById("selectAll")
+                                                        
+                                                            if(selectAll.checked){
+                                                                liste_id_element_check=[]
+                                                                checkbox.each(function(){
+                                                                    this.checked = true;
+                                                                    var id = parseInt(this.getAttribute('id')) ;
+                                                                    
+                                                                    liste_id_element_check.push(id)  
+                                                                                          
+                                                                });
+                                                               
+                                                            } else{
+                                                                checkbox.each(function(){
+                                                                    this.checked = false; 
+                                                                    var id = this.getAttribute('id') ;
+                                                                    liste_id_element_check=[] 
+                                                                                         
+                                                                });
+                                                               
+                                                            } 
+                                                        
+                                                        checkbox.click(function(){
+                                                            if(!this.checked){
+                                                                $("#selectAll").prop("checked", false);
+                                                            }
+                                                            
+                                                        });
+                                                        }}/>
+                                  <label for="selectAll"></label>
+                              </span>
+                          </th>
+                          <th>Indice</th>
+                          <th>Titre</th>
+                          <th>Categorie</th>
+                          <th>Entité</th>
+                          <th>Assignation</th>
+                          <th>Date</th> 
+                          <th>Etat</th>
+                          <th>Actions</th>
+                      </thead>
+                      <tbody>
+                          {content}
+                      </tbody>
+                  </table>
+                  
+              </div>
+          
+              )
+            }
+          }
+        
+          
           
         return (
             <body>
@@ -538,10 +851,14 @@ class AllPlaintes extends Component {
                                             <div class="row">
                                                     <div class="col-sm-6">
                                                         <h2>Gestion de <b>Plaintes</b></h2>
+                                                        <input type='text' style={{marginTop:"20px"}}className ="form-group form-control" value={this.state.SearchTerm} onChange={this.onEditSearchTerm} placeholder="Rechercher"/>
+                                                        
                                                     </div>
+                                                       
                                                     <div class="col-sm-6">
-                                                        <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><span class="glyphicon glyphicon-plus"></span> <span>Add Plainte</span></button>
-                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemodalVisible:true})}><span class="glyphicon glyphicon-minus"></span> <span>Delete</span></button>						
+                                                    
+                                                        <button  class="btn btn-success" data-toggle="modal" onClick={()=>this.setState({addmodalVisible:true})}><i ><FaPlusCircle /></i> <span>Ajouter Plainte</span></button>
+                                                        <button class="btn btn-danger" data-toggle="modal" onClick={()=>this.setState({deletemultimodalVisible:true})}><i><FaMinusCircle /></i> <span>Supprimer</span></button>						
                                                         </div>
                                                     </div>
                                     </div>
@@ -549,6 +866,9 @@ class AllPlaintes extends Component {
                                     {this.ShowModal()}
 
                                     </div>
+                                    
+                                  
+                                    
                     </div>    
                 </div>
                 
@@ -626,15 +946,15 @@ class AllPlaintes extends Component {
                                     
                                     <div class="form-group">
                                     <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                                    <textarea value={this.state.value} className ="form-control" style={{height:40}}
                                             onChange={this.onChangeDescription} required/>
                                     </div>
                                 </div>      
                             </BModal.Body>
                             <BModal.Footer>
                             
-                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({addmodalVisible:false})}/>
-                                <input type="submit" class="btn btn-success" value="Add"  />
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({addmodalVisible:false})}/>
+                                <input type="submit" class="btn btn-success" value="Enregistrer"  />
                                 
                             </BModal.Footer>
                     </form>    
@@ -653,6 +973,7 @@ class AllPlaintes extends Component {
                                 </BModal.Title>
                             </BModal.Header>
                             <BModal.Body>
+                           
                                 <div style={{display:'flex',flexDirection:"column",justifyContent:'space-between'}}>
                                     <div class="form-group">
                                         <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
@@ -711,15 +1032,15 @@ class AllPlaintes extends Component {
                                     
                                     <div class="form-group">
                                     <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
+                                    <textarea value={this.state.value} className ="form-control" style={{height:40}}
                                             onChange={this.onChangeDescription} required/>
                                     </div>
                                 </div>      
                             </BModal.Body>
                             <BModal.Footer>
                             
-                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({editmodalVisible:false})}/>
-                                <input type="submit" class="btn btn-success" value="Save"  />
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({editmodalVisible:false})}/>
+                                <input type="submit" class="btn btn-success" value="Enregistrer"  />
                                 
                             </BModal.Footer>
                     </form>    
@@ -735,160 +1056,43 @@ class AllPlaintes extends Component {
         >          <form onSubmit={this.onDeletePlainte}>
                             <BModal.Header closeButton>
                                 <BModal.Title id="example-modal-sizes-title-sm">
-                                <h4 class="modal-title">Delete Plainte</h4>
+                                <h4 class="modal-title">Supprimer Plainte</h4>
                                 </BModal.Title>
                             </BModal.Header>
                             <BModal.Body>
-                                <p>Are you sure you want to delete this Records?</p>
-                                <p class="text-warning"><small>This action cannot be undone.</small></p>
+                                <p>Voulez vous supprimer cet enregistrement?</p>
+                                <p class="text-warning"><small>Cette action est definitive.</small></p>
                             </BModal.Body>
                             <BModal.Footer>
-                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={()=>this.setState({deletemodalVisible:false})}/>
-                                <input type="submit" class="btn btn-danger" value="Delete"/> 
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({deletemodalVisible:false})}/>
+                                <input type="submit" class="btn btn-danger" value="Supprimer"/> 
                             </BModal.Footer>
                     </form>    
         </BModal>
-           
-    
 
-        <div id="addEmployeeModal" class="modal fade">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <form onSubmit={this.onSendPlainte} >
-                        <div class="modal-header">						
-                            <h4 class="modal-title">Ajouter Plainte</h4>
-                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                        </div>
-                        <div class="modal-body">					
-                            <div class="form-group">
-                            <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-                                <input type='text' className ="form-control" name='Titre'
-                        onChange={this.onChangeTitre} required />
-                            </div>
-                            <div class="form-group">
-                                <label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-                                <select value={this.state.value} className ="form-control" 
-                                        onChange={this.onChangeCategorie} required>
-                                    <option value="Web-Defacement">Web-Defacement</option>
-                                    <option value="Spam">Spam</option>
-                                    <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                                    <option value="FleeceWare">FleeceWare</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeEntité} required>
-                                    <option value="CIRT">Equipe Aide</option>
-                                    <option value="Entité 2">Direction du CIRT</option>
-                                    <option value="Entité 3">Reseau et Systeme</option>
-                                    <option value="Entité 4">Entité 4</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeAssignation} >
-                                    <option value="2">Rudy</option>
-                                    <option value="3">Arold</option>
-                                    <option value="4">Nick</option>
-                                    <option value="1">Cardoun</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                            <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                            <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                                    onChange={this.onChangeDescription} required/>
-                            </div>					
-                        </div>
-                        <div class="modal-footer">
-                            <input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-                            <input type="submit" class="btn btn-success" value="Add"  />
-                        </div>
-                    </form>
-                </div>
-            </div>
-            </div>
-<div id="editEmployeeModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-        <form onSubmit={this.onEditPlainte} >
-				<div class="modal-header">						
-					<h4 class="modal-title">Editer Plainte</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">					
-					<div class="form-group">
-                    <label for='Titre' style={{fontWeight:"bold"}}>Titre</label>
-						<input type='text' className ="form-control" name='Titre'
-                   onChange={this.onChangeTitre} required />
-					</div>
-					<div class="form-group">
-						<label for='categorie' style={{fontWeight:"bold"}}>Categorie</label>
-						<select value={this.state.value} className ="form-control" 
-                                  onChange={this.onChangeCategorie} required>
-                            <option value="Web-Defacement">Web-Defacement</option>
-                            <option value="Spam">Spam</option>
-                            <option value="Ingenierie Sociale">Ingenierie Sociale</option>
-                            <option value="FleeceWare">FleeceWare</option>
-                        </select>
-					</div>
-                    <div class="form-group">
-						<label for='entités' style={{fontWeight:"bold"}}>Entité</label>
-						<select value={this.state.value} className ="form-control" 
-                          onChange={this.onChangeEntité} required>
-                            <option value="CIRT">Equipe Aide</option>
-                            <option value="Entité 2">Direction du CIRT</option>
-                            <option value="Entité 3">Reseau et Systeme</option>
-                            <option value="Entité 4">Entité 4</option>
-                        </select>
-					</div>
-                    <div class="form-group">
-                                <label for='assignation' style={{fontWeight:"bold"}}>Employé Assigné</label>
-                                <select value={this.state.value} className ="form-control" 
-                                onChange={this.onChangeAssignation} >
-                                    <option value="2">Rudy</option>
-                                    <option value="3">Arold</option>
-                                    <option value="4">Nick</option>
-                                    <option value="1">Cardoun</option>
-                                </select>
-                            </div>
-					<div class="form-group">
-                    <label for='description' style={{fontWeight:"bold"}}>Description</label>
-                    <textarea value={this.state.value} className ="form-control" style={{height:90}}
-                              onChange={this.onChangeDescription} required/>
-					</div>					
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel" onClick={this.onCancel}/>
-					<input type="submit" class="btn btn-success" value="Save" />
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
-
-
-<div id="deleteEmployeeModal" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<form onSubmit={this.onDeletePlainte}>
-				<div class="modal-header">						
-					<h4 class="modal-title">Delete Plainte</h4>
-					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				</div>
-				<div class="modal-body">					
-					<p>Are you sure you want to delete this Records?</p>
-					<p class="text-warning"><small>This action cannot be undone.</small></p>
-				</div>
-				<div class="modal-footer">
-					<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel"/>
-					<input type="submit" class="btn btn-danger" value="Delete"/>
-				</div>
-			</form>
-		</div>
-	</div>
-</div>
+        <BModal
+          id="deletemultimodal"
+          size="sm"
+          show={this.state.deletemultimodalVisible}
+          onHide={() => this.setState({deletemultimodalVisible:false})}
+          aria-labelledby="contained-modal-title-vcenter"
+         
+        >          <form onSubmit={this.onDeleteMultiPlainte}>
+                            <BModal.Header closeButton>
+                                <BModal.Title id="example-modal-sizes-title-sm">
+                                <h4 class="modal-title">Supprimer Plainte</h4>
+                                </BModal.Title>
+                            </BModal.Header>
+                            <BModal.Body>
+                                <p>Voulez vous supprimer ces enregistrements?</p>
+                                <p class="text-warning"><small>Cette action est definitive.</small></p>
+                            </BModal.Body>
+                            <BModal.Footer>
+                                <input type="button" class="btn btn-default" data-dismiss="modal" value="Annuler" onClick={()=>this.setState({deletemultimodalVisible:false})}/>
+                                <input type="submit" class="btn btn-danger" value="Supprimer"/> 
+                            </BModal.Footer>
+                    </form>    
+        </BModal>
             </body>
         );
     }
